@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
 
-public static class Constants
-{
-    public const int memoryRefresh = 50;
-}
-
 namespace christ_a_2
 {
     public partial class mainForm : Form
     {
+        public static class Constants
+        {
+            public const int memoryRefresh = 50;
+        }
+
         List<byte[]> meme = new List<byte[]>();
 
         public mainForm()
