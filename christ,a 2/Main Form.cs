@@ -9,7 +9,10 @@ namespace christ_a_2
     {
         public static class Constants
         {
-            public const int memoryRefresh = 50;
+            public const int memoryCounterRefresh = 50;
+
+            public const int memoryIncreaseRate = 50;
+            public const int memoryIncrease = 1024 * 1024 * 64;
         }
 
         List<byte[]> meme = new List<byte[]>();
@@ -18,25 +21,42 @@ namespace christ_a_2
         {
             InitializeComponent();
 
+            
             this.HandleCreated += mainForm_HandleCreated;
         }
 
         private void mainForm_HandleCreated(object sender, EventArgs e)
         {
-            Thread memoryCounterThread = new Thread(updateMemoryCounter);
+            Thread memoryCounterThread = new Thread(updateMemoryCounterLoop);
             memoryCounterThread.Start();
         }
 
-        void updateMemoryCounter()
+        private void updateMemoryCounterLoop()
         {
             while (true)
             {
                 Invoke(new Action(() =>
                 {
-                    memoryUsedLabel.Text = "Memory used: " + ((float)System.Diagnostics.Process.GetCurrentProcess().PrivateMemorySize64 / (1024 * 1024 * 1024)).ToString("0.00") + " GB";
+                    float memUsed = (float)System.Diagnostics.Process.GetCurrentProcess().PrivateMemorySize64 / (1024 * 1024 * 1024);
+                    //float memUsed = (float)GC.GetTotalMemory(true) / (1024 * 1024 * 1024);
+                    memoryUsedLabel.Text = "Memory used: " + memUsed.ToString("0.00") + " GB";
                 }));
 
-                Thread.Sleep(Constants.memoryRefresh);
+                Thread.Sleep(Constants.memoryCounterRefresh);
+            }
+        }
+
+        private void increaseMemoryLoop()
+        {
+            while (true)
+            {
+                byte[] tempMeme = new byte[Constants.memoryIncrease];
+                for (int i = 0; i < Constants.memoryIncrease; i++)
+                    tempMeme[i] = 0;
+
+                meme.Add(tempMeme);
+
+                Thread.Sleep(Constants.memoryIncreaseRate);
             }
         }
 
@@ -52,7 +72,8 @@ namespace christ_a_2
 
         private void memoryLeakButton_Click(object sender, EventArgs e)
         {
-            meme.Add(new byte[1024 * 1024 * 1024]);
+            Thread increaseMemoryThread = new Thread(increaseMemoryLoop);
+            increaseMemoryThread.Start();
         }
     }
 }

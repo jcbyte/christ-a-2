@@ -46,7 +46,7 @@
             this.startGameButton.Name = "startGameButton";
             this.startGameButton.Size = new System.Drawing.Size(325, 128);
             this.startGameButton.TabIndex = 0;
-            this.startGameButton.Text = "Start";
+            this.startGameButton.Text = "Start Game";
             this.startGameButton.UseVisualStyleBackColor = false;
             this.startGameButton.Click += new System.EventHandler(this.startGameButton_Click);
             // 
@@ -78,7 +78,7 @@
             this.memoryLeakButton.Name = "memoryLeakButton";
             this.memoryLeakButton.Size = new System.Drawing.Size(325, 128);
             this.memoryLeakButton.TabIndex = 2;
-            this.memoryLeakButton.Text = "Memory Leak";
+            this.memoryLeakButton.Text = "Start Memory Leak";
             this.memoryLeakButton.UseVisualStyleBackColor = false;
             this.memoryLeakButton.Click += new System.EventHandler(this.memoryLeakButton_Click);
             // 
