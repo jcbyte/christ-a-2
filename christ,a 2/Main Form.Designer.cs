@@ -63,7 +63,7 @@
             this.exitButton.Location = new System.Drawing.Point(59, 387);
             this.exitButton.Name = "exitButton";
             this.exitButton.Size = new System.Drawing.Size(325, 128);
-            this.exitButton.TabIndex = 1;
+            this.exitButton.TabIndex = 0;
             this.exitButton.Text = "Exit";
             this.exitButton.UseVisualStyleBackColor = false;
             this.exitButton.Click += new System.EventHandler(this.exitButton_Click);
@@ -79,7 +79,7 @@
             this.memoryLeakButton.Location = new System.Drawing.Point(59, 243);
             this.memoryLeakButton.Name = "memoryLeakButton";
             this.memoryLeakButton.Size = new System.Drawing.Size(325, 128);
-            this.memoryLeakButton.TabIndex = 2;
+            this.memoryLeakButton.TabIndex = 0;
             this.memoryLeakButton.Text = "Start Memory Leak";
             this.memoryLeakButton.UseVisualStyleBackColor = false;
             this.memoryLeakButton.Click += new System.EventHandler(this.memoryLeakButton_Click);
@@ -90,7 +90,7 @@
             this.memoryUsedLabel.Location = new System.Drawing.Point(1207, 20);
             this.memoryUsedLabel.Name = "memoryUsedLabel";
             this.memoryUsedLabel.Size = new System.Drawing.Size(193, 19);
-            this.memoryUsedLabel.TabIndex = 3;
+            this.memoryUsedLabel.TabIndex = 0;
             this.memoryUsedLabel.Text = "Memory used: 68 GB";
             // 
             // mainForm
