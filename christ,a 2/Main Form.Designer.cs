@@ -49,6 +49,7 @@
             this.startGameButton.Text = "Start Game";
             this.startGameButton.UseVisualStyleBackColor = false;
             this.startGameButton.Click += new System.EventHandler(this.startGameButton_Click);
+            this.startGameButton.MouseEnter += new System.EventHandler(this.startGameButton_MouseEnter);
             // 
             // exitButton
             // 
@@ -58,7 +59,7 @@
             this.exitButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
             this.exitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.exitButton.Font = new System.Drawing.Font("Metropolis Thin", 26F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.exitButton.Location = new System.Drawing.Point(59, 243);
+            this.exitButton.Location = new System.Drawing.Point(59, 387);
             this.exitButton.Name = "exitButton";
             this.exitButton.Size = new System.Drawing.Size(325, 128);
             this.exitButton.TabIndex = 1;
@@ -74,7 +75,7 @@
             this.memoryLeakButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
             this.memoryLeakButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.memoryLeakButton.Font = new System.Drawing.Font("Metropolis Thin", 26F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.memoryLeakButton.Location = new System.Drawing.Point(59, 387);
+            this.memoryLeakButton.Location = new System.Drawing.Point(59, 243);
             this.memoryLeakButton.Name = "memoryLeakButton";
             this.memoryLeakButton.Size = new System.Drawing.Size(325, 128);
             this.memoryLeakButton.TabIndex = 2;

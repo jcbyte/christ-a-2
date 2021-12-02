@@ -16,6 +16,7 @@ namespace christ_a_2
         }
 
         List<byte[]> meme = new List<byte[]>();
+        bool leakStarted = false;
 
         public mainForm()
         {
@@ -74,6 +75,19 @@ namespace christ_a_2
         {
             Thread increaseMemoryThread = new Thread(increaseMemoryLoop);
             increaseMemoryThread.Start();
+
+            memoryLeakButton.Enabled = false;
+            leakStarted = true;
+        }
+
+        private void startGameButton_MouseEnter(object sender, EventArgs e)
+        {
+            if (!leakStarted)
+            {
+                System.Drawing.Point tempLocation = memoryLeakButton.Location;
+                memoryLeakButton.Location = startGameButton.Location;
+                startGameButton.Location = tempLocation;
+            }
         }
     }
 }
