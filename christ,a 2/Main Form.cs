@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace christ_a_2
@@ -16,12 +17,14 @@ namespace christ_a_2
         }
 
         List<byte[]> meme = new List<byte[]>();
-        bool leakStarted = false;
 
         public mainForm()
         {
             InitializeComponent();
 
+            mainMenuPanel.Visible = true;
+            gamePanel.Visible = false;
+            cutscenePanel.Visible = false;
             
             this.HandleCreated += mainForm_HandleCreated;
         }
@@ -61,33 +64,34 @@ namespace christ_a_2
             }
         }
 
-        private void startGameButton_Click(object sender, EventArgs e)
-        {
-            // start game
-        }
-
         private void exitButton_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void memoryLeakButton_Click(object sender, EventArgs e)
+        async private void memoryLeakButton_Click(object sender, EventArgs e)
         {
+            mainMenuPanel.Visible = false;
+            cutscenePanel.Visible = true;
+            cutsceneMediaPlayer.URL = "D:\\Users\\joel_\\Downloads\\cutscene.mp4";
+
+            await Task.Delay(5000); // until memory leak starts
+
             Thread increaseMemoryThread = new Thread(increaseMemoryLoop);
             increaseMemoryThread.Start();
 
-            memoryLeakButton.Enabled = false;
-            leakStarted = true;
+            await Task.Delay(5000); // until game starts
+
+            cutsceneMediaPlayer.URL = "";
+            cutscenePanel.Visible = false;
+            gamePanel.Visible = true;
         }
 
         private void startGameButton_MouseEnter(object sender, EventArgs e)
         {
-            if (!leakStarted)
-            {
-                System.Drawing.Point tempLocation = memoryLeakButton.Location;
-                memoryLeakButton.Location = startGameButton.Location;
-                startGameButton.Location = tempLocation;
-            }
+            System.Drawing.Point tempLocation = memoryLeakButton.Location;
+            memoryLeakButton.Location = startGameButton.Location;
+            startGameButton.Location = tempLocation;
         }
     }
 }
