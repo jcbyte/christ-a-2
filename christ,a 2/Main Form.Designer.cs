@@ -35,9 +35,14 @@
             this.memoryUsedLabel = new System.Windows.Forms.Label();
             this.mainMenuPanel = new System.Windows.Forms.Panel();
             this.gamePanel = new System.Windows.Forms.Panel();
+            this.playerPictureBox = new System.Windows.Forms.PictureBox();
+            this.floorPictureBox = new System.Windows.Forms.PictureBox();
             this.cutscenePanel = new System.Windows.Forms.Panel();
             this.cutsceneMediaPlayer = new AxWMPLib.AxWindowsMediaPlayer();
             this.mainMenuPanel.SuspendLayout();
+            this.gamePanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.playerPictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.floorPictureBox)).BeginInit();
             this.cutscenePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.cutsceneMediaPlayer)).BeginInit();
             this.SuspendLayout();
@@ -121,10 +126,33 @@
             this.gamePanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.gamePanel.Controls.Add(this.playerPictureBox);
+            this.gamePanel.Controls.Add(this.floorPictureBox);
             this.gamePanel.Location = new System.Drawing.Point(0, 0);
             this.gamePanel.Name = "gamePanel";
             this.gamePanel.Size = new System.Drawing.Size(1280, 720);
             this.gamePanel.TabIndex = 1;
+            // 
+            // playerPictureBox
+            // 
+            this.playerPictureBox.BackColor = System.Drawing.Color.Transparent;
+            this.playerPictureBox.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("playerPictureBox.BackgroundImage")));
+            this.playerPictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.playerPictureBox.Location = new System.Drawing.Point(573, 346);
+            this.playerPictureBox.Name = "playerPictureBox";
+            this.playerPictureBox.Size = new System.Drawing.Size(50, 93);
+            this.playerPictureBox.TabIndex = 1;
+            this.playerPictureBox.TabStop = false;
+            // 
+            // floorPictureBox
+            // 
+            this.floorPictureBox.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("floorPictureBox.BackgroundImage")));
+            this.floorPictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.floorPictureBox.Location = new System.Drawing.Point(0, 0);
+            this.floorPictureBox.Name = "floorPictureBox";
+            this.floorPictureBox.Size = new System.Drawing.Size(2000, 2000);
+            this.floorPictureBox.TabIndex = 0;
+            this.floorPictureBox.TabStop = false;
             // 
             // cutscenePanel
             // 
@@ -168,6 +196,9 @@
             this.Text = "Christ,a 2";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.mainMenuPanel.ResumeLayout(false);
+            this.gamePanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.playerPictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.floorPictureBox)).EndInit();
             this.cutscenePanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.cutsceneMediaPlayer)).EndInit();
             this.ResumeLayout(false);
@@ -184,6 +215,8 @@
         private System.Windows.Forms.Panel gamePanel;
         private System.Windows.Forms.Panel cutscenePanel;
         private AxWMPLib.AxWindowsMediaPlayer cutsceneMediaPlayer;
+        private System.Windows.Forms.PictureBox floorPictureBox;
+        private System.Windows.Forms.PictureBox playerPictureBox;
     }
 }
 
