@@ -135,22 +135,25 @@
             // 
             // playerPictureBox
             // 
-            this.playerPictureBox.BackColor = System.Drawing.Color.Transparent;
+            this.playerPictureBox.BackColor = System.Drawing.Color.Green;
             this.playerPictureBox.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("playerPictureBox.BackgroundImage")));
             this.playerPictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.playerPictureBox.Location = new System.Drawing.Point(573, 346);
+            this.playerPictureBox.Location = new System.Drawing.Point(587, 346);
             this.playerPictureBox.Name = "playerPictureBox";
-            this.playerPictureBox.Size = new System.Drawing.Size(50, 93);
+            this.playerPictureBox.Size = new System.Drawing.Size(45, 77);
             this.playerPictureBox.TabIndex = 1;
             this.playerPictureBox.TabStop = false;
             // 
             // floorPictureBox
             // 
-            this.floorPictureBox.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("floorPictureBox.BackgroundImage")));
-            this.floorPictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.floorPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.floorPictureBox.BackgroundImage = global::christ_a_2.Properties.Resources.floor;
+            this.floorPictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.floorPictureBox.Location = new System.Drawing.Point(0, 0);
             this.floorPictureBox.Name = "floorPictureBox";
-            this.floorPictureBox.Size = new System.Drawing.Size(2000, 2000);
+            this.floorPictureBox.Size = new System.Drawing.Size(1280, 720);
             this.floorPictureBox.TabIndex = 0;
             this.floorPictureBox.TabStop = false;
             // 

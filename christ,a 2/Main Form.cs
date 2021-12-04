@@ -15,45 +15,52 @@ namespace christ_a_2
             public const int memoryIncreaseRate = 50;
             public const int memoryIncrease = 1024 * 1024 * 64;
 
-            public const int playerSpeed = 50;
+            public const float playerSpeed = 0.005f;
+
+            public static readonly Vector2 playerSize = new Vector2(0.02f, 0.06f);
+            public static readonly Vector2 enemySize = new Vector2(0.02f, 0.06f);
         }
 
-        private class Vector2i
+        public class Vector2
         {
-            public int x;
-            public int y;
+            public float x;
+            public float y;
 
-            public Vector2i(int x_, int y_)
+            public Vector2(float x_, float y_)
             {
                 x = x_;
                 y = y_;
             }
 
-            public Vector2i(System.Drawing.Point p)
-            {
-                x = p.X;
-                y = p.Y;
-            }
-
-            static public Vector2i operator +(Vector2i lhs, Vector2i rhs)
+            static public Vector2 operator +(Vector2 lhs, Vector2 rhs)
             {
                 lhs.x += rhs.x;
                 lhs.y += rhs.y;
                 return lhs;
             }
+        }
 
-            public System.Drawing.Point toPoint()
-            {
-                return new System.Drawing.Point(x, y);
-            }
+        private static Vector2 toRelativeV2(System.Drawing.Point p, System.Drawing.Size formSize)
+        {
+            return new Vector2((float)p.X / formSize.Width, (float)p.Y / formSize.Height);
+        }
+
+        private static System.Drawing.Point fromRelativeV2(Vector2 v, System.Drawing.Size formSize)
+        {
+            return new System.Drawing.Point((int)(v.x * formSize.Width), (int)(v.y * formSize.Height));
+        }
+
+        private static System.Drawing.Size systemPointToSystemSize(System.Drawing.Point p)
+        {
+            return new System.Drawing.Size(p.X, p.Y);
         }
 
         private class Enemy
         {
-            public Vector2i pos;
+            public Vector2 pos;
             public PictureBox pb;
 
-            public Enemy(Vector2i pos_, System.Drawing.Size size)
+            public Enemy(Vector2 pos_, System.Drawing.Size size)
             {
                 pos = pos_;
 
@@ -61,18 +68,17 @@ namespace christ_a_2
                 pb.BackgroundImageLayout = ImageLayout.Stretch;
                 pb.Size = size;
                 pb.BackgroundImage = Properties.Resources.Cowboy_Snowman_Cropped;
-                
-                updatePos();
             }
 
-            public void updatePos()
+            public void updatePos(System.Drawing.Size formSize)
             {
-                pb.Location = pos.toPoint();
+                pb.Location = fromRelativeV2(pos, formSize);
             }
         }
 
         private List<byte[]> meme = new List<byte[]>();
         private List<Enemy> enemys = new List<Enemy>();
+        private Vector2 playerPos = new Vector2(0.5f, 0.5f);
 
         public mainForm()
         {
@@ -120,6 +126,13 @@ namespace christ_a_2
             }
         }
 
+        private void startGameButton_MouseEnter(object sender, EventArgs e)
+        {
+            System.Drawing.Point tempLocation = memoryLeakButton.Location;
+            memoryLeakButton.Location = startGameButton.Location;
+            startGameButton.Location = tempLocation;
+        }
+
         private void exitButton_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -142,40 +155,42 @@ namespace christ_a_2
             cutscenePanel.Visible = false;
             gamePanel.Visible = true;
 
-            Level1();
+            loadLevel(1);
         }
 
-        private void Level1()
+        private void loadLevel(int level)
         {
-            Random rng = new Random();
+            System.Drawing.Bitmap floorImg;
+            switch (level)
+            {
+                case 0: floorImg = Properties.Resources.floor; break;
+                default: floorImg = new System.Drawing.Bitmap(1, 1); break;
+            }
+            floorPictureBox.BackgroundImage = floorImg;
+
+            floorPictureBox.Size = this.Size;
+            floorPictureBox.Location = new System.Drawing.Point(0, 0);
+
+            playerPos = new Vector2(0.5f, 0.5f);
+            playerPictureBox.Location = fromRelativeV2(playerPos, this.Size);
+            playerPictureBox.Size = systemPointToSystemSize(fromRelativeV2(Constants.playerSize, this.Size));
+
+            Random rng = new Random(); // lvevl specfic
             for (int i = 0; i < 10; i++)
-            { 
-                enemys.Add(new Enemy(new Vector2i(rng.Next(0, 1000), rng.Next(0, 1000)), new System.Drawing.Size(100, 100)));
+            {
+                enemys.Add(new Enemy(new Vector2((float)rng.NextDouble(), (float)rng.NextDouble()), systemPointToSystemSize(fromRelativeV2(Constants.enemySize, this.Size))));
                 gamePanel.Controls.Add(enemys[i].pb);
+                enemys[i].updatePos(this.Size);
                 enemys[i].pb.BringToFront();
             }
         }
 
-        private void startGameButton_MouseEnter(object sender, EventArgs e)
-        {
-            System.Drawing.Point tempLocation = memoryLeakButton.Location;
-            memoryLeakButton.Location = startGameButton.Location;
-            startGameButton.Location = tempLocation;
-        }
-
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            Vector2i movement = new Vector2i((keyData == Keys.A || keyData == Keys.Left) ? Constants.playerSpeed : ((keyData == Keys.D || keyData == Keys.Right) ? -Constants.playerSpeed : 0), (keyData == Keys.W || keyData == Keys.Up) ? Constants.playerSpeed : ((keyData == Keys.S || keyData == Keys.Down) ? -Constants.playerSpeed : 0));
-            
-            Vector2i floorPos = new Vector2i(floorPictureBox.Location);
-            floorPos += movement;
-            floorPictureBox.Location = floorPos.toPoint();
+            Vector2 movement = new Vector2((keyData == Keys.A || keyData == Keys.Left) ? -Constants.playerSpeed : ((keyData == Keys.D || keyData == Keys.Right) ? Constants.playerSpeed : 0), (keyData == Keys.W || keyData == Keys.Up) ? -Constants.playerSpeed : ((keyData == Keys.S || keyData == Keys.Down) ? Constants.playerSpeed : 0));
 
-            for (int i = 0; i < enemys.Count; i++)
-            {
-                enemys[i].pos += movement;
-                enemys[i].updatePos();
-            }
+            playerPos += movement;
+            playerPictureBox.Location = fromRelativeV2(playerPos, this.Size);
 
             return base.ProcessCmdKey(ref msg, keyData);
         }
