@@ -163,7 +163,7 @@ namespace christ_a_2
             System.Drawing.Bitmap floorImg;
             switch (level)
             {
-                case 0: floorImg = Properties.Resources.floor; break;
+                case 1: floorImg = Properties.Resources.floor; break;
                 default: floorImg = new System.Drawing.Bitmap(1, 1); break;
             }
             floorPictureBox.BackgroundImage = floorImg;

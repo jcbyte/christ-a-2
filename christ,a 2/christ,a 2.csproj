@@ -107,13 +107,13 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Cowboy_Snowman_Cropped.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\floor.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\nullz.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cowboy_Snowman_Cropped.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
