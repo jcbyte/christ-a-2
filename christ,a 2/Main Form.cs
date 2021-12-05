@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Media;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -19,7 +20,7 @@ namespace christ_a_2
 
             public const int gameLoopFPS = 60;
 
-            public const float playerSpeed = 0.005f;
+            public const float playerSpeed = 0.15f;
 
             public static readonly Vector2 playerSize = new Vector2(0.02f, 0.06f); // Sizes are relative
             public static readonly Vector2 enemySize = new Vector2(0.02f, 0.06f);
@@ -46,11 +47,30 @@ namespace christ_a_2
                 y = _y;
             }
 
+            public float Magnitude()
+            {
+                return (float)Math.Sqrt(Math.Pow(x,2) + Math.Pow(y, 2));
+            }
+
+            public Vector2 Normalise()
+            {
+                float mag = this.Magnitude();
+                return new Vector2(x / mag, y / mag);
+            }
+
             static public Vector2 operator +(Vector2 lhs, Vector2 rhs)
             {
-                lhs.x += rhs.x;
-                lhs.y += rhs.y;
-                return lhs;
+                return new Vector2(lhs.x + rhs.x, lhs.y + rhs.y);
+            }
+
+            static public Vector2 operator -(Vector2 lhs, Vector2 rhs)
+            {
+                return new Vector2(lhs.x - rhs.x, lhs.y - rhs.y);
+            }
+
+            static public Vector2 operator *(Vector2 lhs, float rhs)
+            {
+                return new Vector2(lhs.x * rhs, lhs.y * rhs);
             }
         }
 
@@ -146,14 +166,14 @@ namespace christ_a_2
             public Vector2 pos;
             public PictureBox pb;
 
-            public Enemy(Vector2 _pos, System.Drawing.Size size)
+            public Enemy(Vector2 _pos, System.Drawing.Size size)  // probably dont want size here
             {
                 pos = _pos;
 
                 pb = new PictureBox(); // Add new picturebox (enemy) to the form
                 pb.BackgroundImageLayout = ImageLayout.Stretch;
                 pb.Size = size;
-                pb.BackgroundImage = Properties.Resources.Cowboy_Snowman_Cropped; // different enemys?
+                pb.BackgroundImage = Properties.Resources.snowmanEnemy; // different enemys?
             }
 
             public void UpdatePos(System.Drawing.Size formSize)
@@ -164,10 +184,45 @@ namespace christ_a_2
 
         #endregion
 
+        #region "Bullet (Needs work)"
+
+        class Bullet
+        {
+            public Vector2 pos;
+            public Vector2 dir;
+            public float speed;
+            public PictureBox pb;
+
+            public Bullet(Vector2 _pos, Vector2 _dir, float _speed, System.Drawing.Size size) // probably dont want size here
+            {
+                pos = _pos;
+                dir = _dir;
+                speed = _speed;
+
+                pb = new PictureBox(); // Add new picturebox (bullet) to the form
+                pb.BackgroundImageLayout = ImageLayout.Stretch;
+                pb.Size = size;
+                pb.BackgroundImage = Properties.Resources.playerBullet;
+            }
+
+            public void UpdatePos(System.Drawing.Size formSize)
+            {
+                pos += dir * speed;
+                pb.Location = FromRelativeV2(pos, formSize);
+            }
+        }
+
+        #endregion
+
         private List<byte[]> meme = new List<byte[]>(); // Totally useful memory
 
         private List<Enemy> enemys = new List<Enemy>();
+        private List<Bullet> bullets = new List<Bullet>();
+
         private Vector2 playerPos = new Vector2(0.5f, 0.5f);
+
+        private SoundPlayer backgroundMusicPlayer = new SoundPlayer();
+        private SoundPlayer soundEffectsPlayer = new SoundPlayer();
 
         private Dictionary<Scenes, SceneOb> scenesData;
         private Dictionary<Cutscenes, string> cutscenesData;
@@ -187,24 +242,24 @@ namespace christ_a_2
 
             cutscenesData = new Dictionary<Cutscenes, string>
             {
-                {Cutscenes.OpeningCredits, "" },
+                {Cutscenes.OpeningCredits, "FullResources\\Cutscenes\\openingCredits.mp4" },
                 {Cutscenes.BeforeGame, "D:\\Users\\joel_\\Downloads\\cutscenes\\cutscene.mp4" },
                 {Cutscenes.BeforeBoss, "" },
-                {Cutscenes.Loss, "" },
+                {Cutscenes.Loss, "FullResources\\Cutscenes\\youDied.mp4" },
                 {Cutscenes.Win, "" }
             };
 
             levelsData = new Dictionary<Levels, levelOb> {
-                {Levels.Level1, new levelOb(Properties.Resources.floor, 10) },
-                {Levels.Level2, new levelOb(Properties.Resources.floor, 20) },
-                {Levels.Level3, new levelOb(Properties.Resources.floor, 30) },
-                {Levels.BossLevel, new levelOb(Properties.Resources.floor, 50) }
+                {Levels.Level1, new levelOb(Properties.Resources.level1FloorFactory, 10) },
+                {Levels.Level2, new levelOb(Properties.Resources.level1FloorFactory, 20) },
+                {Levels.Level3, new levelOb(Properties.Resources.level1FloorFactory, 30) },
+                {Levels.BossLevel, new levelOb(Properties.Resources.level1FloorFactory, 50) }
             };
 
             foreach (KeyValuePair<Scenes, SceneOb> s in scenesData)
                 s.Value.panel.Visible = false;
-            LoadScene(Scenes.Menu);
-            
+            LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
+
             this.HandleCreated += mainForm_HandleCreated;
         }
 
@@ -272,19 +327,28 @@ namespace christ_a_2
             Cutscenes cutscene = (Cutscenes)data;
 
             cutscene_media_windowsMediaPlayer.URL = cutscenesData[cutscene];
+            cutscene_media_windowsMediaPlayer.uiMode = "none";
             
             switch(cutscene)
             {
                 case Cutscenes.OpeningCredits:
+
+                    backgroundMusicPlayer.SoundLocation = "FullResources\\Music\\menu.wav";
+                    backgroundMusicPlayer.Load();
+                    backgroundMusicPlayer.Play();
+
+                    await Task.Delay(12000);
 
                     LoadScene(Scenes.Menu);
                     break;
 
                 case Cutscenes.BeforeGame:
 
-                    await Task.Delay(2000); // Wait until memory leak starts
+                    backgroundMusicPlayer.Stop();
+
+                    /* * /await Task.Delay(2000); // Wait until memory leak starts
                     IncreaseMemoryLoopAsync(); // Start the memory leak
-                    await Task.Delay(2000); // Wait until level1 starts
+                    await Task.Delay(2000); // Wait until level1 starts */
 
                     LoadScene(Scenes.Game, Levels.Level1);
                     break;
@@ -319,7 +383,7 @@ namespace christ_a_2
             Random rng = new Random(2);
             for (int i = 0; i < levelsData[level].enemyAmount; i++) // Create the enemys in random locations // Could have specfic locations later?
             {
-                enemys.Add(new Enemy(new Vector2((float)rng.NextDouble(), (float)rng.NextDouble()), SystemPointToSystemSize(FromRelativeV2(Constants.enemySize, this.Size))));
+                enemys.Add(new Enemy(new Vector2((float)rng.NextDouble(), (float)rng.NextDouble()), SystemPointToSystemSize(FromRelativeV2(Constants.enemySize, this.Size)))); // Instatiate enemys
                 main_game_panel.Controls.Add(enemys[i].pb);
                 enemys[i].UpdatePos(this.Size);
                 enemys[i].pb.BringToFront();
@@ -335,24 +399,56 @@ namespace christ_a_2
         private async void GameLoopAsync()
         {
             int delay = (int)((1.0f / Constants.gameLoopFPS) * 1000);
+            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+
+            float startElapsed;
+            float delta = 0;
+
+            float lastShot = 0;
 
             while (true)
             {
-                Vector2 movement = new Vector2();
+                startElapsed = sw.ElapsedMilliseconds;
 
-                if (Keyboard.IsKeyDown(Key.W) || Keyboard.IsKeyDown(Key.Up))
-                    movement.y -= Constants.playerSpeed;
-                if (Keyboard.IsKeyDown(Key.S) || Keyboard.IsKeyDown(Key.Down))
-                    movement.y += Constants.playerSpeed;
-                if (Keyboard.IsKeyDown(Key.A) || Keyboard.IsKeyDown(Key.Left))
-                    movement.x -= Constants.playerSpeed;
-                if (Keyboard.IsKeyDown(Key.D) || Keyboard.IsKeyDown(Key.Right))
-                    movement.x += Constants.playerSpeed;
+                if (cScene == Scenes.Game)
+                {
+                    Vector2 movement = new Vector2();
 
-                playerPos += movement;
-                playerPictureBox.Location = FromRelativeV2(playerPos, this.Size);
+                    if (Keyboard.IsKeyDown(Key.W) || Keyboard.IsKeyDown(Key.Up)) // Get movement varible depending on keypress
+                        movement.y -= Constants.playerSpeed;
+                    if (Keyboard.IsKeyDown(Key.S) || Keyboard.IsKeyDown(Key.Down))
+                        movement.y += Constants.playerSpeed;
+                    if (Keyboard.IsKeyDown(Key.A) || Keyboard.IsKeyDown(Key.Left))
+                        movement.x -= Constants.playerSpeed;
+                    if (Keyboard.IsKeyDown(Key.D) || Keyboard.IsKeyDown(Key.Right))
+                        movement.x += Constants.playerSpeed;
+
+                    playerPos += movement * delta; // Player Movement
+                    playerPictureBox.Location = FromRelativeV2(playerPos, this.Size);
+
+                    if (MouseButtons == MouseButtons.Left) // Player tries to shoot
+                    {
+                        if (lastShot < sw.ElapsedMilliseconds - 450) // firerate
+                        {
+                            Vector2 bulletdir = (ToRelativeV2(MousePosition, this.Size) - playerPos).Normalise();
+                            bullets.Add(new Bullet(playerPos, bulletdir, 0.04f, SystemPointToSystemSize(FromRelativeV2(new Vector2(0.01f, 0.04f), this.Size)))); // Instatiate bullet
+
+                            int bulleti = bullets.Count - 1;
+                            main_game_panel.Controls.Add(bullets[bulleti].pb);
+                            bullets[bulleti].pb.BringToFront();
+
+                            lastShot = sw.ElapsedMilliseconds;
+                        }
+                    }
+
+                    for (int i = 0; i < bullets.Count; i++)
+                    {
+                        bullets[i].UpdatePos(this.Size);
+                    }
+                }
 
                 await Task.Delay(delay);
+                delta = (sw.ElapsedMilliseconds - startElapsed) / 1000; // Calculate deltatime for frame
             }
         }
 

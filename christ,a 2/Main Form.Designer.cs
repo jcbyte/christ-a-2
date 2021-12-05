@@ -135,7 +135,7 @@
             // 
             // playerPictureBox
             // 
-            this.playerPictureBox.BackColor = System.Drawing.Color.Green;
+            this.playerPictureBox.BackColor = System.Drawing.Color.White;
             this.playerPictureBox.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("playerPictureBox.BackgroundImage")));
             this.playerPictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.playerPictureBox.Location = new System.Drawing.Point(587, 346);
@@ -149,7 +149,7 @@
             this.game_floor_pictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.game_floor_pictureBox.BackgroundImage = global::christ_a_2.Properties.Resources.floor;
+            this.game_floor_pictureBox.BackgroundImage = global::christ_a_2.Properties.Resources.level1FloorFactory;
             this.game_floor_pictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.game_floor_pictureBox.Location = new System.Drawing.Point(0, 0);
             this.game_floor_pictureBox.Name = "game_floor_pictureBox";
@@ -187,8 +187,8 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(21)))), ((int)(((byte)(21)))));
             this.ClientSize = new System.Drawing.Size(1280, 720);
             this.Controls.Add(this.main_memoryCounter_label);
-            this.Controls.Add(this.main_game_panel);
             this.Controls.Add(this.main_cutscene_panel);
+            this.Controls.Add(this.main_game_panel);
             this.Controls.Add(this.main_menu_panel);
             this.Font = new System.Drawing.Font("Metropolis Thin", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(129)))), ((int)(((byte)(204)))));

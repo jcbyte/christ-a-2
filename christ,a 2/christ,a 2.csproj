@@ -117,5 +117,14 @@
   <ItemGroup>
     <None Include="Resources\Cowboy_Snowman_Cropped.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Factory_Level1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bullet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\openingCreditsCutscene.mp4" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -61,26 +61,6 @@ namespace christ_a_2.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Cowboy_Snowman_Cropped {
-            get {
-                object obj = ResourceManager.GetObject("Cowboy_Snowman_Cropped", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap floor {
-            get {
-                object obj = ResourceManager.GetObject("floor", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon icon {
@@ -93,9 +73,39 @@ namespace christ_a_2.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap nullz {
+        internal static System.Drawing.Bitmap level1FloorFactory {
             get {
-                object obj = ResourceManager.GetObject("nullz", resourceCulture);
+                object obj = ResourceManager.GetObject("level1FloorFactory", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap nullzPlayer {
+            get {
+                object obj = ResourceManager.GetObject("nullzPlayer", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap playerBullet {
+            get {
+                object obj = ResourceManager.GetObject("playerBullet", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap snowmanEnemy {
+            get {
+                object obj = ResourceManager.GetObject("snowmanEnemy", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
