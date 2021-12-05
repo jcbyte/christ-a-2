@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -8,6 +7,7 @@ namespace christ_a_2
 {
     public partial class mainForm : Form
     {
+        #region "Constants"
         public static class Constants // Global game settings
         {
             public const int memoryCounterRefresh = 50;
@@ -20,7 +20,9 @@ namespace christ_a_2
             public static readonly Vector2 playerSize = new Vector2(0.02f, 0.06f);
             public static readonly Vector2 enemySize = new Vector2(0.02f, 0.06f);
         }
+        #endregion
 
+        #region "Relative Vector2"
         public class Vector2 // Relative Vector2 class (0-1, 0-1)
         {
             public float x;
@@ -54,7 +56,9 @@ namespace christ_a_2
         {
             return new System.Drawing.Size(p.X, p.Y);
         }
+        #endregion
 
+        #region "Enemy"
         private class Enemy // Enemy class containg visual and code objects
         {
             public Vector2 pos;
@@ -75,6 +79,7 @@ namespace christ_a_2
                 pb.Location = fromRelativeV2(pos, formSize);
             }
         }
+        #endregion
 
         private List<byte[]> meme = new List<byte[]>(); // Totally useful memory
         private List<Enemy> enemys = new List<Enemy>();
@@ -91,6 +96,7 @@ namespace christ_a_2
             this.HandleCreated += mainForm_HandleCreated;
         }
 
+        #region "Async"
         private void mainForm_HandleCreated(object sender, EventArgs e) // To start memory counter after the Window has been initialised
         {
             updateMemoryCounterLoopAsync();
@@ -121,7 +127,9 @@ namespace christ_a_2
                 await Task.Delay(Constants.memoryIncreaseRate);
             }
         }
+        #endregion
 
+        #region "Menu"
         private void startGameButton_MouseEnter(object sender, EventArgs e) // Swap start button with memory leak button ;)
         {
             System.Drawing.Point tempLocation = memoryLeakButton.Location;
@@ -152,7 +160,9 @@ namespace christ_a_2
 
             loadLevel(1);
         }
+        #endregion
 
+        #region "Game"
         private void loadLevel(int level)
         {
             System.Drawing.Bitmap floorImg;
@@ -198,5 +208,6 @@ namespace christ_a_2
 
             return base.ProcessCmdKey(ref msg, keyData);
         }
+        #endregion
     }
 }
