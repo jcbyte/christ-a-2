@@ -8,7 +8,7 @@ namespace christ_a_2
 {
     public partial class mainForm : Form
     {
-        public static class Constants
+        public static class Constants // Global game settings
         {
             public const int memoryCounterRefresh = 50;
 
@@ -21,7 +21,7 @@ namespace christ_a_2
             public static readonly Vector2 enemySize = new Vector2(0.02f, 0.06f);
         }
 
-        public class Vector2
+        public class Vector2 // Relative Vector2 class (0-1, 0-1)
         {
             public float x;
             public float y;
@@ -40,22 +40,22 @@ namespace christ_a_2
             }
         }
 
-        private static Vector2 toRelativeV2(System.Drawing.Point p, System.Drawing.Size formSize)
+        private static Vector2 toRelativeV2(System.Drawing.Point p, System.Drawing.Size formSize) // Convert from a Windows Point to relative Vector2
         {
             return new Vector2((float)p.X / formSize.Width, (float)p.Y / formSize.Height);
         }
 
-        private static System.Drawing.Point fromRelativeV2(Vector2 v, System.Drawing.Size formSize)
+        private static System.Drawing.Point fromRelativeV2(Vector2 v, System.Drawing.Size formSize) // Convert from a relative Vector2 to a Windows Point
         {
             return new System.Drawing.Point((int)(v.x * formSize.Width), (int)(v.y * formSize.Height));
         }
 
-        private static System.Drawing.Size systemPointToSystemSize(System.Drawing.Point p)
+        private static System.Drawing.Size systemPointToSystemSize(System.Drawing.Point p) // Change Windows Point to Windows Scale 
         {
             return new System.Drawing.Size(p.X, p.Y);
         }
 
-        private class Enemy
+        private class Enemy // Enemy class containg visual and code objects
         {
             public Vector2 pos;
             public PictureBox pb;
@@ -64,7 +64,7 @@ namespace christ_a_2
             {
                 pos = pos_;
 
-                pb = new PictureBox();
+                pb = new PictureBox(); // Add new picturebox (enemy) to the form
                 pb.BackgroundImageLayout = ImageLayout.Stretch;
                 pb.Size = size;
                 pb.BackgroundImage = Properties.Resources.Cowboy_Snowman_Cropped;
@@ -76,7 +76,7 @@ namespace christ_a_2
             }
         }
 
-        private List<byte[]> meme = new List<byte[]>();
+        private List<byte[]> meme = new List<byte[]>(); // Totally useful memory
         private List<Enemy> enemys = new List<Enemy>();
         private Vector2 playerPos = new Vector2(0.5f, 0.5f);
 
@@ -91,7 +91,7 @@ namespace christ_a_2
             this.HandleCreated += mainForm_HandleCreated;
         }
 
-        private void mainForm_HandleCreated(object sender, EventArgs e)
+        private void mainForm_HandleCreated(object sender, EventArgs e) // To start memory counter after the Window has been initialised
         {
             Thread memoryCounterThread = new Thread(updateMemoryCounterLoop);
             memoryCounterThread.Start();
@@ -101,7 +101,7 @@ namespace christ_a_2
         {
             while (true)
             {
-                Invoke(new Action(() =>
+                Invoke(new Action(() => // Invoke as memoryUsedLabel in different thread // Could change this to async?
                 {
                     float memUsed = (float)System.Diagnostics.Process.GetCurrentProcess().PrivateMemorySize64 / (1024 * 1024 * 1024);
                     //float memUsed = (float)GC.GetTotalMemory(true) / (1024 * 1024 * 1024);
@@ -126,7 +126,7 @@ namespace christ_a_2
             }
         }
 
-        private void startGameButton_MouseEnter(object sender, EventArgs e)
+        private void startGameButton_MouseEnter(object sender, EventArgs e) // Swap start vutton with memory leak button ;)
         {
             System.Drawing.Point tempLocation = memoryLeakButton.Location;
             memoryLeakButton.Location = startGameButton.Location;
@@ -142,16 +142,16 @@ namespace christ_a_2
         {
             mainMenuPanel.Visible = false;
             cutscenePanel.Visible = true;
-            cutsceneMediaPlayer.URL = "D:\\Users\\joel_\\Downloads\\cutscene.mp4";
+            cutsceneMediaPlayer.URL = "D:\\Users\\joel_\\Downloads\\cutscene.mp4"; // Start the cutscene
 
-            await Task.Delay(5000); // until memory leak starts
+            await Task.Delay(5000); // Wait until memory leak starts
 
             Thread increaseMemoryThread = new Thread(increaseMemoryLoop);
-            increaseMemoryThread.Start();
+            increaseMemoryThread.Start(); // Start memory leak
 
-            await Task.Delay(5000); // until game starts
+            await Task.Delay(5000); // Waint until game starts
 
-            cutsceneMediaPlayer.URL = "";
+            cutsceneMediaPlayer.URL = ""; // Stop the cutscene
             cutscenePanel.Visible = false;
             gamePanel.Visible = true;
 
@@ -161,22 +161,30 @@ namespace christ_a_2
         private void loadLevel(int level)
         {
             System.Drawing.Bitmap floorImg;
-            switch (level)
-            {
-                case 1: floorImg = Properties.Resources.floor; break;
-                default: floorImg = new System.Drawing.Bitmap(1, 1); break;
-            }
-            floorPictureBox.BackgroundImage = floorImg;
+            int enemyAmount;
 
-            floorPictureBox.Size = this.Size;
+            switch (level) // Change floor and enemys depending on level
+            {
+                case 1: 
+                    floorImg = Properties.Resources.floor;
+                    enemyAmount = 10;
+                    break;
+                default: 
+                    floorImg = new System.Drawing.Bitmap(1, 1);
+                    enemyAmount = 0;
+                    break;
+            }
+
+            floorPictureBox.BackgroundImage = floorImg;
+            floorPictureBox.Size = this.Size; // Make sure floor fills screen
             floorPictureBox.Location = new System.Drawing.Point(0, 0);
 
             playerPos = new Vector2(0.5f, 0.5f);
-            playerPictureBox.Location = fromRelativeV2(playerPos, this.Size);
+            playerPictureBox.Location = fromRelativeV2(playerPos, this.Size); // Have player start in centre // Could change depending on level?
             playerPictureBox.Size = systemPointToSystemSize(fromRelativeV2(Constants.playerSize, this.Size));
 
-            Random rng = new Random(); // lvevl specfic
-            for (int i = 0; i < 10; i++)
+            Random rng = new Random();
+            for (int i = 0; i < enemyAmount; i++) // Create the enemys in random locations // Could have specfic locations later?
             {
                 enemys.Add(new Enemy(new Vector2((float)rng.NextDouble(), (float)rng.NextDouble()), systemPointToSystemSize(fromRelativeV2(Constants.enemySize, this.Size))));
                 gamePanel.Controls.Add(enemys[i].pb);
@@ -185,11 +193,11 @@ namespace christ_a_2
             }
         }
 
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData) // Get when a key is pressed anytime in the program
         {
             Vector2 movement = new Vector2((keyData == Keys.A || keyData == Keys.Left) ? -Constants.playerSpeed : ((keyData == Keys.D || keyData == Keys.Right) ? Constants.playerSpeed : 0), (keyData == Keys.W || keyData == Keys.Up) ? -Constants.playerSpeed : ((keyData == Keys.S || keyData == Keys.Down) ? Constants.playerSpeed : 0));
 
-            playerPos += movement;
+            playerPos += movement; // Move the player respectively
             playerPictureBox.Location = fromRelativeV2(playerPos, this.Size);
 
             return base.ProcessCmdKey(ref msg, keyData);
