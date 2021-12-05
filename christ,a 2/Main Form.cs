@@ -93,26 +93,22 @@ namespace christ_a_2
 
         private void mainForm_HandleCreated(object sender, EventArgs e) // To start memory counter after the Window has been initialised
         {
-            Thread memoryCounterThread = new Thread(updateMemoryCounterLoop);
-            memoryCounterThread.Start();
+            updateMemoryCounterLoopAsync();
         }
 
-        private void updateMemoryCounterLoop()
+        private async void updateMemoryCounterLoopAsync()
         {
             while (true)
             {
-                Invoke(new Action(() => // Invoke as memoryUsedLabel in different thread // Could change this to async?
-                {
-                    float memUsed = (float)System.Diagnostics.Process.GetCurrentProcess().PrivateMemorySize64 / (1024 * 1024 * 1024);
-                    //float memUsed = (float)GC.GetTotalMemory(true) / (1024 * 1024 * 1024);
-                    memoryUsedLabel.Text = "Memory used: " + memUsed.ToString("0.00") + " GB";
-                }));
+                float memUsed = (float)System.Diagnostics.Process.GetCurrentProcess().PrivateMemorySize64 / (1024 * 1024 * 1024);
+                //float memUsed = (float)GC.GetTotalMemory(true) / (1024 * 1024 * 1024);
+                memoryUsedLabel.Text = "Memory used: " + memUsed.ToString("0.00") + " GB";
 
-                Thread.Sleep(Constants.memoryCounterRefresh);
+                await Task.Delay(Constants.memoryCounterRefresh);
             }
         }
 
-        private void increaseMemoryLoop()
+        private async void increaseMemoryLoopAsync()
         {
             while (true)
             {
@@ -122,11 +118,11 @@ namespace christ_a_2
 
                 meme.Add(tempMeme);
 
-                Thread.Sleep(Constants.memoryIncreaseRate);
+                await Task.Delay(Constants.memoryIncreaseRate);
             }
         }
 
-        private void startGameButton_MouseEnter(object sender, EventArgs e) // Swap start vutton with memory leak button ;)
+        private void startGameButton_MouseEnter(object sender, EventArgs e) // Swap start button with memory leak button ;)
         {
             System.Drawing.Point tempLocation = memoryLeakButton.Location;
             memoryLeakButton.Location = startGameButton.Location;
@@ -141,18 +137,17 @@ namespace christ_a_2
         private async void memoryLeakButton_Click(object sender, EventArgs e)
         {
             mainMenuPanel.Visible = false;
-            cutscenePanel.Visible = true;
+            /* */cutscenePanel.Visible = true;
             cutsceneMediaPlayer.URL = "D:\\Users\\joel_\\Downloads\\cutscene.mp4"; // Start the cutscene
 
-            await Task.Delay(5000); // Wait until memory leak starts
+            await Task.Delay(2000); // Wait until memory leak starts
 
-            Thread increaseMemoryThread = new Thread(increaseMemoryLoop);
-            increaseMemoryThread.Start(); // Start memory leak
+            increaseMemoryLoopAsync(); // Start memory leak
 
-            await Task.Delay(5000); // Waint until game starts
+            await Task.Delay(2000); // Waint until game starts
 
             cutsceneMediaPlayer.URL = ""; // Stop the cutscene
-            cutscenePanel.Visible = false;
+            cutscenePanel.Visible = false;//*/
             gamePanel.Visible = true;
 
             loadLevel(1);
@@ -178,6 +173,7 @@ namespace christ_a_2
             floorPictureBox.BackgroundImage = floorImg;
             floorPictureBox.Size = this.Size; // Make sure floor fills screen
             floorPictureBox.Location = new System.Drawing.Point(0, 0);
+            floorPictureBox.SendToBack();
 
             playerPos = new Vector2(0.5f, 0.5f);
             playerPictureBox.Location = fromRelativeV2(playerPos, this.Size); // Have player start in centre // Could change depending on level?
