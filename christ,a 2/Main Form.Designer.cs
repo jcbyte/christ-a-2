@@ -34,12 +34,14 @@
             this.menu_startMemoryLeak_button = new System.Windows.Forms.Button();
             this.main_memoryCounter_label = new System.Windows.Forms.Label();
             this.main_menu_panel = new System.Windows.Forms.Panel();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.main_game_panel = new System.Windows.Forms.Panel();
             this.playerPictureBox = new System.Windows.Forms.PictureBox();
             this.game_floor_pictureBox = new System.Windows.Forms.PictureBox();
             this.main_cutscene_panel = new System.Windows.Forms.Panel();
             this.cutscene_media_windowsMediaPlayer = new AxWMPLib.AxWindowsMediaPlayer();
             this.main_menu_panel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.main_game_panel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.playerPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.game_floor_pictureBox)).BeginInit();
@@ -116,10 +118,24 @@
             this.main_menu_panel.Controls.Add(this.menu_startGame_button);
             this.main_menu_panel.Controls.Add(this.menu_startMemoryLeak_button);
             this.main_menu_panel.Controls.Add(this.menu_exit_button);
+            this.main_menu_panel.Controls.Add(this.pictureBox1);
             this.main_menu_panel.Location = new System.Drawing.Point(0, 0);
             this.main_menu_panel.Name = "main_menu_panel";
             this.main_menu_panel.Size = new System.Drawing.Size(1280, 720);
             this.main_menu_panel.TabIndex = 1;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox1.BackgroundImage = global::christ_a_2.Properties.Resources.menu;
+            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(1280, 720);
+            this.pictureBox1.TabIndex = 1;
+            this.pictureBox1.TabStop = false;
             // 
             // main_game_panel
             // 
@@ -187,9 +203,9 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(21)))), ((int)(((byte)(21)))));
             this.ClientSize = new System.Drawing.Size(1280, 720);
             this.Controls.Add(this.main_memoryCounter_label);
-            this.Controls.Add(this.main_cutscene_panel);
             this.Controls.Add(this.main_game_panel);
             this.Controls.Add(this.main_menu_panel);
+            this.Controls.Add(this.main_cutscene_panel);
             this.Font = new System.Drawing.Font("Metropolis Thin", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(129)))), ((int)(((byte)(204)))));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -199,6 +215,7 @@
             this.Text = "Christ,a 2";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.main_menu_panel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.main_game_panel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.playerPictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.game_floor_pictureBox)).EndInit();
@@ -220,6 +237,7 @@
         private System.Windows.Forms.PictureBox playerPictureBox;
         private System.Windows.Forms.Panel main_cutscene_panel;
         private AxWMPLib.AxWindowsMediaPlayer cutscene_media_windowsMediaPlayer;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }
 
