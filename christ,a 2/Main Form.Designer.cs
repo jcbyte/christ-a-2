@@ -29,109 +29,109 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(mainForm));
-            this.startGameButton = new System.Windows.Forms.Button();
-            this.exitButton = new System.Windows.Forms.Button();
-            this.memoryLeakButton = new System.Windows.Forms.Button();
-            this.memoryUsedLabel = new System.Windows.Forms.Label();
-            this.mainMenuPanel = new System.Windows.Forms.Panel();
-            this.gamePanel = new System.Windows.Forms.Panel();
+            this.menu_startGame_button = new System.Windows.Forms.Button();
+            this.menu_exit_button = new System.Windows.Forms.Button();
+            this.menu_startMemoryLeak_button = new System.Windows.Forms.Button();
+            this.main_memoryCounter_label = new System.Windows.Forms.Label();
+            this.main_menu_panel = new System.Windows.Forms.Panel();
+            this.main_game_panel = new System.Windows.Forms.Panel();
             this.playerPictureBox = new System.Windows.Forms.PictureBox();
             this.floorPictureBox = new System.Windows.Forms.PictureBox();
-            this.cutscenePanel = new System.Windows.Forms.Panel();
-            this.cutsceneMediaPlayer = new AxWMPLib.AxWindowsMediaPlayer();
-            this.mainMenuPanel.SuspendLayout();
-            this.gamePanel.SuspendLayout();
+            this.main_cutscene_panel = new System.Windows.Forms.Panel();
+            this.cutscene_media_windowsMediaPlayer = new AxWMPLib.AxWindowsMediaPlayer();
+            this.main_menu_panel.SuspendLayout();
+            this.main_game_panel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.playerPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.floorPictureBox)).BeginInit();
-            this.cutscenePanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.cutsceneMediaPlayer)).BeginInit();
+            this.main_cutscene_panel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.cutscene_media_windowsMediaPlayer)).BeginInit();
             this.SuspendLayout();
             // 
-            // startGameButton
+            // menu_startGame_button
             // 
-            this.startGameButton.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.startGameButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
-            this.startGameButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(135)))), ((int)(((byte)(118)))), ((int)(((byte)(166)))));
-            this.startGameButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(58)))), ((int)(((byte)(58)))), ((int)(((byte)(58)))));
-            this.startGameButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
-            this.startGameButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.startGameButton.Font = new System.Drawing.Font("Metropolis Thin", 26F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.startGameButton.Location = new System.Drawing.Point(460, 80);
-            this.startGameButton.Name = "startGameButton";
-            this.startGameButton.Size = new System.Drawing.Size(360, 125);
-            this.startGameButton.TabIndex = 0;
-            this.startGameButton.Text = "Start Game";
-            this.startGameButton.UseVisualStyleBackColor = false;
-            this.startGameButton.MouseEnter += new System.EventHandler(this.startGameButton_MouseEnter);
+            this.menu_startGame_button.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.menu_startGame_button.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.menu_startGame_button.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(135)))), ((int)(((byte)(118)))), ((int)(((byte)(166)))));
+            this.menu_startGame_button.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(58)))), ((int)(((byte)(58)))), ((int)(((byte)(58)))));
+            this.menu_startGame_button.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.menu_startGame_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.menu_startGame_button.Font = new System.Drawing.Font("Metropolis Thin", 26F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.menu_startGame_button.Location = new System.Drawing.Point(460, 80);
+            this.menu_startGame_button.Name = "menu_startGame_button";
+            this.menu_startGame_button.Size = new System.Drawing.Size(360, 125);
+            this.menu_startGame_button.TabIndex = 0;
+            this.menu_startGame_button.Text = "Start Game";
+            this.menu_startGame_button.UseVisualStyleBackColor = false;
+            this.menu_startGame_button.MouseEnter += new System.EventHandler(this.menu_startGame_button_MouseEnter);
             // 
-            // exitButton
+            // menu_exit_button
             // 
-            this.exitButton.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.exitButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
-            this.exitButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(135)))), ((int)(((byte)(118)))), ((int)(((byte)(166)))));
-            this.exitButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(58)))), ((int)(((byte)(58)))), ((int)(((byte)(58)))));
-            this.exitButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
-            this.exitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.exitButton.Font = new System.Drawing.Font("Metropolis Thin", 26F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.exitButton.Location = new System.Drawing.Point(460, 350);
-            this.exitButton.Name = "exitButton";
-            this.exitButton.Size = new System.Drawing.Size(360, 125);
-            this.exitButton.TabIndex = 0;
-            this.exitButton.Text = "Exit";
-            this.exitButton.UseVisualStyleBackColor = false;
-            this.exitButton.Click += new System.EventHandler(this.exitButton_Click);
+            this.menu_exit_button.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.menu_exit_button.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.menu_exit_button.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(135)))), ((int)(((byte)(118)))), ((int)(((byte)(166)))));
+            this.menu_exit_button.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(58)))), ((int)(((byte)(58)))), ((int)(((byte)(58)))));
+            this.menu_exit_button.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.menu_exit_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.menu_exit_button.Font = new System.Drawing.Font("Metropolis Thin", 26F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.menu_exit_button.Location = new System.Drawing.Point(460, 350);
+            this.menu_exit_button.Name = "menu_exit_button";
+            this.menu_exit_button.Size = new System.Drawing.Size(360, 125);
+            this.menu_exit_button.TabIndex = 0;
+            this.menu_exit_button.Text = "Exit";
+            this.menu_exit_button.UseVisualStyleBackColor = false;
+            this.menu_exit_button.Click += new System.EventHandler(this.menu_exit_button_Click);
             // 
-            // memoryLeakButton
+            // menu_startMemoryLeak_button
             // 
-            this.memoryLeakButton.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.memoryLeakButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
-            this.memoryLeakButton.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(135)))), ((int)(((byte)(118)))), ((int)(((byte)(166)))));
-            this.memoryLeakButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(58)))), ((int)(((byte)(58)))), ((int)(((byte)(58)))));
-            this.memoryLeakButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
-            this.memoryLeakButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.memoryLeakButton.Font = new System.Drawing.Font("Metropolis Thin", 26F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.memoryLeakButton.Location = new System.Drawing.Point(460, 215);
-            this.memoryLeakButton.Name = "memoryLeakButton";
-            this.memoryLeakButton.Size = new System.Drawing.Size(360, 125);
-            this.memoryLeakButton.TabIndex = 0;
-            this.memoryLeakButton.Text = "Start Memory Leak";
-            this.memoryLeakButton.UseVisualStyleBackColor = false;
-            this.memoryLeakButton.Click += new System.EventHandler(this.memoryLeakButton_Click);
+            this.menu_startMemoryLeak_button.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.menu_startMemoryLeak_button.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.menu_startMemoryLeak_button.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(135)))), ((int)(((byte)(118)))), ((int)(((byte)(166)))));
+            this.menu_startMemoryLeak_button.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(58)))), ((int)(((byte)(58)))), ((int)(((byte)(58)))));
+            this.menu_startMemoryLeak_button.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.menu_startMemoryLeak_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.menu_startMemoryLeak_button.Font = new System.Drawing.Font("Metropolis Thin", 26F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.menu_startMemoryLeak_button.Location = new System.Drawing.Point(460, 215);
+            this.menu_startMemoryLeak_button.Name = "menu_startMemoryLeak_button";
+            this.menu_startMemoryLeak_button.Size = new System.Drawing.Size(360, 125);
+            this.menu_startMemoryLeak_button.TabIndex = 0;
+            this.menu_startMemoryLeak_button.Text = "Start Memory Leak";
+            this.menu_startMemoryLeak_button.UseVisualStyleBackColor = false;
+            this.menu_startMemoryLeak_button.Click += new System.EventHandler(this.menu_startMemoryLeak_button_Click);
             // 
-            // memoryUsedLabel
+            // main_memoryCounter_label
             // 
-            this.memoryUsedLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.memoryUsedLabel.Location = new System.Drawing.Point(1040, 20);
-            this.memoryUsedLabel.Name = "memoryUsedLabel";
-            this.memoryUsedLabel.Size = new System.Drawing.Size(220, 20);
-            this.memoryUsedLabel.TabIndex = 0;
-            this.memoryUsedLabel.Text = "Memory used: 68.42 GB";
+            this.main_memoryCounter_label.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.main_memoryCounter_label.Location = new System.Drawing.Point(1040, 20);
+            this.main_memoryCounter_label.Name = "main_memoryCounter_label";
+            this.main_memoryCounter_label.Size = new System.Drawing.Size(220, 20);
+            this.main_memoryCounter_label.TabIndex = 0;
+            this.main_memoryCounter_label.Text = "Memory used: 68.42 GB";
             // 
-            // mainMenuPanel
+            // main_menu_panel
             // 
-            this.mainMenuPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.main_menu_panel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.mainMenuPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.mainMenuPanel.Controls.Add(this.startGameButton);
-            this.mainMenuPanel.Controls.Add(this.memoryLeakButton);
-            this.mainMenuPanel.Controls.Add(this.exitButton);
-            this.mainMenuPanel.Location = new System.Drawing.Point(0, 0);
-            this.mainMenuPanel.Name = "mainMenuPanel";
-            this.mainMenuPanel.Size = new System.Drawing.Size(1280, 720);
-            this.mainMenuPanel.TabIndex = 1;
+            this.main_menu_panel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.main_menu_panel.Controls.Add(this.menu_startGame_button);
+            this.main_menu_panel.Controls.Add(this.menu_startMemoryLeak_button);
+            this.main_menu_panel.Controls.Add(this.menu_exit_button);
+            this.main_menu_panel.Location = new System.Drawing.Point(0, 0);
+            this.main_menu_panel.Name = "main_menu_panel";
+            this.main_menu_panel.Size = new System.Drawing.Size(1280, 720);
+            this.main_menu_panel.TabIndex = 1;
             // 
-            // gamePanel
+            // main_game_panel
             // 
-            this.gamePanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.main_game_panel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.gamePanel.Controls.Add(this.playerPictureBox);
-            this.gamePanel.Controls.Add(this.floorPictureBox);
-            this.gamePanel.Location = new System.Drawing.Point(0, 0);
-            this.gamePanel.Name = "gamePanel";
-            this.gamePanel.Size = new System.Drawing.Size(1280, 720);
-            this.gamePanel.TabIndex = 1;
+            this.main_game_panel.Controls.Add(this.playerPictureBox);
+            this.main_game_panel.Controls.Add(this.floorPictureBox);
+            this.main_game_panel.Location = new System.Drawing.Point(0, 0);
+            this.main_game_panel.Name = "main_game_panel";
+            this.main_game_panel.Size = new System.Drawing.Size(1280, 720);
+            this.main_game_panel.TabIndex = 1;
             // 
             // playerPictureBox
             // 
@@ -151,34 +151,34 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.floorPictureBox.BackgroundImage = global::christ_a_2.Properties.Resources.floor;
             this.floorPictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.floorPictureBox.Location = new System.Drawing.Point(0, 0);
+            this.floorPictureBox.Location = new System.Drawing.Point(96, 68);
             this.floorPictureBox.Name = "floorPictureBox";
             this.floorPictureBox.Size = new System.Drawing.Size(1280, 720);
             this.floorPictureBox.TabIndex = 0;
             this.floorPictureBox.TabStop = false;
             // 
-            // cutscenePanel
+            // main_cutscene_panel
             // 
-            this.cutscenePanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.main_cutscene_panel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.cutscenePanel.Controls.Add(this.cutsceneMediaPlayer);
-            this.cutscenePanel.Location = new System.Drawing.Point(0, 0);
-            this.cutscenePanel.Name = "cutscenePanel";
-            this.cutscenePanel.Size = new System.Drawing.Size(1280, 720);
-            this.cutscenePanel.TabIndex = 1;
+            this.main_cutscene_panel.Controls.Add(this.cutscene_media_windowsMediaPlayer);
+            this.main_cutscene_panel.Location = new System.Drawing.Point(0, 0);
+            this.main_cutscene_panel.Name = "main_cutscene_panel";
+            this.main_cutscene_panel.Size = new System.Drawing.Size(1280, 720);
+            this.main_cutscene_panel.TabIndex = 3;
             // 
-            // cutsceneMediaPlayer
+            // cutscene_media_windowsMediaPlayer
             // 
-            this.cutsceneMediaPlayer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.cutscene_media_windowsMediaPlayer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.cutsceneMediaPlayer.Enabled = true;
-            this.cutsceneMediaPlayer.Location = new System.Drawing.Point(0, 0);
-            this.cutsceneMediaPlayer.Name = "cutsceneMediaPlayer";
-            this.cutsceneMediaPlayer.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("cutsceneMediaPlayer.OcxState")));
-            this.cutsceneMediaPlayer.Size = new System.Drawing.Size(1280, 720);
-            this.cutsceneMediaPlayer.TabIndex = 0;
+            this.cutscene_media_windowsMediaPlayer.Enabled = true;
+            this.cutscene_media_windowsMediaPlayer.Location = new System.Drawing.Point(0, 0);
+            this.cutscene_media_windowsMediaPlayer.Name = "cutscene_media_windowsMediaPlayer";
+            this.cutscene_media_windowsMediaPlayer.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("cutscene_media_windowsMediaPlayer.OcxState")));
+            this.cutscene_media_windowsMediaPlayer.Size = new System.Drawing.Size(1280, 720);
+            this.cutscene_media_windowsMediaPlayer.TabIndex = 0;
             // 
             // mainForm
             // 
@@ -186,10 +186,10 @@
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(21)))), ((int)(((byte)(21)))));
             this.ClientSize = new System.Drawing.Size(1280, 720);
-            this.Controls.Add(this.memoryUsedLabel);
-            this.Controls.Add(this.gamePanel);
-            this.Controls.Add(this.cutscenePanel);
-            this.Controls.Add(this.mainMenuPanel);
+            this.Controls.Add(this.main_memoryCounter_label);
+            this.Controls.Add(this.main_cutscene_panel);
+            this.Controls.Add(this.main_menu_panel);
+            this.Controls.Add(this.main_game_panel);
             this.Font = new System.Drawing.Font("Metropolis Thin", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(129)))), ((int)(((byte)(204)))));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -198,28 +198,28 @@
             this.Name = "mainForm";
             this.Text = "Christ,a 2";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-            this.mainMenuPanel.ResumeLayout(false);
-            this.gamePanel.ResumeLayout(false);
+            this.main_menu_panel.ResumeLayout(false);
+            this.main_game_panel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.playerPictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.floorPictureBox)).EndInit();
-            this.cutscenePanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.cutsceneMediaPlayer)).EndInit();
+            this.main_cutscene_panel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.cutscene_media_windowsMediaPlayer)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Button startGameButton;
-        private System.Windows.Forms.Button exitButton;
-        private System.Windows.Forms.Button memoryLeakButton;
-        private System.Windows.Forms.Label memoryUsedLabel;
-        private System.Windows.Forms.Panel mainMenuPanel;
-        private System.Windows.Forms.Panel gamePanel;
-        private System.Windows.Forms.Panel cutscenePanel;
-        private AxWMPLib.AxWindowsMediaPlayer cutsceneMediaPlayer;
+        private System.Windows.Forms.Button menu_startGame_button;
+        private System.Windows.Forms.Button menu_exit_button;
+        private System.Windows.Forms.Button menu_startMemoryLeak_button;
+        private System.Windows.Forms.Label main_memoryCounter_label;
+        private System.Windows.Forms.Panel main_menu_panel;
+        private System.Windows.Forms.Panel main_game_panel;
         private System.Windows.Forms.PictureBox floorPictureBox;
         private System.Windows.Forms.PictureBox playerPictureBox;
+        private System.Windows.Forms.Panel main_cutscene_panel;
+        private AxWMPLib.AxWindowsMediaPlayer cutscene_media_windowsMediaPlayer;
     }
 }
 

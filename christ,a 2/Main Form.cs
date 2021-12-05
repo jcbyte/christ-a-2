@@ -8,6 +8,7 @@ namespace christ_a_2
     public partial class mainForm : Form
     {
         #region "Constants"
+
         public static class Constants // Global game settings
         {
             public const int memoryCounterRefresh = 50;
@@ -15,23 +16,27 @@ namespace christ_a_2
             public const int memoryIncreaseRate = 50;
             public const int memoryIncrease = 1024 * 1024 * 64;
 
+            public const int gameLoopFPS = 60;
+
             public const float playerSpeed = 0.005f;
 
-            public static readonly Vector2 playerSize = new Vector2(0.02f, 0.06f);
+            public static readonly Vector2 playerSize = new Vector2(0.02f, 0.06f); // Sizes are relative
             public static readonly Vector2 enemySize = new Vector2(0.02f, 0.06f);
         }
+
         #endregion
 
         #region "Relative Vector2"
+
         public class Vector2 // Relative Vector2 class (0-1, 0-1)
         {
             public float x;
             public float y;
 
-            public Vector2(float x_, float y_)
+            public Vector2(float _x, float _y)
             {
-                x = x_;
-                y = y_;
+                x = _x;
+                y = _y;
             }
 
             static public Vector2 operator +(Vector2 lhs, Vector2 rhs)
@@ -42,31 +47,77 @@ namespace christ_a_2
             }
         }
 
-        private static Vector2 toRelativeV2(System.Drawing.Point p, System.Drawing.Size formSize) // Convert from a Windows Point to relative Vector2
+        private static Vector2 ToRelativeV2(System.Drawing.Point p, System.Drawing.Size formSize) // Convert from a Windows Point to relative Vector2
         {
             return new Vector2((float)p.X / formSize.Width, (float)p.Y / formSize.Height);
         }
 
-        private static System.Drawing.Point fromRelativeV2(Vector2 v, System.Drawing.Size formSize) // Convert from a relative Vector2 to a Windows Point
+        private static System.Drawing.Point FromRelativeV2(Vector2 v, System.Drawing.Size formSize) // Convert from a relative Vector2 to a Windows Point
         {
             return new System.Drawing.Point((int)(v.x * formSize.Width), (int)(v.y * formSize.Height));
         }
 
-        private static System.Drawing.Size systemPointToSystemSize(System.Drawing.Point p) // Change Windows Point to Windows Scale 
+        private static System.Drawing.Size SystemPointToSystemSize(System.Drawing.Point p) // Change Windows Point to Windows Scale 
         {
             return new System.Drawing.Size(p.X, p.Y);
         }
+
         #endregion
 
-        #region "Enemy"
+        #region "Scenes"
+
+        private enum Scenes : byte
+        {
+            Menu,
+            Cutscene,
+            Game,
+        }
+
+        private struct SceneOb
+        {
+            public Panel panel;
+            public Action<object> onLoad;
+
+            public SceneOb(Panel _panel, Action<object> _onLoad = null)
+            {
+                panel = _panel;
+                onLoad = _onLoad;
+            }
+        }
+
+        private void LoadScene(Scenes s, object data = null) // Close current scene and initialise new scene with optional data
+        {
+            scenesData[cScene].panel.Visible = false;
+            cScene = s;
+            scenesData[cScene].panel.Visible = true;
+            if (scenesData[cScene].onLoad != null) scenesData[cScene].onLoad(data);
+        }
+
+        #endregion
+
+        #region "Cutscenes"
+
+        private enum Cutscenes : byte
+        {
+            OpeningCredits,
+            BeforeGame,
+            BeforeBoss,
+            Loss,
+            Win
+        }
+
+        #endregion
+
+        #region "Enemy (needs work)"
+
         private class Enemy // Enemy class containg visual and code objects
         {
             public Vector2 pos;
             public PictureBox pb;
 
-            public Enemy(Vector2 pos_, System.Drawing.Size size)
+            public Enemy(Vector2 _pos, System.Drawing.Size size)
             {
-                pos = pos_;
+                pos = _pos;
 
                 pb = new PictureBox(); // Add new picturebox (enemy) to the form
                 pb.BackgroundImageLayout = ImageLayout.Stretch;
@@ -74,47 +125,70 @@ namespace christ_a_2
                 pb.BackgroundImage = Properties.Resources.Cowboy_Snowman_Cropped;
             }
 
-            public void updatePos(System.Drawing.Size formSize)
+            public void UpdatePos(System.Drawing.Size formSize)
             {
-                pb.Location = fromRelativeV2(pos, formSize);
+                pb.Location = FromRelativeV2(pos, formSize);
             }
         }
+
         #endregion
 
         private List<byte[]> meme = new List<byte[]>(); // Totally useful memory
+
         private List<Enemy> enemys = new List<Enemy>();
         private Vector2 playerPos = new Vector2(0.5f, 0.5f);
+
+        private Dictionary<Scenes, SceneOb> scenesData;
+        private Dictionary<Cutscenes, string> cutscenesData;
+        private Scenes cScene = Scenes.Menu;
 
         public mainForm()
         {
             InitializeComponent();
 
-            mainMenuPanel.Visible = true;
-            gamePanel.Visible = false;
-            cutscenePanel.Visible = false;
+            scenesData = new Dictionary<Scenes, SceneOb> { 
+                {Scenes.Menu, new SceneOb(main_menu_panel) }, 
+                {Scenes.Cutscene, new SceneOb(main_cutscene_panel, CutsceneOnload) }, 
+                {Scenes.Game, new SceneOb(main_game_panel) }, 
+            };
+
+            cutscenesData = new Dictionary<Cutscenes, string>
+            {
+                {Cutscenes.OpeningCredits, "" },
+                {Cutscenes.BeforeGame, "D:\\Users\\joel_\\Downloads\\cutscenes\\cutscene.mp4" },
+                {Cutscenes.BeforeBoss, "" },
+                {Cutscenes.Loss, "" },
+                {Cutscenes.Win, "" }
+            };
+
+            foreach (KeyValuePair<Scenes, SceneOb> s in scenesData)
+                s.Value.panel.Visible = false;
+            LoadScene(Scenes.Menu);
             
             this.HandleCreated += mainForm_HandleCreated;
         }
 
         #region "Async"
+
         private void mainForm_HandleCreated(object sender, EventArgs e) // To start memory counter after the Window has been initialised
         {
-            updateMemoryCounterLoopAsync();
+            UpdateMemoryCounterLoopAsync();
+            GameLoopAsync();
         }
 
-        private async void updateMemoryCounterLoopAsync()
+        private async void UpdateMemoryCounterLoopAsync()
         {
             while (true)
             {
                 float memUsed = (float)System.Diagnostics.Process.GetCurrentProcess().PrivateMemorySize64 / (1024 * 1024 * 1024);
                 //float memUsed = (float)GC.GetTotalMemory(true) / (1024 * 1024 * 1024);
-                memoryUsedLabel.Text = "Memory used: " + memUsed.ToString("0.00") + " GB";
+                main_memoryCounter_label.Text = "Memory used: " + memUsed.ToString("0.00") + " GB";
 
                 await Task.Delay(Constants.memoryCounterRefresh);
             }
         }
 
-        private async void increaseMemoryLoopAsync()
+        private async void IncreaseMemoryLoopAsync()
         {
             while (true)
             {
@@ -127,42 +201,71 @@ namespace christ_a_2
                 await Task.Delay(Constants.memoryIncreaseRate);
             }
         }
+
         #endregion
 
         #region "Menu"
-        private void startGameButton_MouseEnter(object sender, EventArgs e) // Swap start button with memory leak button ;)
+
+        private void menu_startGame_button_MouseEnter(object sender, EventArgs e) // Swap start button with memory leak button ;)
         {
-            System.Drawing.Point tempLocation = memoryLeakButton.Location;
-            memoryLeakButton.Location = startGameButton.Location;
-            startGameButton.Location = tempLocation;
+            System.Drawing.Point tempLocation = menu_startMemoryLeak_button.Location;
+            menu_startMemoryLeak_button.Location = menu_startGame_button.Location;
+            menu_startGame_button.Location = tempLocation;
         }
 
-        private void exitButton_Click(object sender, EventArgs e)
+        private void menu_exit_button_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private async void memoryLeakButton_Click(object sender, EventArgs e)
+        private void menu_startMemoryLeak_button_Click(object sender, EventArgs e)
         {
-            mainMenuPanel.Visible = false;
-            /* */cutscenePanel.Visible = true;
-            cutsceneMediaPlayer.URL = "D:\\Users\\joel_\\Downloads\\cutscene.mp4"; // Start the cutscene
-
-            await Task.Delay(2000); // Wait until memory leak starts
-
-            increaseMemoryLoopAsync(); // Start memory leak
-
-            await Task.Delay(2000); // Waint until game starts
-
-            cutsceneMediaPlayer.URL = ""; // Stop the cutscene
-            cutscenePanel.Visible = false;//*/
-            gamePanel.Visible = true;
-
-            loadLevel(1);
+            LoadScene(Scenes.Cutscene, Cutscenes.BeforeGame);
         }
+
         #endregion
 
-        #region "Game"
+        #region "Cutscene"
+
+        private async void CutsceneOnload(object cs)
+        {
+            Cutscenes cutscene = (Cutscenes)cs;
+
+            cutscene_media_windowsMediaPlayer.URL = cutscenesData[cutscene];
+            
+            switch(cutscene)
+            {
+                case Cutscenes.OpeningCredits:
+
+                    LoadScene(Scenes.Menu);
+                    break;
+
+                case Cutscenes.BeforeGame:
+
+                    await Task.Delay(2000); // Wait until memory leak starts
+                    IncreaseMemoryLoopAsync(); // Start the memory leak
+                    await Task.Delay(2000); // Wait until level1 starts
+
+                    LoadScene(Scenes.Game);
+                    break;
+
+                case Cutscenes.BeforeBoss:
+                    break;
+
+                case Cutscenes.Loss:
+                    break;
+
+                case Cutscenes.Win:
+                    break;
+            }
+
+            cutscene_media_windowsMediaPlayer.URL = "";
+        }
+
+        #endregion
+
+        #region "Game (needs work)"
+
         private void loadLevel(int level)
         {
             System.Drawing.Bitmap floorImg;
@@ -193,7 +296,7 @@ namespace christ_a_2
             for (int i = 0; i < enemyAmount; i++) // Create the enemys in random locations // Could have specfic locations later?
             {
                 enemys.Add(new Enemy(new Vector2((float)rng.NextDouble(), (float)rng.NextDouble()), systemPointToSystemSize(fromRelativeV2(Constants.enemySize, this.Size))));
-                gamePanel.Controls.Add(enemys[i].pb);
+                main_game_panel.Controls.Add(enemys[i].pb);
                 enemys[i].updatePos(this.Size);
                 enemys[i].pb.BringToFront();
             }
@@ -208,6 +311,22 @@ namespace christ_a_2
 
             return base.ProcessCmdKey(ref msg, keyData);
         }
+
+        private async void gameLoopAsync()
+        {
+            int delay = (int)((1.0f / Constants.gameLoopFPS) * 1000);
+
+            while (true)
+            {
+                if (System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.F))
+                {
+                    Console.WriteLine("loamo");
+                }
+
+                await Task.Delay(delay);
+            }
+        }
+
         #endregion
     }
 }
