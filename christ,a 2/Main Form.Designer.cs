@@ -36,13 +36,13 @@
             this.main_menu_panel = new System.Windows.Forms.Panel();
             this.main_game_panel = new System.Windows.Forms.Panel();
             this.playerPictureBox = new System.Windows.Forms.PictureBox();
-            this.floorPictureBox = new System.Windows.Forms.PictureBox();
+            this.game_floor_pictureBox = new System.Windows.Forms.PictureBox();
             this.main_cutscene_panel = new System.Windows.Forms.Panel();
             this.cutscene_media_windowsMediaPlayer = new AxWMPLib.AxWindowsMediaPlayer();
             this.main_menu_panel.SuspendLayout();
             this.main_game_panel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.playerPictureBox)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.floorPictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.game_floor_pictureBox)).BeginInit();
             this.main_cutscene_panel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.cutscene_media_windowsMediaPlayer)).BeginInit();
             this.SuspendLayout();
@@ -127,7 +127,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.main_game_panel.Controls.Add(this.playerPictureBox);
-            this.main_game_panel.Controls.Add(this.floorPictureBox);
+            this.main_game_panel.Controls.Add(this.game_floor_pictureBox);
             this.main_game_panel.Location = new System.Drawing.Point(0, 0);
             this.main_game_panel.Name = "main_game_panel";
             this.main_game_panel.Size = new System.Drawing.Size(1280, 720);
@@ -144,18 +144,18 @@
             this.playerPictureBox.TabIndex = 1;
             this.playerPictureBox.TabStop = false;
             // 
-            // floorPictureBox
+            // game_floor_pictureBox
             // 
-            this.floorPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.game_floor_pictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.floorPictureBox.BackgroundImage = global::christ_a_2.Properties.Resources.floor;
-            this.floorPictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.floorPictureBox.Location = new System.Drawing.Point(96, 68);
-            this.floorPictureBox.Name = "floorPictureBox";
-            this.floorPictureBox.Size = new System.Drawing.Size(1280, 720);
-            this.floorPictureBox.TabIndex = 0;
-            this.floorPictureBox.TabStop = false;
+            this.game_floor_pictureBox.BackgroundImage = global::christ_a_2.Properties.Resources.floor;
+            this.game_floor_pictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.game_floor_pictureBox.Location = new System.Drawing.Point(0, 0);
+            this.game_floor_pictureBox.Name = "game_floor_pictureBox";
+            this.game_floor_pictureBox.Size = new System.Drawing.Size(1280, 720);
+            this.game_floor_pictureBox.TabIndex = 0;
+            this.game_floor_pictureBox.TabStop = false;
             // 
             // main_cutscene_panel
             // 
@@ -187,9 +187,9 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(21)))), ((int)(((byte)(21)))));
             this.ClientSize = new System.Drawing.Size(1280, 720);
             this.Controls.Add(this.main_memoryCounter_label);
+            this.Controls.Add(this.main_game_panel);
             this.Controls.Add(this.main_cutscene_panel);
             this.Controls.Add(this.main_menu_panel);
-            this.Controls.Add(this.main_game_panel);
             this.Font = new System.Drawing.Font("Metropolis Thin", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(129)))), ((int)(((byte)(204)))));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -201,7 +201,7 @@
             this.main_menu_panel.ResumeLayout(false);
             this.main_game_panel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.playerPictureBox)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.floorPictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.game_floor_pictureBox)).EndInit();
             this.main_cutscene_panel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.cutscene_media_windowsMediaPlayer)).EndInit();
             this.ResumeLayout(false);
@@ -216,7 +216,7 @@
         private System.Windows.Forms.Label main_memoryCounter_label;
         private System.Windows.Forms.Panel main_menu_panel;
         private System.Windows.Forms.Panel main_game_panel;
-        private System.Windows.Forms.PictureBox floorPictureBox;
+        private System.Windows.Forms.PictureBox game_floor_pictureBox;
         private System.Windows.Forms.PictureBox playerPictureBox;
         private System.Windows.Forms.Panel main_cutscene_panel;
         private AxWMPLib.AxWindowsMediaPlayer cutscene_media_windowsMediaPlayer;

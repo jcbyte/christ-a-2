@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Input;
 
 namespace christ_a_2
 {
@@ -32,6 +33,12 @@ namespace christ_a_2
         {
             public float x;
             public float y;
+
+            public Vector2()
+            {
+                x = 0;
+                y = 0;
+            }
 
             public Vector2(float _x, float _y)
             {
@@ -108,7 +115,31 @@ namespace christ_a_2
 
         #endregion
 
-        #region "Enemy (needs work)"
+        #region "Levels"
+
+        private enum Levels : byte
+        {
+            Level1,
+            Level2,
+            Level3,
+            BossLevel
+        }
+
+        private struct levelOb
+        {
+            public System.Drawing.Bitmap floorImg;
+            public int enemyAmount;
+
+            public levelOb(System.Drawing.Bitmap _floorImg, int _enemyAmount)
+            {
+                floorImg = _floorImg;
+                enemyAmount = _enemyAmount;
+            }
+        }
+
+        #endregion
+
+        #region "Enemy (Needs work)"
 
         private class Enemy // Enemy class containg visual and code objects
         {
@@ -122,7 +153,7 @@ namespace christ_a_2
                 pb = new PictureBox(); // Add new picturebox (enemy) to the form
                 pb.BackgroundImageLayout = ImageLayout.Stretch;
                 pb.Size = size;
-                pb.BackgroundImage = Properties.Resources.Cowboy_Snowman_Cropped;
+                pb.BackgroundImage = Properties.Resources.Cowboy_Snowman_Cropped; // different enemys?
             }
 
             public void UpdatePos(System.Drawing.Size formSize)
@@ -140,6 +171,8 @@ namespace christ_a_2
 
         private Dictionary<Scenes, SceneOb> scenesData;
         private Dictionary<Cutscenes, string> cutscenesData;
+        private Dictionary<Levels, levelOb> levelsData;
+
         private Scenes cScene = Scenes.Menu;
 
         public mainForm()
@@ -149,7 +182,7 @@ namespace christ_a_2
             scenesData = new Dictionary<Scenes, SceneOb> { 
                 {Scenes.Menu, new SceneOb(main_menu_panel) }, 
                 {Scenes.Cutscene, new SceneOb(main_cutscene_panel, CutsceneOnload) }, 
-                {Scenes.Game, new SceneOb(main_game_panel) }, 
+                {Scenes.Game, new SceneOb(main_game_panel, GameOnLoad) }, 
             };
 
             cutscenesData = new Dictionary<Cutscenes, string>
@@ -159,6 +192,13 @@ namespace christ_a_2
                 {Cutscenes.BeforeBoss, "" },
                 {Cutscenes.Loss, "" },
                 {Cutscenes.Win, "" }
+            };
+
+            levelsData = new Dictionary<Levels, levelOb> {
+                {Levels.Level1, new levelOb(Properties.Resources.floor, 10) },
+                {Levels.Level2, new levelOb(Properties.Resources.floor, 20) },
+                {Levels.Level3, new levelOb(Properties.Resources.floor, 30) },
+                {Levels.BossLevel, new levelOb(Properties.Resources.floor, 50) }
             };
 
             foreach (KeyValuePair<Scenes, SceneOb> s in scenesData)
@@ -227,9 +267,9 @@ namespace christ_a_2
 
         #region "Cutscene"
 
-        private async void CutsceneOnload(object cs)
+        private async void CutsceneOnload(object data)
         {
-            Cutscenes cutscene = (Cutscenes)cs;
+            Cutscenes cutscene = (Cutscenes)data;
 
             cutscene_media_windowsMediaPlayer.URL = cutscenesData[cutscene];
             
@@ -246,7 +286,7 @@ namespace christ_a_2
                     IncreaseMemoryLoopAsync(); // Start the memory leak
                     await Task.Delay(2000); // Wait until level1 starts
 
-                    LoadScene(Scenes.Game);
+                    LoadScene(Scenes.Game, Levels.Level1);
                     break;
 
                 case Cutscenes.BeforeBoss:
@@ -266,62 +306,51 @@ namespace christ_a_2
 
         #region "Game (needs work)"
 
-        private void loadLevel(int level)
+        private void GameOnLoad(object data)
         {
-            System.Drawing.Bitmap floorImg;
-            int enemyAmount;
+            Levels level = (Levels)data;
 
-            switch (level) // Change floor and enemys depending on level
-            {
-                case 1: 
-                    floorImg = Properties.Resources.floor;
-                    enemyAmount = 10;
-                    break;
-                default: 
-                    floorImg = new System.Drawing.Bitmap(1, 1);
-                    enemyAmount = 0;
-                    break;
-            }
-
-            floorPictureBox.BackgroundImage = floorImg;
-            floorPictureBox.Size = this.Size; // Make sure floor fills screen
-            floorPictureBox.Location = new System.Drawing.Point(0, 0);
-            floorPictureBox.SendToBack();
+            game_floor_pictureBox.BackgroundImage = levelsData[level].floorImg;
 
             playerPos = new Vector2(0.5f, 0.5f);
-            playerPictureBox.Location = fromRelativeV2(playerPos, this.Size); // Have player start in centre // Could change depending on level?
-            playerPictureBox.Size = systemPointToSystemSize(fromRelativeV2(Constants.playerSize, this.Size));
+            playerPictureBox.Location = FromRelativeV2(playerPos, this.Size); // Have player start in centre // Could change depending on level?
+            playerPictureBox.Size = SystemPointToSystemSize(FromRelativeV2(Constants.playerSize, this.Size));
 
-            Random rng = new Random();
-            for (int i = 0; i < enemyAmount; i++) // Create the enemys in random locations // Could have specfic locations later?
+            Random rng = new Random(2);
+            for (int i = 0; i < levelsData[level].enemyAmount; i++) // Create the enemys in random locations // Could have specfic locations later?
             {
-                enemys.Add(new Enemy(new Vector2((float)rng.NextDouble(), (float)rng.NextDouble()), systemPointToSystemSize(fromRelativeV2(Constants.enemySize, this.Size))));
+                enemys.Add(new Enemy(new Vector2((float)rng.NextDouble(), (float)rng.NextDouble()), SystemPointToSystemSize(FromRelativeV2(Constants.enemySize, this.Size))));
                 main_game_panel.Controls.Add(enemys[i].pb);
-                enemys[i].updatePos(this.Size);
+                enemys[i].UpdatePos(this.Size);
                 enemys[i].pb.BringToFront();
+            }
+
+            switch(level) // Level specialitys
+            {
+                case Levels.BossLevel: 
+                break;
             }
         }
 
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData) // Get when a key is pressed anytime in the program
-        {
-            Vector2 movement = new Vector2((keyData == Keys.A || keyData == Keys.Left) ? -Constants.playerSpeed : ((keyData == Keys.D || keyData == Keys.Right) ? Constants.playerSpeed : 0), (keyData == Keys.W || keyData == Keys.Up) ? -Constants.playerSpeed : ((keyData == Keys.S || keyData == Keys.Down) ? Constants.playerSpeed : 0));
-
-            playerPos += movement; // Move the player respectively
-            playerPictureBox.Location = fromRelativeV2(playerPos, this.Size);
-
-            return base.ProcessCmdKey(ref msg, keyData);
-        }
-
-        private async void gameLoopAsync()
+        private async void GameLoopAsync()
         {
             int delay = (int)((1.0f / Constants.gameLoopFPS) * 1000);
 
             while (true)
             {
-                if (System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.F))
-                {
-                    Console.WriteLine("loamo");
-                }
+                Vector2 movement = new Vector2();
+
+                if (Keyboard.IsKeyDown(Key.W) || Keyboard.IsKeyDown(Key.Up))
+                    movement.y -= Constants.playerSpeed;
+                if (Keyboard.IsKeyDown(Key.S) || Keyboard.IsKeyDown(Key.Down))
+                    movement.y += Constants.playerSpeed;
+                if (Keyboard.IsKeyDown(Key.A) || Keyboard.IsKeyDown(Key.Left))
+                    movement.x -= Constants.playerSpeed;
+                if (Keyboard.IsKeyDown(Key.D) || Keyboard.IsKeyDown(Key.Right))
+                    movement.x += Constants.playerSpeed;
+
+                playerPos += movement;
+                playerPictureBox.Location = FromRelativeV2(playerPos, this.Size);
 
                 await Task.Delay(delay);
             }
