@@ -148,10 +148,11 @@
             this.main_game_panel.Name = "main_game_panel";
             this.main_game_panel.Size = new System.Drawing.Size(1280, 720);
             this.main_game_panel.TabIndex = 1;
+            this.main_game_panel.Paint += new System.Windows.Forms.PaintEventHandler(this.main_game_panel_Paint);
             // 
             // playerPictureBox
             // 
-            this.playerPictureBox.BackColor = System.Drawing.Color.White;
+            this.playerPictureBox.BackColor = System.Drawing.Color.Transparent;
             this.playerPictureBox.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("playerPictureBox.BackgroundImage")));
             this.playerPictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.playerPictureBox.Location = new System.Drawing.Point(587, 346);
@@ -206,6 +207,7 @@
             this.Controls.Add(this.main_game_panel);
             this.Controls.Add(this.main_menu_panel);
             this.Controls.Add(this.main_cutscene_panel);
+            this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Metropolis Thin", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(129)))), ((int)(((byte)(204)))));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));

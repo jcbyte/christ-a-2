@@ -4,6 +4,7 @@ using System.Media;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Drawing;
 
 namespace christ_a_2
 {
@@ -130,7 +131,7 @@ namespace christ_a_2
             BeforeGame,
             BeforeBoss,
             Loss,
-            Win
+            Win,
         }
 
         #endregion
@@ -142,7 +143,7 @@ namespace christ_a_2
             Level1,
             Level2,
             Level3,
-            BossLevel
+            BossLevel,
         }
 
         private struct levelOb
@@ -159,7 +160,7 @@ namespace christ_a_2
 
         #endregion
 
-        #region "Enemy (Needs work)"
+        #region "Enemy (Needs work, multiple)"
 
         private class Enemy // Enemy class containg visual and code objects
         {
@@ -173,12 +174,118 @@ namespace christ_a_2
                 pb = new PictureBox(); // Add new picturebox (enemy) to the form
                 pb.BackgroundImageLayout = ImageLayout.Stretch;
                 pb.Size = size;
+                pb.BackColor = Color.Transparent;
                 pb.BackgroundImage = Properties.Resources.snowmanEnemy; // different enemys?
             }
 
             public void UpdatePos(System.Drawing.Size formSize)
             {
                 pb.Location = FromRelativeV2(pos, formSize);
+            }
+        }
+
+        #endregion
+
+        #region "Weapons"
+
+        private enum Weapons : byte
+        {
+            Glock19,
+            FiveSeven,
+            DesertEagle,
+
+            Galil,
+            AMD65,
+            AEK971,
+            AK47,
+
+            M107,
+            L115A3,
+            SCAR,
+
+            UMP,
+            MAC10,
+            Uzi,
+
+            M249,
+
+            M2,
+
+            FP6,
+            M1014,
+
+            MGL105,
+
+            RPG7,
+        }
+
+        private enum WeaponType : byte
+        {
+            Semi,
+            Auto,
+        }
+
+        private enum WeaponClass : byte
+        {
+            Pistol,
+            AR,
+            Marksman,
+            SMG,
+            LMG,
+            HMG,
+            Shotgun,
+            GrenadeLauncher,
+            RPG,
+        }
+
+        private struct WeaponClassOb
+        {
+            public string name;
+            public WeaponType type;
+
+            public WeaponClassOb(string _name, WeaponType _type)
+            {
+                name = _name;
+                type = _type;
+            }
+        }
+
+        private struct WeaponOb
+        {
+            public string name;
+            public WeaponClass type;
+            public string country;
+
+            public float damage;
+            public float weight;
+            public int velocity;
+            public int firerate;
+            public int magCapacity;
+            public int maxAmmo;
+            public float accuracy;
+            public float recoil;
+
+            public int shotgunShots; // Shotgun only
+            public float maxGrenadeDistance; // Grendade only
+            public float explosionRadius; // Grenade and RPG only
+
+            public WeaponOb(string _name, WeaponClass _type, string _country, float _damage, float _weight, int _velocity, int _firerate, int _magCapacity, int _maxAmmo, float _accuracy, float _recoil, int _shotgunShots = 0, float _maxGrenadeDistance = 0, float _explosionRadius = 0)
+            {
+                name = _name;
+                type = _type;
+                country = _country;
+                damage = _damage;
+                weight = _weight;
+                velocity = _velocity;
+                firerate = _firerate;
+                magCapacity = _magCapacity;
+                maxAmmo = _maxAmmo;
+                accuracy = _accuracy;
+                recoil = _recoil;
+
+                shotgunShots = _shotgunShots;
+                maxGrenadeDistance = _maxGrenadeDistance;
+                explosionRadius = _explosionRadius;
             }
         }
 
@@ -202,6 +309,7 @@ namespace christ_a_2
                 pb = new PictureBox(); // Add new picturebox (bullet) to the form
                 pb.BackgroundImageLayout = ImageLayout.Stretch;
                 pb.Size = size;
+                pb.BackColor = Color.Transparent;
                 pb.BackgroundImage = Properties.Resources.playerBullet;
             }
 
@@ -227,8 +335,11 @@ namespace christ_a_2
         private Dictionary<Scenes, SceneOb> scenesData;
         private Dictionary<Cutscenes, string> cutscenesData;
         private Dictionary<Levels, levelOb> levelsData;
+        private Dictionary<WeaponClass, WeaponClassOb> weaponClassData;
+        private Dictionary<Weapons, WeaponOb> weaponsData;
 
         private Scenes cScene = Scenes.Menu;
+        private Levels cLevel = Levels.Level1;
 
         public mainForm()
         {
@@ -243,22 +354,58 @@ namespace christ_a_2
             cutscenesData = new Dictionary<Cutscenes, string>
             {
                 {Cutscenes.OpeningCredits, "FullResources\\Cutscenes\\openingCredits.mp4" },
-                {Cutscenes.BeforeGame, "D:\\Users\\joel_\\Downloads\\cutscenes\\cutscene.mp4" },
-                {Cutscenes.BeforeBoss, "" },
-                {Cutscenes.Loss, "FullResources\\Cutscenes\\youDied.mp4" },
-                {Cutscenes.Win, "" }
+                {Cutscenes.BeforeGame,     "D:\\Users\\joel_\\Downloads\\cutscenes\\cutscene.mp4" },
+                {Cutscenes.BeforeBoss,     "" },
+                {Cutscenes.Loss,           "FullResources\\Cutscenes\\youDied.mp4" },
+                {Cutscenes.Win,            "" }
             };
 
             levelsData = new Dictionary<Levels, levelOb> {
-                {Levels.Level1, new levelOb(Properties.Resources.level1FloorFactory, 10) },
-                {Levels.Level2, new levelOb(Properties.Resources.level1FloorFactory, 20) },
-                {Levels.Level3, new levelOb(Properties.Resources.level1FloorFactory, 30) },
+                {Levels.Level1,    new levelOb(Properties.Resources.level1FloorFactory, 10) },
+                {Levels.Level2,    new levelOb(Properties.Resources.level1FloorFactory, 20) },
+                {Levels.Level3,    new levelOb(Properties.Resources.level1FloorFactory, 30) },
                 {Levels.BossLevel, new levelOb(Properties.Resources.level1FloorFactory, 50) }
+            };
+
+            weaponClassData = new Dictionary<WeaponClass, WeaponClassOb> {
+                {WeaponClass.Pistol,          new WeaponClassOb("Pistol",            WeaponType.Semi) },
+                {WeaponClass.AR,              new WeaponClassOb("Assult Rifle",      WeaponType.Auto) },
+                {WeaponClass.Marksman,        new WeaponClassOb("Marksman Rifle",    WeaponType.Semi) },
+                {WeaponClass.SMG,             new WeaponClassOb("Sub-Machine Gun",   WeaponType.Auto) },
+                {WeaponClass.LMG,             new WeaponClassOb("Light-Machine Gun", WeaponType.Auto) },
+                {WeaponClass.HMG,             new WeaponClassOb("Heavy-Machine Gun", WeaponType.Auto) },
+                {WeaponClass.Shotgun,         new WeaponClassOb("Shotgun",           WeaponType.Semi) },
+                {WeaponClass.GrenadeLauncher, new WeaponClassOb("Grenade Launcher",  WeaponType.Semi) },
+                {WeaponClass.RPG,             new WeaponClassOb("RPG",               WeaponType.Semi) },
+            };
+
+            weaponsData = new Dictionary<Weapons, WeaponOb> {
+                {Weapons.Glock19,     new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
+                {Weapons.FiveSeven,   new WeaponOb("Five SeveN", WeaponClass.Pistol, "Belgium", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
+
+                {Weapons.DesertEagle, new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
+                {Weapons.Galil,       new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
+                {Weapons.AMD65,       new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
+                {Weapons.AEK971,      new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
+                {Weapons.AK47,        new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
+                {Weapons.M107,        new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
+                {Weapons.L115A3,      new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
+                {Weapons.SCAR,        new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
+                {Weapons.UMP,         new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
+                {Weapons.MAC10,       new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
+                {Weapons.Uzi,         new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
+                {Weapons.M249,        new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
+                {Weapons.M2,          new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
+                {Weapons.FP6,         new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
+                {Weapons.M1014,       new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
+                {Weapons.MGL105,      new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
+                {Weapons.RPG7,        new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
             };
 
             foreach (KeyValuePair<Scenes, SceneOb> s in scenesData)
                 s.Value.panel.Visible = false;
-            LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
+            //LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
+            LoadScene(Scenes.Menu);
 
             this.HandleCreated += mainForm_HandleCreated;
         }
@@ -373,8 +520,11 @@ namespace christ_a_2
         private void GameOnLoad(object data)
         {
             Levels level = (Levels)data;
+            cLevel = level;
 
-            game_floor_pictureBox.BackgroundImage = levelsData[level].floorImg;
+            game_floor_pictureBox.BackgroundImage = levelsData[level].floorImg; // Set image of floor over drawing for lag purposes
+            game_floor_pictureBox.Location = new Point(0, 0);
+            game_floor_pictureBox.Size = this.Size;
 
             playerPos = new Vector2(0.5f, 0.5f);
             playerPictureBox.Location = FromRelativeV2(playerPos, this.Size); // Have player start in centre // Could change depending on level?
@@ -424,9 +574,9 @@ namespace christ_a_2
                         movement.x += Constants.playerSpeed;
 
                     playerPos += movement * delta; // Player Movement
-                    playerPictureBox.Location = FromRelativeV2(playerPos, this.Size);
+                    playerPictureBox.Location = FromRelativeV2(playerPos, main_game_panel.Size);
 
-                    if (MouseButtons == MouseButtons.Left) // Player tries to shoot
+                    if (MouseButtons == MouseButtons.Left) // Player tries to shoot // (needs work)
                     {
                         if (lastShot < sw.ElapsedMilliseconds - 450) // firerate
                         {
@@ -449,6 +599,16 @@ namespace christ_a_2
 
                 await Task.Delay(delay);
                 delta = (sw.ElapsedMilliseconds - startElapsed) / 1000; // Calculate deltatime for frame
+            }
+        }
+
+        private void main_game_panel_Paint(object sender, PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
+
+            if (cScene == Scenes.Game)
+            {
+                g.DrawImage(levelsData[cLevel].floorImg, 0, 0, this.Size.Width, this.Size.Height); // Draw image of floor to game panel for transparency lag purposes
             }
         }
 
