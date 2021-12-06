@@ -381,25 +381,27 @@ namespace christ_a_2
 
             weaponsData = new Dictionary<Weapons, WeaponOb> {
                 {Weapons.Glock19,     new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
-                {Weapons.FiveSeven,   new WeaponOb("Five SeveN", WeaponClass.Pistol, "Belgium", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
+                {Weapons.FiveSeven,   new WeaponOb("Five SeveN", WeaponClass.Pistol, "Belgium", 20, 0.62f, 650, 180, 20, 60, 0.08f, 0.1f) },
+                {Weapons.DesertEagle, new WeaponOb("Desert Eagle", WeaponClass.Pistol, "USA", 50, 2.00f, 470, 60, 7, 14, 0.02f, 0.2f) },
+                {Weapons.Galil,       new WeaponOb("Galil", WeaponClass.AR, "Israel", 20, 3.95f, 950, 80, 35, 210, 0.15f, 0.1f) },
 
-                {Weapons.DesertEagle, new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
-                {Weapons.Galil,       new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
-                {Weapons.AMD65,       new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
-                {Weapons.AEK971,      new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
-                {Weapons.AK47,        new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
-                {Weapons.M107,        new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
-                {Weapons.L115A3,      new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
-                {Weapons.SCAR,        new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
-                {Weapons.UMP,         new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
-                {Weapons.MAC10,       new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
-                {Weapons.Uzi,         new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
-                {Weapons.M249,        new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
-                {Weapons.M2,          new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
-                {Weapons.FP6,         new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
-                {Weapons.M1014,       new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
-                {Weapons.MGL105,      new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
-                {Weapons.RPG7,        new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
+                // http://www.military-today.com/firearms.htm
+                {Weapons.AMD65,       new WeaponOb("AMD-65", WeaponClass.AR, "Hungary", ) },
+
+                {Weapons.AEK971,      new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
+                {Weapons.AK47,        new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
+                {Weapons.M107,        new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
+                {Weapons.L115A3,      new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
+                {Weapons.SCAR,        new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
+                {Weapons.UMP,         new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
+                {Weapons.MAC10,       new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
+                {Weapons.Uzi,         new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
+                {Weapons.M249,        new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
+                {Weapons.M2,          new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
+                {Weapons.FP6,         new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
+                {Weapons.M1014,       new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
+                {Weapons.MGL105,      new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
+                {Weapons.RPG7,        new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
             };
 
             foreach (KeyValuePair<Scenes, SceneOb> s in scenesData)
