@@ -448,6 +448,8 @@ namespace christ_a_2
             //LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
             LoadScene(Scenes.Menu);
 
+            main_game_panel.Cursor = System.Windows.Forms.Cursors.Cross;
+
             this.HandleCreated += mainForm_HandleCreated;
             Application.Idle += GameLoop;
         }
