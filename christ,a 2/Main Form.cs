@@ -21,8 +21,8 @@ namespace christ_a_2
 
             public const float playerSpeed = 0.15f;
 
-            public static readonly Vector2 playerSize = new Vector2(0.02f, 0.06f); // Sizes are relative
-            public static readonly Vector2 enemySize = new Vector2(0.02f, 0.06f);
+            public static readonly Vector2 playerSize = new Vector2(0.02f, 0.06f); // Scaled relative Vector2
+            public static readonly Vector2 enemySize = new Vector2(0.02f, 0.06f); // Scaled relative Vector2
         }
 
         #endregion
@@ -73,19 +73,27 @@ namespace christ_a_2
             }
         }
 
-        private static Vector2 ToRelativeV2(System.Drawing.Point p, System.Drawing.Size formSize) // Convert from a Windows Point to relative Vector2
+        private static Vector2 ToRelativeV2(Point p, Size formSize) // Convert from a Windows Point to relative Vector2
         {
             return new Vector2((float)p.X / formSize.Width, (float)p.Y / formSize.Height);
         }
 
-        private static System.Drawing.Point FromRelativeV2(Vector2 v, System.Drawing.Size formSize) // Convert from a relative Vector2 to a Windows Point
+        private static Point FromRelativeV2(Vector2 v, Size formSize) // Convert from a relative Vector2 to a Windows Point
         {
-            return new System.Drawing.Point((int)(v.x * formSize.Width), (int)(v.y * formSize.Height));
+            return new Point((int)(v.x * formSize.Width), (int)(v.y * formSize.Height));
         }
 
-        private static System.Drawing.Size SystemPointToSystemSize(System.Drawing.Point p) // Change Windows Point to Windows Scale 
+        private static Size SystemPointToSystemSize(Point p) // Change Windows Point to Windows Scale 
         {
-            return new System.Drawing.Size(p.X, p.Y);
+            return new Size(p.X, p.Y);
+        }
+
+        private static Vector2 FromScaledRelativeV2ToRealtiveV2(Vector2 c, Size formSize) // A scaled relative Vector2 so that the proportions are 1:1, used for scaling
+        {
+            if (formSize.Width > formSize.Height)
+                return new Vector2(c.x * (formSize.Width / formSize.Height), c.y);
+            else
+                return new Vector2(c.x, c.y * (formSize.Height / formSize.Width));
         }
 
         #endregion
@@ -256,7 +264,7 @@ namespace christ_a_2
             public WeaponClass type;
             public Image img;
             public Image bulletImg;
-            public Vector2 bulletSize;
+            public Vector2 bulletSize; // Scaled relative Vector2
             public string country;
 
             public float damage;
@@ -560,12 +568,12 @@ namespace christ_a_2
 
             playerPos = new Vector2(0.5f, 0.5f);
             playerPictureBox.Location = FromRelativeV2(playerPos, this.Size); // Have player start in centre // Could change depending on level?
-            playerPictureBox.Size = SystemPointToSystemSize(FromRelativeV2(Constants.playerSize, this.Size));
+            playerPictureBox.Size = SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(Constants.playerSize, this.Size), this.Size));
 
             Random rng = new Random(2);
             for (int i = 0; i < levelsData[level].enemyAmount; i++) // Create the enemys in random locations // Could have specfic locations later?
             {
-                enemys.Add(new Enemy(new Vector2((float)rng.NextDouble(), (float)rng.NextDouble()), SystemPointToSystemSize(FromRelativeV2(Constants.enemySize, this.Size)))); // Instatiate enemys
+                enemys.Add(new Enemy(new Vector2((float)rng.NextDouble(), (float)rng.NextDouble()), SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(Constants.enemySize, this.Size), this.Size)))); // Instatiate enemys
                 main_game_panel.Controls.Add(enemys[i].pb);
                 enemys[i].UpdatePos(this.Size);
                 enemys[i].pb.BringToFront();
