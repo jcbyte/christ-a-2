@@ -173,7 +173,7 @@ namespace christ_a_2
                 pb.BackgroundImageLayout = ImageLayout.Stretch;
                 pb.Size = size;
                 pb.BackColor = Color.Transparent;
-                pb.BackgroundImage = Properties.Resources.snowmanEnemy; // different enemys?
+                pb.BackgroundImage = Properties.Resources.enemy_snowman; // different enemys?
             }
 
             public void UpdatePos(System.Drawing.Size formSize)
@@ -188,6 +188,8 @@ namespace christ_a_2
 
         private enum Weapons : byte
         {
+            None,
+
             Glock19,
             FiveSeven,
             DesertEagle,
@@ -252,6 +254,9 @@ namespace christ_a_2
         {
             public string name;
             public WeaponClass type;
+            public Image img;
+            public Image bulletImg;
+            public Vector2 bulletSize;
             public string country;
 
             public float damage;
@@ -268,11 +273,17 @@ namespace christ_a_2
             public float maxGrenadeDistance; // Relative - Grendade only
             public float explosionRadius; // Relative - Grenade and RPG only
 
-            public WeaponOb(string _name, WeaponClass _type, string _country, float _damage, float _weight, int _velocity, int _firerate, int _magCapacity, int _maxAmmoMultiplier, float _accuracy, float _recoil, float _pushBack = 0, int _shotgunShots = 0, float _maxGrenadeDistance = 0, float _explosionRadius = 0)
+            
+
+            public WeaponOb(string _name, WeaponClass _type, Image _img, Image _bulletImg, Vector2 _bulletSize, string _country, float _damage, float _weight, int _velocity, int _firerate, int _magCapacity, int _maxAmmoMultiplier, float _accuracy, float _recoil, float _pushBack = 0, int _shotgunShots = 0, float _maxGrenadeDistance = 0, float _explosionRadius = 0)
             {
                 name = _name;
                 type = _type;
+                img = _img;
+                bulletImg = _bulletImg;
+                bulletSize = _bulletSize;
                 country = _country;
+
                 damage = _damage;
                 weight = _weight;
                 velocity = _velocity;
@@ -310,7 +321,7 @@ namespace christ_a_2
                 pb.BackgroundImageLayout = ImageLayout.Stretch;
                 pb.Size = size;
                 pb.BackColor = Color.Transparent;
-                pb.BackgroundImage = Properties.Resources.playerBullet;
+                pb.BackgroundImage = Properties.Resources.bullet_pistol;
             }
 
             public void UpdatePos(System.Drawing.Size formSize)
@@ -328,6 +339,7 @@ namespace christ_a_2
         private List<Bullet> bullets = new List<Bullet>();
 
         private Vector2 playerPos = new Vector2(0.5f, 0.5f);
+        private Weapons[] inventory = new Weapons[3] { Weapons.Glock19, Weapons.None, Weapons.None };
 
         private SoundPlayer backgroundMusicPlayer = new SoundPlayer();
         private SoundPlayer soundEffectsPlayer = new SoundPlayer();
@@ -361,10 +373,10 @@ namespace christ_a_2
             };
 
             levelsData = new Dictionary<Levels, levelOb> {
-                {Levels.Level1,    new levelOb(Properties.Resources.level1FloorFactory, 10) },
-                {Levels.Level2,    new levelOb(Properties.Resources.level1FloorFactory, 20) },
-                {Levels.Level3,    new levelOb(Properties.Resources.level1FloorFactory, 30) },
-                {Levels.BossLevel, new levelOb(Properties.Resources.level1FloorFactory, 50) }
+                {Levels.Level1,    new levelOb(Properties.Resources.level_1Factory, 10) },
+                {Levels.Level2,    new levelOb(Properties.Resources.level_1Factory, 20) },
+                {Levels.Level3,    new levelOb(Properties.Resources.level_1Factory, 30) },
+                {Levels.BossLevel, new levelOb(Properties.Resources.level_1Factory, 50) }
             };
 
             weaponClassData = new Dictionary<WeaponClass, WeaponClassOb> {
@@ -381,26 +393,26 @@ namespace christ_a_2
 
             // http://www.military-today.com/firearms.htm
             weaponsData = new Dictionary<Weapons, WeaponOb> {
-            //  Weapon,                            Name,           Type,                        Country,          Damage, Weight, Velocity, Firerate, MagCapacity, MaxAmmoMultiplier, Accuracy, Recoil, PushBack, ShotgunShots, maxGrenadeDistance, ExplosionRadius
-                {Weapons.Glock19,     new WeaponOb("Glock-19",     WeaponClass.Pistol,          "Austria",        0,      0.67f,  380,      60,/**/   15,          3,                 0.00f,    0.00f) },
-                {Weapons.FiveSeven,   new WeaponOb("Five SeveN",   WeaponClass.Pistol,          "Belgium",        0,      0.62f,  650,      80,/**/   20,          3,                 0.00f,    0.00f) },
-                {Weapons.DesertEagle, new WeaponOb("Desert Eagle", WeaponClass.Pistol,          "USA",            0,      2.00f,  470,      45,/**/   7,           2,                 0.00f,    0.00f) },
-                {Weapons.Galil,       new WeaponOb("Galil",        WeaponClass.AR,              "Israel",         0,      3.95f,  950,      80,       35,          6,                 0.00f,    0.00f) },
-                {Weapons.AMD65,       new WeaponOb("AMD-65",       WeaponClass.AR,              "Hungary",        0,      3.13f,  710,      70,       30,          6,                 0.00f,    0.00f) },
-                {Weapons.AEK971,      new WeaponOb("AEK-971",      WeaponClass.AR,              "Russia",         0,      3.30f,  880,      70,       30,          6,                 0.00f,    0.00f) },
-                {Weapons.AK47,        new WeaponOb("AK-47",        WeaponClass.AR,              "Russia",         0,      4.30f,  715,      70,       30,          6,                 0.00f,    0.00f) },
-                {Weapons.M107,        new WeaponOb("M107",         WeaponClass.Marksman,        "USA",            0,      12.90f, 853,      20,/**/   1,           10,                0.00f,    0.00f) },
-                {Weapons.L115A3,      new WeaponOb("L115A3",       WeaponClass.Marksman,        "United Kingdom", 0,      6.80f,  936,      20,/**/   2,           5,                 0.00f,    0.00f) },
-                {Weapons.SCAR,        new WeaponOb("SCAR",         WeaponClass.Marksman,        "Belgium",        0,      3.50f,  715,      60,/**/   10,          2,                 0.00f,    0.00f) },
-                {Weapons.UMP,         new WeaponOb("UMP",          WeaponClass.SMG,             "Germany",        0,      2.30f,  285,      55,/*R*/  25,          10,                0.00f,    0.00f) },
-                {Weapons.MAC10,       new WeaponOb("MAC-10",       WeaponClass.SMG,             "USA",            0,      2.84f,  305,      80,/*R*/  30,          10,                0.00f,    0.00f) },
-                {Weapons.Uzi,         new WeaponOb("Uzi",          WeaponClass.SMG,             "Israel",         0,      1.70f,  345,      40,/*R*/  20,          10,                0.00f,    0.00f) },
-                {Weapons.M249,        new WeaponOb("M249",         WeaponClass.LMG,             "USA",            0,      7.50f,  915,      100,/*R*/ 30,/*R*/     15,                0.00f,    0.00f) },
-                {Weapons.M2,          new WeaponOb("M2",           WeaponClass.HMG,             "USA",            0,      38.00f, 820,      90,/*R*/  100,/*R*/    4,                 0.00f,    0.00f) },
-                {Weapons.FP6,         new WeaponOb("FP6",          WeaponClass.Shotgun,         "Germany",        0,      3.00f,  400,      60,/**/   6,           2,                 0.00f,    0.00f,  0.00f,    3) },
-                {Weapons.M1014,       new WeaponOb("M1014",        WeaponClass.Shotgun,         "Italy",          0,      3.630f, 408,      30,/**/   8,           3,                 0.00f,    0.00f,  0.00f,    3) },
-                {Weapons.MGL105,      new WeaponOb("MGL-105",      WeaponClass.GrenadeLauncher, "South Africa",   0,      5.30f,  76,       60,/**/   6,           1,                 0.00f,    0.00f,  0.00f,    0,            0.50f,              0.05f) },
-                {Weapons.RPG7,        new WeaponOb("RPG-7",        WeaponClass.RPG,             "Russia",         0,      7.90f,  208,      30,/**/   1,           4,                 0.00f,    0.00f,  0.00f,    0,            0.00f,              0.05f) },
+            //  Weapon,                            Name,           Type,                        Img,                                   BulletImg,                          BulletSize,                Country,          Damage, Weight, Velocity, Firerate, MagCapacity, MaxAmmoMultiplier, Accuracy, Recoil, PushBack, ShotgunShots, maxGrenadeDistance, ExplosionRadius
+                {Weapons.Glock19,     new WeaponOb("Glock-19",     WeaponClass.Pistol,          Properties.Resources.weapon_glock19,   Properties.Resources.bullet_pistol,  new Vector2(0.01f, 0.01f), "Austria",        0,      0.67f,  380,      60,/**/   15,          3,                 0.00f,    0.00f) },
+                {Weapons.FiveSeven,   new WeaponOb("Five SeveN",   WeaponClass.Pistol,          Properties.Resources.weapon_fiveseven, Properties.Resources.bullet_pistol,  new Vector2(0.01f, 0.01f), "Belgium",        0,      0.62f,  650,      80,/**/   20,          3,                 0.00f,    0.00f) },
+                {Weapons.DesertEagle, new WeaponOb("Desert Eagle", WeaponClass.Pistol,          Properties.Resources.weapon_deagle,    Properties.Resources.bullet_pistol,  new Vector2(0.01f, 0.01f), "USA",            0,      2.00f,  470,      45,/**/   7,           2,                 0.00f,    0.00f) },
+                {Weapons.Galil,       new WeaponOb("Galil",        WeaponClass.AR,              Properties.Resources.weapon_galil,     Properties.Resources.bullet_other,   new Vector2(0.01f, 0.01f), "Israel",         0,      3.95f,  950,      80,       35,          6,                 0.00f,    0.00f) },
+                {Weapons.AMD65,       new WeaponOb("AMD-65",       WeaponClass.AR,              Properties.Resources.weapon_amd65,     Properties.Resources.bullet_other,   new Vector2(0.01f, 0.01f), "Hungary",        0,      3.13f,  710,      70,       30,          6,                 0.00f,    0.00f) },
+                {Weapons.AEK971,      new WeaponOb("AEK-971",      WeaponClass.AR,              Properties.Resources.weapon_aek971,    Properties.Resources.bullet_other,   new Vector2(0.01f, 0.01f), "Russia",         0,      3.30f,  880,      70,       30,          6,                 0.00f,    0.00f) },
+                {Weapons.AK47,        new WeaponOb("AK-47",        WeaponClass.AR,              Properties.Resources.weapon_ak47,      Properties.Resources.bullet_other,   new Vector2(0.01f, 0.01f), "Russia",         0,      4.30f,  715,      70,       30,          6,                 0.00f,    0.00f) },
+                {Weapons.M107,        new WeaponOb("M107",         WeaponClass.Marksman,        Properties.Resources.weapon_m107,      Properties.Resources.bullet_other,   new Vector2(0.01f, 0.01f), "USA",            0,      12.90f, 853,      20,/**/   1,           10,                0.00f,    0.00f) },
+                {Weapons.L115A3,      new WeaponOb("L115A3",       WeaponClass.Marksman,        Properties.Resources.weapon_l115a3,    Properties.Resources.bullet_other,   new Vector2(0.01f, 0.01f), "United Kingdom", 0,      6.80f,  936,      20,/**/   2,           5,                 0.00f,    0.00f) },
+                {Weapons.SCAR,        new WeaponOb("SCAR SSR",     WeaponClass.Marksman,        Properties.Resources.weapon_scar,      Properties.Resources.bullet_other,   new Vector2(0.01f, 0.01f), "Belgium",        0,      3.50f,  715,      60,/**/   10,          2,                 0.00f,    0.00f) },
+                {Weapons.UMP,         new WeaponOb("UMP",          WeaponClass.SMG,             Properties.Resources.weapon_ump,       Properties.Resources.bullet_other,   new Vector2(0.01f, 0.01f), "Germany",        0,      2.30f,  285,      55,/*R*/  25,          10,                0.00f,    0.00f) },
+                {Weapons.MAC10,       new WeaponOb("MAC-10",       WeaponClass.SMG,             Properties.Resources.weapon_mac10,     Properties.Resources.bullet_other,   new Vector2(0.01f, 0.01f), "USA",            0,      2.84f,  305,      80,/*R*/  30,          10,                0.00f,    0.00f) },
+                {Weapons.Uzi,         new WeaponOb("Uzi",          WeaponClass.SMG,             Properties.Resources.weapon_uzi,       Properties.Resources.bullet_other,   new Vector2(0.01f, 0.01f), "Israel",         0,      1.70f,  345,      40,/*R*/  20,          10,                0.00f,    0.00f) },
+                {Weapons.M249,        new WeaponOb("M249",         WeaponClass.LMG,             Properties.Resources.weapon_m249,      Properties.Resources.bullet_other,   new Vector2(0.01f, 0.01f), "USA",            0,      7.50f,  915,      100,/*R*/ 30,/*R*/     15,                0.00f,    0.00f) },
+                {Weapons.M2,          new WeaponOb("M2",           WeaponClass.HMG,             Properties.Resources.weapon_m2,        Properties.Resources.bullet_other,   new Vector2(0.01f, 0.01f), "USA",            0,      38.00f, 820,      90,/*R*/  100,/*R*/    4,                 0.00f,    0.00f) },
+                {Weapons.FP6,         new WeaponOb("FP6",          WeaponClass.Shotgun,         Properties.Resources.weapon_fp6,       Properties.Resources.bullet_shotgun, new Vector2(0.01f, 0.01f), "Germany",        0,      3.00f,  400,      60,/**/   6,           2,                 0.00f,    0.00f,  0.00f,    3) },
+                {Weapons.M1014,       new WeaponOb("M1014",        WeaponClass.Shotgun,         Properties.Resources.weapon_m1014,     Properties.Resources.bullet_shotgun, new Vector2(0.01f, 0.01f), "Italy",          0,      3.630f, 408,      30,/**/   8,           3,                 0.00f,    0.00f,  0.00f,    3) },
+                {Weapons.MGL105,      new WeaponOb("MGL-105",      WeaponClass.GrenadeLauncher, Properties.Resources.weapon_mgl105,    Properties.Resources.bullet_grenade, new Vector2(0.01f, 0.01f), "South Africa",   0,      5.30f,  76,       60,/**/   6,           1,                 0.00f,    0.00f,  0.00f,    0,            0.50f,              0.05f) },
+                {Weapons.RPG7,        new WeaponOb("RPG-7",        WeaponClass.RPG,             Properties.Resources.weapon_rpg7,      Properties.Resources.bullet_rpg,     new Vector2(0.01f, 0.01f), "Russia",         0,      7.90f,  208,      30,/**/   1,           4,                 0.00f,    0.00f,  0.00f,    0,            0.00f,              0.05f) },
             };
 
             foreach (KeyValuePair<Scenes, SceneOb> s in scenesData)

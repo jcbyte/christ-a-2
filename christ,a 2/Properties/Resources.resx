@@ -118,22 +118,91 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="snowmanEnemy" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="enemy_snowman" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Cowboy_Snowman_Cropped.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="level1FloorFactory" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="level_1Factory" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Factory_Level1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="playerBullet" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="bullet_pistol" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\bullet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="nullzPlayer" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="player_nullz" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\nullz.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="menu" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\menu.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="bullet_grenade" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\bullet_grenadeLauncher.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="bullet_other" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\bullet_ar.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="bullet_rpg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\bullet_rpg.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="bullet_shotgun" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\bullet_shotgun.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="weapon_aek971" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\weapon_aek971.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="weapon_ak47" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\weapon_ak47.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="weapon_amd65" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\weapon_amd65.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="weapon_deagle" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\weapon_deagle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="weapon_fiveseven" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\weapon_fiveseven.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="weapon_fp6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\weapon_fp6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="weapon_galil" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\weapon_galil.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="weapon_glock19" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\weapon_glock19.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="weapon_l115a3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\weapon_l115a3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="weapon_m1014" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\weapon_m1014.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="weapon_m107" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\weapon_m107.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="weapon_m2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\weapon_m2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="weapon_m249" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\weapon_m249.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="weapon_mac10" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\weapon_mac10.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="weapon_mgl105" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\weapon_mgl105.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="weapon_rpg7" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\weapon_rpg7.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="weapon_scar" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\weapon_scar.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="weapon_ump" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\weapon_ump.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="weapon_uzi" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\weapon_uzi.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

@@ -129,5 +129,77 @@
   <ItemGroup>
     <None Include="Resources\menu.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\weapon_glock19.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\weapon_l115a3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\weapon_m2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\weapon_m107.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\weapon_m1014.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\weapon_mac10.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\weapon_mgl105.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\weapon_rpg7.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\weapon_scar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\weapon_ump.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\weapon_uzi.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\weapon_aek971.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\weapon_ak47.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\weapon_amd65.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\weapon_deagle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\weapon_fiveseven.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\weapon_fp6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\weapon_galil.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\weapon_m249.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bullet_ar.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bullet_ar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bullet_grenadeLauncher.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bullet_rpg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bullet_shotgun.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
