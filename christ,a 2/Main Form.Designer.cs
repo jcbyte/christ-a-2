@@ -47,6 +47,7 @@
             this.game_floor_pictureBox = new System.Windows.Forms.PictureBox();
             this.main_cutscene_panel = new System.Windows.Forms.Panel();
             this.cutscene_media_windowsMediaPlayer = new AxWMPLib.AxWindowsMediaPlayer();
+            this.game_inventory_reloading_label = new System.Windows.Forms.Label();
             this.main_menu_panel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.main_game_panel.SuspendLayout();
@@ -161,7 +162,7 @@
             this.main_game_panel.Size = new System.Drawing.Size(1280, 720);
             this.main_game_panel.TabIndex = 1;
             this.main_game_panel.Paint += new System.Windows.Forms.PaintEventHandler(this.main_game_panel_Paint);
-            this.main_game_panel.MouseWheel += new System.Windows.Forms.MouseEventHandler(main_game_panel_MouseWheel);
+            this.main_game_panel.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.main_game_panel_MouseWheel);
             // 
             // playerPictureBox
             // 
@@ -179,6 +180,7 @@
             this.game_inventory_panel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.game_inventory_panel.BackColor = System.Drawing.Color.Transparent;
             this.game_inventory_panel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.game_inventory_panel.Controls.Add(this.game_inventory_reloading_label);
             this.game_inventory_panel.Controls.Add(this.game_inventory_prevWeapon_PictureBox);
             this.game_inventory_panel.Controls.Add(this.game_inventory_nextWeapon_PictureBox);
             this.game_inventory_panel.Controls.Add(this.game_inventory_currentWeaponAmmoReserve_Label);
@@ -286,6 +288,18 @@
             this.cutscene_media_windowsMediaPlayer.Size = new System.Drawing.Size(1280, 720);
             this.cutscene_media_windowsMediaPlayer.TabIndex = 0;
             // 
+            // game_inventory_reloading_label
+            // 
+            this.game_inventory_reloading_label.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(168)))), ((int)(((byte)(44)))), ((int)(((byte)(56)))));
+            this.game_inventory_reloading_label.Font = new System.Drawing.Font("Metropolis Thin", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.game_inventory_reloading_label.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(96)))), ((int)(((byte)(153)))));
+            this.game_inventory_reloading_label.Location = new System.Drawing.Point(10, 35);
+            this.game_inventory_reloading_label.Name = "game_inventory_reloading_label";
+            this.game_inventory_reloading_label.Size = new System.Drawing.Size(200, 30);
+            this.game_inventory_reloading_label.TabIndex = 6;
+            this.game_inventory_reloading_label.Text = "Reloading";
+            this.game_inventory_reloading_label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // mainForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
@@ -339,6 +353,7 @@
         private System.Windows.Forms.PictureBox game_inventory_prevWeapon_PictureBox;
         private System.Windows.Forms.PictureBox game_inventory_nextWeapon_PictureBox;
         private System.Windows.Forms.Label game_inventory_currentWeaponAmmoReserve_Label;
+        private System.Windows.Forms.Label game_inventory_reloading_label;
     }
 }
 
