@@ -19,8 +19,6 @@ namespace christ_a_2
             public const int memoryIncreaseRate = 50;
             public const int memoryIncrease = 1024 * 1024 * 64;
 
-            public const int gameLoopFPS = 60;
-
             public const float playerSpeed = 0.15f;
 
             public static readonly Vector2 playerSize = new Vector2(0.02f, 0.06f); // Sizes are relative
@@ -386,7 +384,7 @@ namespace christ_a_2
                 {Weapons.Galil,       new WeaponOb("Galil", WeaponClass.AR, "Israel", 20, 3.95f, 950, 80, 35, 210, 0.15f, 0.1f) },
 
                 // http://www.military-today.com/firearms.htm
-                {Weapons.AMD65,       new WeaponOb("AMD-65", WeaponClass.AR, "Hungary", ) },
+                /*{Weapons.AMD65,       new WeaponOb("AMD-65", WeaponClass.AR, "Hungary", ) },
 
                 {Weapons.AEK971,      new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
                 {Weapons.AK47,        new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
@@ -401,7 +399,7 @@ namespace christ_a_2
                 {Weapons.FP6,         new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
                 {Weapons.M1014,       new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
                 {Weapons.MGL105,      new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
-                {Weapons.RPG7,        new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
+                {Weapons.RPG7,        new WeaponOb("", WeaponClass.Pistol, "Austria", ) },*/
             };
 
             foreach (KeyValuePair<Scenes, SceneOb> s in scenesData)
@@ -410,6 +408,7 @@ namespace christ_a_2
             LoadScene(Scenes.Menu);
 
             this.HandleCreated += mainForm_HandleCreated;
+            Application.Idle += GameLoop;
         }
 
         #region "Async"
@@ -417,7 +416,6 @@ namespace christ_a_2
         private void mainForm_HandleCreated(object sender, EventArgs e) // To start memory counter after the Window has been initialised
         {
             UpdateMemoryCounterLoopAsync();
-            GameLoopAsync();
         }
 
         private async void UpdateMemoryCounterLoopAsync()
@@ -548,60 +546,54 @@ namespace christ_a_2
             }
         }
 
-        private async void GameLoopAsync()
+        System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+
+        float startElapsed;
+        float delta = 0;
+
+        float lastShot = 0;
+
+        void GameLoop(object sender, EventArgs e)
         {
-            int delay = (int)((1.0f / Constants.gameLoopFPS) * 1000);
-            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
-
-            float startElapsed;
-            float delta = 0;
-
-            float lastShot = 0;
-
-            while (true)
+            if (cScene == Scenes.Game)
             {
-                startElapsed = sw.ElapsedMilliseconds;
+                Vector2 movement = new Vector2();
 
-                if (cScene == Scenes.Game)
+                if (Keyboard.IsKeyDown(Key.W) || Keyboard.IsKeyDown(Key.Up)) // Get movement varible depending on keypress
+                    movement.y -= Constants.playerSpeed;
+                if (Keyboard.IsKeyDown(Key.S) || Keyboard.IsKeyDown(Key.Down))
+                    movement.y += Constants.playerSpeed;
+                if (Keyboard.IsKeyDown(Key.A) || Keyboard.IsKeyDown(Key.Left))
+                    movement.x -= Constants.playerSpeed;
+                if (Keyboard.IsKeyDown(Key.D) || Keyboard.IsKeyDown(Key.Right))
+                    movement.x += Constants.playerSpeed;
+
+                playerPos += movement * delta; // Player Movement
+                playerPictureBox.Location = FromRelativeV2(playerPos, main_game_panel.Size);
+
+                if (MouseButtons == MouseButtons.Left) // Player tries to shoot // (needs work)
                 {
-                    Vector2 movement = new Vector2();
-
-                    if (Keyboard.IsKeyDown(Key.W) || Keyboard.IsKeyDown(Key.Up)) // Get movement varible depending on keypress
-                        movement.y -= Constants.playerSpeed;
-                    if (Keyboard.IsKeyDown(Key.S) || Keyboard.IsKeyDown(Key.Down))
-                        movement.y += Constants.playerSpeed;
-                    if (Keyboard.IsKeyDown(Key.A) || Keyboard.IsKeyDown(Key.Left))
-                        movement.x -= Constants.playerSpeed;
-                    if (Keyboard.IsKeyDown(Key.D) || Keyboard.IsKeyDown(Key.Right))
-                        movement.x += Constants.playerSpeed;
-
-                    playerPos += movement * delta; // Player Movement
-                    playerPictureBox.Location = FromRelativeV2(playerPos, main_game_panel.Size);
-
-                    if (MouseButtons == MouseButtons.Left) // Player tries to shoot // (needs work)
+                   if (lastShot < sw.ElapsedMilliseconds - 450) // firerate
                     {
-                        if (lastShot < sw.ElapsedMilliseconds - 450) // firerate
-                        {
-                            Vector2 bulletdir = (ToRelativeV2(MousePosition, this.Size) - playerPos).Normalise();
-                            bullets.Add(new Bullet(playerPos, bulletdir, 0.04f, SystemPointToSystemSize(FromRelativeV2(new Vector2(0.01f, 0.04f), this.Size)))); // Instatiate bullet
+                        Vector2 bulletdir = (ToRelativeV2(MousePosition, this.Size) - playerPos).Normalise();
+                        bullets.Add(new Bullet(playerPos, bulletdir, 0.04f, SystemPointToSystemSize(FromRelativeV2(new Vector2(0.01f, 0.04f), this.Size)))); // Instatiate bullet
 
-                            int bulleti = bullets.Count - 1;
-                            main_game_panel.Controls.Add(bullets[bulleti].pb);
-                            bullets[bulleti].pb.BringToFront();
+                        int bulleti = bullets.Count - 1;
+                        main_game_panel.Controls.Add(bullets[bulleti].pb);
+                        bullets[bulleti].pb.BringToFront();
 
-                            lastShot = sw.ElapsedMilliseconds;
-                        }
-                    }
-
-                    for (int i = 0; i < bullets.Count; i++)
-                    {
-                        bullets[i].UpdatePos(this.Size);
+                        lastShot = sw.ElapsedMilliseconds;
                     }
                 }
 
-                await Task.Delay(delay);
-                delta = (sw.ElapsedMilliseconds - startElapsed) / 1000; // Calculate deltatime for frame
+                for (int i = 0; i < bullets.Count; i++)
+                {
+                    bullets[i].UpdatePos(this.Size);
+                }
             }
+
+            delta = (sw.ElapsedMilliseconds - startElapsed) / 1000; // Calculate deltatime for frame
+            startElapsed = sw.ElapsedMilliseconds;
         }
 
         private void main_game_panel_Paint(object sender, PaintEventArgs e)
