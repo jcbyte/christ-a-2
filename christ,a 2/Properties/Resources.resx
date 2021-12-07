@@ -193,6 +193,9 @@
   <data name="weapon_mgl105" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\weapon_mgl105.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="weapon_none" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\weapon_none.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="weapon_rpg7" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\weapon_rpg7.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

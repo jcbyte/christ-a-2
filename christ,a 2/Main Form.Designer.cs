@@ -37,27 +37,27 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.main_game_panel = new System.Windows.Forms.Panel();
             this.playerPictureBox = new System.Windows.Forms.PictureBox();
+            this.game_inventory_panel = new System.Windows.Forms.Panel();
+            this.game_inventory_prevWeapon_PictureBox = new System.Windows.Forms.PictureBox();
+            this.game_inventory_nextWeapon_PictureBox = new System.Windows.Forms.PictureBox();
+            this.game_inventory_currentWeaponAmmoReserve_Label = new System.Windows.Forms.Label();
+            this.game_inventory_currentWeaponAmmo_Label = new System.Windows.Forms.Label();
+            this.game_inventory_currentWeaponName_label = new System.Windows.Forms.Label();
+            this.game_inventory_currentWeapon_PictureBox = new System.Windows.Forms.PictureBox();
             this.game_floor_pictureBox = new System.Windows.Forms.PictureBox();
             this.main_cutscene_panel = new System.Windows.Forms.Panel();
             this.cutscene_media_windowsMediaPlayer = new AxWMPLib.AxWindowsMediaPlayer();
-            this.game_inventory_panel = new System.Windows.Forms.Panel();
-            this.game_inventory_currentWeapon_PictureBox = new System.Windows.Forms.PictureBox();
-            this.game_inventory_currentWeaponName_label = new System.Windows.Forms.Label();
-            this.game_inventory_currentWeaponAmmo_Label = new System.Windows.Forms.Label();
-            this.game_inventory_currentWeaponAmmoReserve_Label = new System.Windows.Forms.Label();
-            this.game_inventory_nextWeapon_PictureBox = new System.Windows.Forms.PictureBox();
-            this.game_inventory_prevWeapon_PictureBox = new System.Windows.Forms.PictureBox();
             this.main_menu_panel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.main_game_panel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.playerPictureBox)).BeginInit();
+            this.game_inventory_panel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.game_inventory_prevWeapon_PictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.game_inventory_nextWeapon_PictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.game_inventory_currentWeapon_PictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.game_floor_pictureBox)).BeginInit();
             this.main_cutscene_panel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.cutscene_media_windowsMediaPlayer)).BeginInit();
-            this.game_inventory_panel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.game_inventory_currentWeapon_PictureBox)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.game_inventory_nextWeapon_PictureBox)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.game_inventory_prevWeapon_PictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // menu_startGame_button
@@ -161,6 +161,7 @@
             this.main_game_panel.Size = new System.Drawing.Size(1280, 720);
             this.main_game_panel.TabIndex = 1;
             this.main_game_panel.Paint += new System.Windows.Forms.PaintEventHandler(this.main_game_panel_Paint);
+            this.main_game_panel.MouseWheel += new System.Windows.Forms.MouseEventHandler(main_game_panel_MouseWheel);
             // 
             // playerPictureBox
             // 
@@ -172,6 +173,82 @@
             this.playerPictureBox.Size = new System.Drawing.Size(45, 77);
             this.playerPictureBox.TabIndex = 1;
             this.playerPictureBox.TabStop = false;
+            // 
+            // game_inventory_panel
+            // 
+            this.game_inventory_panel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.game_inventory_panel.BackColor = System.Drawing.Color.Transparent;
+            this.game_inventory_panel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.game_inventory_panel.Controls.Add(this.game_inventory_prevWeapon_PictureBox);
+            this.game_inventory_panel.Controls.Add(this.game_inventory_nextWeapon_PictureBox);
+            this.game_inventory_panel.Controls.Add(this.game_inventory_currentWeaponAmmoReserve_Label);
+            this.game_inventory_panel.Controls.Add(this.game_inventory_currentWeaponAmmo_Label);
+            this.game_inventory_panel.Controls.Add(this.game_inventory_currentWeaponName_label);
+            this.game_inventory_panel.Controls.Add(this.game_inventory_currentWeapon_PictureBox);
+            this.game_inventory_panel.Location = new System.Drawing.Point(920, 550);
+            this.game_inventory_panel.Name = "game_inventory_panel";
+            this.game_inventory_panel.Size = new System.Drawing.Size(340, 150);
+            this.game_inventory_panel.TabIndex = 2;
+            // 
+            // game_inventory_prevWeapon_PictureBox
+            // 
+            this.game_inventory_prevWeapon_PictureBox.BackgroundImage = global::christ_a_2.Properties.Resources.weapon_ak47;
+            this.game_inventory_prevWeapon_PictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.game_inventory_prevWeapon_PictureBox.Location = new System.Drawing.Point(230, 90);
+            this.game_inventory_prevWeapon_PictureBox.Name = "game_inventory_prevWeapon_PictureBox";
+            this.game_inventory_prevWeapon_PictureBox.Size = new System.Drawing.Size(100, 40);
+            this.game_inventory_prevWeapon_PictureBox.TabIndex = 5;
+            this.game_inventory_prevWeapon_PictureBox.TabStop = false;
+            // 
+            // game_inventory_nextWeapon_PictureBox
+            // 
+            this.game_inventory_nextWeapon_PictureBox.BackgroundImage = global::christ_a_2.Properties.Resources.weapon_deagle;
+            this.game_inventory_nextWeapon_PictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.game_inventory_nextWeapon_PictureBox.Location = new System.Drawing.Point(230, 30);
+            this.game_inventory_nextWeapon_PictureBox.Name = "game_inventory_nextWeapon_PictureBox";
+            this.game_inventory_nextWeapon_PictureBox.Size = new System.Drawing.Size(100, 40);
+            this.game_inventory_nextWeapon_PictureBox.TabIndex = 4;
+            this.game_inventory_nextWeapon_PictureBox.TabStop = false;
+            // 
+            // game_inventory_currentWeaponAmmoReserve_Label
+            // 
+            this.game_inventory_currentWeaponAmmoReserve_Label.Font = new System.Drawing.Font("Metropolis Thin", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.game_inventory_currentWeaponAmmoReserve_Label.Location = new System.Drawing.Point(110, 120);
+            this.game_inventory_currentWeaponAmmoReserve_Label.Name = "game_inventory_currentWeaponAmmoReserve_Label";
+            this.game_inventory_currentWeaponAmmoReserve_Label.Size = new System.Drawing.Size(100, 20);
+            this.game_inventory_currentWeaponAmmoReserve_Label.TabIndex = 3;
+            this.game_inventory_currentWeaponAmmoReserve_Label.Text = "15/30";
+            this.game_inventory_currentWeaponAmmoReserve_Label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // game_inventory_currentWeaponAmmo_Label
+            // 
+            this.game_inventory_currentWeaponAmmo_Label.Font = new System.Drawing.Font("Metropolis Thin", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.game_inventory_currentWeaponAmmo_Label.Location = new System.Drawing.Point(10, 120);
+            this.game_inventory_currentWeaponAmmo_Label.Name = "game_inventory_currentWeaponAmmo_Label";
+            this.game_inventory_currentWeaponAmmo_Label.Size = new System.Drawing.Size(100, 20);
+            this.game_inventory_currentWeaponAmmo_Label.TabIndex = 2;
+            this.game_inventory_currentWeaponAmmo_Label.Text = "5/15";
+            this.game_inventory_currentWeaponAmmo_Label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // game_inventory_currentWeaponName_label
+            // 
+            this.game_inventory_currentWeaponName_label.Font = new System.Drawing.Font("Metropolis Thin", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.game_inventory_currentWeaponName_label.Location = new System.Drawing.Point(10, 90);
+            this.game_inventory_currentWeaponName_label.Name = "game_inventory_currentWeaponName_label";
+            this.game_inventory_currentWeaponName_label.Size = new System.Drawing.Size(200, 30);
+            this.game_inventory_currentWeaponName_label.TabIndex = 1;
+            this.game_inventory_currentWeaponName_label.Text = "Glock-19";
+            this.game_inventory_currentWeaponName_label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // game_inventory_currentWeapon_PictureBox
+            // 
+            this.game_inventory_currentWeapon_PictureBox.BackgroundImage = global::christ_a_2.Properties.Resources.weapon_glock19;
+            this.game_inventory_currentWeapon_PictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.game_inventory_currentWeapon_PictureBox.Location = new System.Drawing.Point(10, 10);
+            this.game_inventory_currentWeapon_PictureBox.Name = "game_inventory_currentWeapon_PictureBox";
+            this.game_inventory_currentWeapon_PictureBox.Size = new System.Drawing.Size(200, 80);
+            this.game_inventory_currentWeapon_PictureBox.TabIndex = 0;
+            this.game_inventory_currentWeapon_PictureBox.TabStop = false;
             // 
             // game_floor_pictureBox
             // 
@@ -209,82 +286,6 @@
             this.cutscene_media_windowsMediaPlayer.Size = new System.Drawing.Size(1280, 720);
             this.cutscene_media_windowsMediaPlayer.TabIndex = 0;
             // 
-            // game_inventory_panel
-            // 
-            this.game_inventory_panel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.game_inventory_panel.BackColor = System.Drawing.Color.Transparent;
-            this.game_inventory_panel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.game_inventory_panel.Controls.Add(this.game_inventory_prevWeapon_PictureBox);
-            this.game_inventory_panel.Controls.Add(this.game_inventory_nextWeapon_PictureBox);
-            this.game_inventory_panel.Controls.Add(this.game_inventory_currentWeaponAmmoReserve_Label);
-            this.game_inventory_panel.Controls.Add(this.game_inventory_currentWeaponAmmo_Label);
-            this.game_inventory_panel.Controls.Add(this.game_inventory_currentWeaponName_label);
-            this.game_inventory_panel.Controls.Add(this.game_inventory_currentWeapon_PictureBox);
-            this.game_inventory_panel.Location = new System.Drawing.Point(920, 550);
-            this.game_inventory_panel.Name = "game_inventory_panel";
-            this.game_inventory_panel.Size = new System.Drawing.Size(340, 150);
-            this.game_inventory_panel.TabIndex = 2;
-            // 
-            // game_inventory_currentWeapon_PictureBox
-            // 
-            this.game_inventory_currentWeapon_PictureBox.BackgroundImage = global::christ_a_2.Properties.Resources.bullet_pistol;
-            this.game_inventory_currentWeapon_PictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.game_inventory_currentWeapon_PictureBox.Location = new System.Drawing.Point(10, 10);
-            this.game_inventory_currentWeapon_PictureBox.Name = "game_inventory_currentWeapon_PictureBox";
-            this.game_inventory_currentWeapon_PictureBox.Size = new System.Drawing.Size(200, 80);
-            this.game_inventory_currentWeapon_PictureBox.TabIndex = 0;
-            this.game_inventory_currentWeapon_PictureBox.TabStop = false;
-            // 
-            // game_inventory_currentWeaponName_label
-            // 
-            this.game_inventory_currentWeaponName_label.Font = new System.Drawing.Font("Metropolis Thin", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.game_inventory_currentWeaponName_label.Location = new System.Drawing.Point(10, 90);
-            this.game_inventory_currentWeaponName_label.Name = "game_inventory_currentWeaponName_label";
-            this.game_inventory_currentWeaponName_label.Size = new System.Drawing.Size(200, 30);
-            this.game_inventory_currentWeaponName_label.TabIndex = 1;
-            this.game_inventory_currentWeaponName_label.Text = "Glock-19";
-            this.game_inventory_currentWeaponName_label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // game_inventory_currentWeaponAmmo_Label
-            // 
-            this.game_inventory_currentWeaponAmmo_Label.Font = new System.Drawing.Font("Metropolis Thin", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.game_inventory_currentWeaponAmmo_Label.Location = new System.Drawing.Point(10, 120);
-            this.game_inventory_currentWeaponAmmo_Label.Name = "game_inventory_currentWeaponAmmo_Label";
-            this.game_inventory_currentWeaponAmmo_Label.Size = new System.Drawing.Size(100, 20);
-            this.game_inventory_currentWeaponAmmo_Label.TabIndex = 2;
-            this.game_inventory_currentWeaponAmmo_Label.Text = "5/15";
-            this.game_inventory_currentWeaponAmmo_Label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // game_inventory_currentWeaponAmmoReserve_Label
-            // 
-            this.game_inventory_currentWeaponAmmoReserve_Label.Font = new System.Drawing.Font("Metropolis Thin", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.game_inventory_currentWeaponAmmoReserve_Label.Location = new System.Drawing.Point(110, 120);
-            this.game_inventory_currentWeaponAmmoReserve_Label.Name = "game_inventory_currentWeaponAmmoReserve_Label";
-            this.game_inventory_currentWeaponAmmoReserve_Label.Size = new System.Drawing.Size(100, 20);
-            this.game_inventory_currentWeaponAmmoReserve_Label.TabIndex = 3;
-            this.game_inventory_currentWeaponAmmoReserve_Label.Text = "15/30";
-            this.game_inventory_currentWeaponAmmoReserve_Label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // game_inventory_nextWeapon_PictureBox
-            // 
-            this.game_inventory_nextWeapon_PictureBox.BackgroundImage = global::christ_a_2.Properties.Resources.bullet_pistol;
-            this.game_inventory_nextWeapon_PictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.game_inventory_nextWeapon_PictureBox.Location = new System.Drawing.Point(230, 30);
-            this.game_inventory_nextWeapon_PictureBox.Name = "game_inventory_nextWeapon_PictureBox";
-            this.game_inventory_nextWeapon_PictureBox.Size = new System.Drawing.Size(100, 40);
-            this.game_inventory_nextWeapon_PictureBox.TabIndex = 4;
-            this.game_inventory_nextWeapon_PictureBox.TabStop = false;
-            // 
-            // game_inventory_prevWeapon_PictureBox
-            // 
-            this.game_inventory_prevWeapon_PictureBox.BackgroundImage = global::christ_a_2.Properties.Resources.bullet_pistol;
-            this.game_inventory_prevWeapon_PictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.game_inventory_prevWeapon_PictureBox.Location = new System.Drawing.Point(230, 90);
-            this.game_inventory_prevWeapon_PictureBox.Name = "game_inventory_prevWeapon_PictureBox";
-            this.game_inventory_prevWeapon_PictureBox.Size = new System.Drawing.Size(100, 40);
-            this.game_inventory_prevWeapon_PictureBox.TabIndex = 5;
-            this.game_inventory_prevWeapon_PictureBox.TabStop = false;
-            // 
             // mainForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
@@ -307,13 +308,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.main_game_panel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.playerPictureBox)).EndInit();
+            this.game_inventory_panel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.game_inventory_prevWeapon_PictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.game_inventory_nextWeapon_PictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.game_inventory_currentWeapon_PictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.game_floor_pictureBox)).EndInit();
             this.main_cutscene_panel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.cutscene_media_windowsMediaPlayer)).EndInit();
-            this.game_inventory_panel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.game_inventory_currentWeapon_PictureBox)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.game_inventory_nextWeapon_PictureBox)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.game_inventory_prevWeapon_PictureBox)).EndInit();
             this.ResumeLayout(false);
 
         }

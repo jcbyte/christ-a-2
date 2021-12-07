@@ -313,6 +313,16 @@ namespace christ_a_2.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap weapon_none {
+            get {
+                object obj = ResourceManager.GetObject("weapon_none", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap weapon_rpg7 {
             get {
                 object obj = ResourceManager.GetObject("weapon_rpg7", resourceCulture);

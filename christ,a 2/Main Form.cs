@@ -273,8 +273,6 @@ namespace christ_a_2
             public float maxGrenadeDistance; // Relative - Grendade only
             public float explosionRadius; // Relative - Grenade and RPG only
 
-            
-
             public WeaponOb(string _name, WeaponClass _type, Image _img, Image _bulletImg, Vector2 _bulletSize, string _country, float _damage, float _weight, int _velocity, int _firerate, int _magCapacity, int _maxAmmoMultiplier, float _accuracy, float _recoil, float _pushBack = 0, int _shotgunShots = 0, float _maxGrenadeDistance = 0, float _explosionRadius = 0)
             {
                 name = _name;
@@ -333,13 +331,31 @@ namespace christ_a_2
 
         #endregion
 
+        #region "Inventory"
+
+        private struct inventoryOb
+        {
+            public Weapons weapon;
+            public int magBullets;
+            public int reserveBullets;
+
+            public inventoryOb(Weapons _weapon = Weapons.None, int _magBullets = 0, int _reserveBullets = 0)
+            {
+                weapon = _weapon;
+                magBullets = _magBullets;
+                reserveBullets = _reserveBullets;
+            }
+        }
+
+        #endregion
+
         private List<byte[]> meme = new List<byte[]>(); // Totally useful memory
 
         private List<Enemy> enemys = new List<Enemy>();
         private List<Bullet> bullets = new List<Bullet>();
 
         private Vector2 playerPos = new Vector2(0.5f, 0.5f);
-        private Weapons[] inventory = new Weapons[3] { Weapons.Glock19, Weapons.None, Weapons.None };
+        private inventoryOb[] inventory = new inventoryOb[3] { new inventoryOb(Weapons.Glock19, 14, 30), new inventoryOb(Weapons.AK47, 0, 0), new inventoryOb(Weapons.RPG7, 1, 2) };
 
         private SoundPlayer backgroundMusicPlayer = new SoundPlayer();
         private SoundPlayer soundEffectsPlayer = new SoundPlayer();
@@ -393,6 +409,7 @@ namespace christ_a_2
 
             // http://www.military-today.com/firearms.htm
             weaponsData = new Dictionary<Weapons, WeaponOb> {
+                {Weapons.None, new WeaponOb("None", WeaponClass.Pistol, Properties.Resources.weapon_none, Properties.Resources.bullet_other, new Vector2(0.00f, 0.00f), "None", 0, 0, 0, 0, 0, 0, 0, 0) },
             //  Weapon,                            Name,           Type,                        Img,                                   BulletImg,                          BulletSize,                Country,          Damage, Weight, Velocity, Firerate, MagCapacity, MaxAmmoMultiplier, Accuracy, Recoil, PushBack, ShotgunShots, maxGrenadeDistance, ExplosionRadius
                 {Weapons.Glock19,     new WeaponOb("Glock-19",     WeaponClass.Pistol,          Properties.Resources.weapon_glock19,   Properties.Resources.bullet_pistol,  new Vector2(0.01f, 0.01f), "Austria",        0,      0.67f,  380,      60,/**/   15,          3,                 0.00f,    0.00f) },
                 {Weapons.FiveSeven,   new WeaponOb("Five SeveN",   WeaponClass.Pistol,          Properties.Resources.weapon_fiveseven, Properties.Resources.bullet_pistol,  new Vector2(0.01f, 0.01f), "Belgium",        0,      0.62f,  650,      80,/**/   20,          3,                 0.00f,    0.00f) },
@@ -539,6 +556,8 @@ namespace christ_a_2
             game_floor_pictureBox.Location = new Point(0, 0);
             game_floor_pictureBox.Size = this.Size;
 
+            UpdateInventoryGraphics(); // Update inventory graphics - useful on first load
+
             playerPos = new Vector2(0.5f, 0.5f);
             playerPictureBox.Location = FromRelativeV2(playerPos, this.Size); // Have player start in centre // Could change depending on level?
             playerPictureBox.Size = SystemPointToSystemSize(FromRelativeV2(Constants.playerSize, this.Size));
@@ -599,7 +618,7 @@ namespace christ_a_2
                     }
                 }
 
-                for (int i = 0; i < bullets.Count; i++)
+                for (int i = 0; i < bullets.Count; i++) // (needs work)
                 {
                     bullets[i].UpdatePos(this.Size);
                 }
@@ -607,6 +626,52 @@ namespace christ_a_2
 
             delta = (sw.ElapsedMilliseconds - startElapsed) / 1000; // Calculate deltatime for frame
             startElapsed = sw.ElapsedMilliseconds;
+        }
+
+        private void UpdateInventoryAmmo() // Update only current weapon ammo graphics in inventory
+        {
+            game_inventory_currentWeaponAmmo_Label.Text = inventory[0].magBullets.ToString() + "/" + weaponsData[inventory[0].weapon].magCapacity.ToString();
+            game_inventory_currentWeaponAmmoReserve_Label.Text = inventory[0].reserveBullets.ToString() + "/" + (weaponsData[inventory[0].weapon].magCapacity * weaponsData[inventory[0].weapon].maxAmmoMultiplier).ToString();
+        }
+
+        private void UpdateInventoryGraphics() // Update all inventory graphics
+        {
+            game_inventory_currentWeapon_PictureBox.BackgroundImage = weaponsData[inventory[0].weapon].img;
+            game_inventory_currentWeaponName_label.Text = weaponsData[inventory[0].weapon].name;
+            
+            game_inventory_nextWeapon_PictureBox.BackgroundImage = weaponsData[inventory[1].weapon].img;
+            game_inventory_prevWeapon_PictureBox.BackgroundImage = weaponsData[inventory[2].weapon].img;
+
+            UpdateInventoryAmmo();
+        }
+
+        private void RotateWeapons(bool next) // Shift inventory either forwards or backwards
+        {
+            inventoryOb[] tempInventory = new inventoryOb[inventory.Length];
+            Array.Copy(inventory, tempInventory, inventory.Length);
+
+            if (next)
+            {
+                inventoryOb first = inventory[0];
+                Array.Copy(tempInventory, 1, inventory, 0, inventory.Length - 1);
+                inventory[inventory.Length - 1] = first;
+            }
+            else
+            {
+                inventoryOb last = inventory[inventory.Length - 1];
+                Array.Copy(tempInventory, 0, inventory, 1, inventory.Length - 1);
+                inventory[0] = last;
+            }
+
+            if (inventory[0].weapon == Weapons.None)
+                RotateWeapons(next);
+            else
+                UpdateInventoryGraphics();
+        }
+
+        private void main_game_panel_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e) // Change weapon on scroll
+        {
+            RotateWeapons(e.Delta > 0);
         }
 
         private void main_game_panel_Paint(object sender, PaintEventArgs e)
