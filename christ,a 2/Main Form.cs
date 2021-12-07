@@ -255,19 +255,20 @@ namespace christ_a_2
             public string country;
 
             public float damage;
-            public float weight;
-            public int velocity;
-            public int firerate;
+            public float weight; // (kg)
+            public int velocity; // Muzzle velocity (m/s)
+            public int firerate; // rate of fire (rpm)
             public int magCapacity;
-            public int maxAmmo;
-            public float accuracy;
-            public float recoil;
+            public int maxAmmoMultiplier; // Amount of extra mags (maxAmmo = magCapacity * maxAmmoMultiplier)
+            public float accuracy; // Relative value for amount of deviation between bullet target and mouse
+            public float recoil; // Relative value for amount of movement in mouse when shot
 
+            public float pushBack; // Relative value for how much player is pushed back when shoting - Only for large weapons
             public int shotgunShots; // Shotgun only
-            public float maxGrenadeDistance; // Grendade only
-            public float explosionRadius; // Grenade and RPG only
+            public float maxGrenadeDistance; // Relative - Grendade only
+            public float explosionRadius; // Relative - Grenade and RPG only
 
-            public WeaponOb(string _name, WeaponClass _type, string _country, float _damage, float _weight, int _velocity, int _firerate, int _magCapacity, int _maxAmmo, float _accuracy, float _recoil, int _shotgunShots = 0, float _maxGrenadeDistance = 0, float _explosionRadius = 0)
+            public WeaponOb(string _name, WeaponClass _type, string _country, float _damage, float _weight, int _velocity, int _firerate, int _magCapacity, int _maxAmmoMultiplier, float _accuracy, float _recoil, float _pushBack = 0, int _shotgunShots = 0, float _maxGrenadeDistance = 0, float _explosionRadius = 0)
             {
                 name = _name;
                 type = _type;
@@ -277,10 +278,11 @@ namespace christ_a_2
                 velocity = _velocity;
                 firerate = _firerate;
                 magCapacity = _magCapacity;
-                maxAmmo = _maxAmmo;
+                maxAmmoMultiplier = _maxAmmoMultiplier;
                 accuracy = _accuracy;
                 recoil = _recoil;
 
+                pushBack = _pushBack;
                 shotgunShots = _shotgunShots;
                 maxGrenadeDistance = _maxGrenadeDistance;
                 explosionRadius = _explosionRadius;
@@ -377,29 +379,28 @@ namespace christ_a_2
                 {WeaponClass.RPG,             new WeaponClassOb("RPG",               WeaponType.Semi) },
             };
 
+            // http://www.military-today.com/firearms.htm
             weaponsData = new Dictionary<Weapons, WeaponOb> {
-                {Weapons.Glock19,     new WeaponOb("Glock-19", WeaponClass.Pistol, "Austria", 10, 0.67f, 100, 120, 15, 45, 0.1f, 0.1f) },
-                {Weapons.FiveSeven,   new WeaponOb("Five SeveN", WeaponClass.Pistol, "Belgium", 20, 0.62f, 650, 180, 20, 60, 0.08f, 0.1f) },
-                {Weapons.DesertEagle, new WeaponOb("Desert Eagle", WeaponClass.Pistol, "USA", 50, 2.00f, 470, 60, 7, 14, 0.02f, 0.2f) },
-                {Weapons.Galil,       new WeaponOb("Galil", WeaponClass.AR, "Israel", 20, 3.95f, 950, 80, 35, 210, 0.15f, 0.1f) },
-
-                // http://www.military-today.com/firearms.htm
-                /*{Weapons.AMD65,       new WeaponOb("AMD-65", WeaponClass.AR, "Hungary", ) },
-
-                {Weapons.AEK971,      new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
-                {Weapons.AK47,        new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
-                {Weapons.M107,        new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
-                {Weapons.L115A3,      new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
-                {Weapons.SCAR,        new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
-                {Weapons.UMP,         new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
-                {Weapons.MAC10,       new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
-                {Weapons.Uzi,         new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
-                {Weapons.M249,        new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
-                {Weapons.M2,          new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
-                {Weapons.FP6,         new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
-                {Weapons.M1014,       new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
-                {Weapons.MGL105,      new WeaponOb("", WeaponClass.Pistol, "Austria", ) },
-                {Weapons.RPG7,        new WeaponOb("", WeaponClass.Pistol, "Austria", ) },*/
+            //  Weapon,                            Name,           Type,                        Country,          Damage, Weight, Velocity, Firerate, MagCapacity, MaxAmmoMultiplier, Accuracy, Recoil, PushBack, ShotgunShots, maxGrenadeDistance, ExplosionRadius
+                {Weapons.Glock19,     new WeaponOb("Glock-19",     WeaponClass.Pistol,          "Austria",        0,      0.67f,  380,      60,/**/   15,          3,                 0.00f,    0.00f) },
+                {Weapons.FiveSeven,   new WeaponOb("Five SeveN",   WeaponClass.Pistol,          "Belgium",        0,      0.62f,  650,      80,/**/   20,          3,                 0.00f,    0.00f) },
+                {Weapons.DesertEagle, new WeaponOb("Desert Eagle", WeaponClass.Pistol,          "USA",            0,      2.00f,  470,      45,/**/   7,           2,                 0.00f,    0.00f) },
+                {Weapons.Galil,       new WeaponOb("Galil",        WeaponClass.AR,              "Israel",         0,      3.95f,  950,      80,       35,          6,                 0.00f,    0.00f) },
+                {Weapons.AMD65,       new WeaponOb("AMD-65",       WeaponClass.AR,              "Hungary",        0,      3.13f,  710,      70,       30,          6,                 0.00f,    0.00f) },
+                {Weapons.AEK971,      new WeaponOb("AEK-971",      WeaponClass.AR,              "Russia",         0,      3.30f,  880,      70,       30,          6,                 0.00f,    0.00f) },
+                {Weapons.AK47,        new WeaponOb("AK-47",        WeaponClass.AR,              "Russia",         0,      4.30f,  715,      70,       30,          6,                 0.00f,    0.00f) },
+                {Weapons.M107,        new WeaponOb("M107",         WeaponClass.Marksman,        "USA",            0,      12.90f, 853,      20,/**/   1,           10,                0.00f,    0.00f) },
+                {Weapons.L115A3,      new WeaponOb("L115A3",       WeaponClass.Marksman,        "United Kingdom", 0,      6.80f,  936,      20,/**/   2,           5,                 0.00f,    0.00f) },
+                {Weapons.SCAR,        new WeaponOb("SCAR",         WeaponClass.Marksman,        "Belgium",        0,      3.50f,  715,      60,/**/   10,          2,                 0.00f,    0.00f) },
+                {Weapons.UMP,         new WeaponOb("UMP",          WeaponClass.SMG,             "Germany",        0,      2.30f,  285,      55,/*R*/  25,          10,                0.00f,    0.00f) },
+                {Weapons.MAC10,       new WeaponOb("MAC-10",       WeaponClass.SMG,             "USA",            0,      2.84f,  305,      80,/*R*/  30,          10,                0.00f,    0.00f) },
+                {Weapons.Uzi,         new WeaponOb("Uzi",          WeaponClass.SMG,             "Israel",         0,      1.70f,  345,      40,/*R*/  20,          10,                0.00f,    0.00f) },
+                {Weapons.M249,        new WeaponOb("M249",         WeaponClass.LMG,             "USA",            0,      7.50f,  915,      100,/*R*/ 30,/*R*/     15,                0.00f,    0.00f) },
+                {Weapons.M2,          new WeaponOb("M2",           WeaponClass.HMG,             "USA",            0,      38.00f, 820,      90,/*R*/  100,/*R*/    4,                 0.00f,    0.00f) },
+                {Weapons.FP6,         new WeaponOb("FP6",          WeaponClass.Shotgun,         "Germany",        0,      3.00f,  400,      60,/**/   6,           2,                 0.00f,    0.00f,  0.00f,    3) },
+                {Weapons.M1014,       new WeaponOb("M1014",        WeaponClass.Shotgun,         "Italy",          0,      3.630f, 408,      30,/**/   8,           3,                 0.00f,    0.00f,  0.00f,    3) },
+                {Weapons.MGL105,      new WeaponOb("MGL-105",      WeaponClass.GrenadeLauncher, "South Africa",   0,      5.30f,  76,       60,/**/   6,           1,                 0.00f,    0.00f,  0.00f,    0,            0.50f,              0.05f) },
+                {Weapons.RPG7,        new WeaponOb("RPG-7",        WeaponClass.RPG,             "Russia",         0,      7.90f,  208,      30,/**/   1,           4,                 0.00f,    0.00f,  0.00f,    0,            0.00f,              0.05f) },
             };
 
             foreach (KeyValuePair<Scenes, SceneOb> s in scenesData)
