@@ -653,29 +653,32 @@ namespace christ_a_2
                             {
                                 if (inventory[0].magBullets > 0) // Make sure there are bullets in the mag
                                 {
-                                    inventory[0].magBullets--; // Remove bullet from mag
-                                    UpdateInventoryAmmo();
+                                    if (!reloading) // Cant shoot while reloading
+                                    {
+                                        inventory[0].magBullets--; // Remove bullet from mag
+                                        UpdateInventoryAmmo();
 
-                                    float accuracyVal = weaponsData[inventory[0].weapon].accuracy / 2;
-                                    Vector2 aimPos = ToRelativeV2(MousePosition, this.Size) + FromScaledRelativeV2ToRealtiveV2(new Vector2(GetFloatRng(-accuracyVal, accuracyVal), GetFloatRng(-accuracyVal, accuracyVal)), this.Size); // Affected by accuracy
-                                    bullets.Add(new Bullet( // Instatiate bullet
-                                        playerPos,
-                                        (aimPos - playerPos).Normalise(),
-                                        (float)weaponsData[inventory[0].weapon].velocity / Constants.velocityDivisor,
-                                        weaponsData[inventory[0].weapon].damage,
-                                        weaponsData[inventory[0].weapon].bulletImg,
-                                        SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(weaponsData[inventory[0].weapon].bulletSize, this.Size), this.Size))
-                                    )); 
-                                    int bulleti = bullets.Count - 1;
-                                    main_game_panel.Controls.Add(bullets[bulleti].pb);
-                                    bullets[bulleti].pb.BringToFront();
+                                        float accuracyVal = weaponsData[inventory[0].weapon].accuracy / 2;
+                                        Vector2 aimPos = ToRelativeV2(MousePosition, this.Size) + FromScaledRelativeV2ToRealtiveV2(new Vector2(GetFloatRng(-accuracyVal, accuracyVal), GetFloatRng(-accuracyVal, accuracyVal)), this.Size); // Affected by accuracy
+                                        bullets.Add(new Bullet( // Instatiate bullet
+                                            playerPos,
+                                            (aimPos - playerPos).Normalise(),
+                                            (float)weaponsData[inventory[0].weapon].velocity / Constants.velocityDivisor,
+                                            weaponsData[inventory[0].weapon].damage,
+                                            weaponsData[inventory[0].weapon].bulletImg,
+                                            SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(weaponsData[inventory[0].weapon].bulletSize, this.Size), this.Size))
+                                        ));
+                                        int bulleti = bullets.Count - 1;
+                                        main_game_panel.Controls.Add(bullets[bulleti].pb);
+                                        bullets[bulleti].pb.BringToFront();
 
-                                    float recoilVal = weaponsData[inventory[0].weapon].recoil / 2;
-                                    Vector2 recoil = FromScaledRelativeV2ToRealtiveV2(new Vector2(GetFloatRng(-recoilVal, recoilVal), GetFloatRng(-recoilVal, recoilVal)), this.Size);
-                                    Vector2 newMousePos = ToRelativeV2(System.Windows.Forms.Cursor.Position, this.Size) + recoil; // Change mouse position depending on recoil
-                                    System.Windows.Forms.Cursor.Position = FromRelativeV2(newMousePos, this.Size);
+                                        float recoilVal = weaponsData[inventory[0].weapon].recoil / 2;
+                                        Vector2 recoil = FromScaledRelativeV2ToRealtiveV2(new Vector2(GetFloatRng(-recoilVal, recoilVal), GetFloatRng(-recoilVal, recoilVal)), this.Size);
+                                        Vector2 newMousePos = ToRelativeV2(System.Windows.Forms.Cursor.Position, this.Size) + recoil; // Change mouse position depending on recoil
+                                        System.Windows.Forms.Cursor.Position = FromRelativeV2(newMousePos, this.Size);
 
-                                    lastShot = sw.ElapsedMilliseconds;
+                                        lastShot = sw.ElapsedMilliseconds;
+                                    }
                                 }
                             }
                         }
@@ -687,7 +690,7 @@ namespace christ_a_2
                 {
                     if (!reloading)
                     {
-                        // HERE
+                        ReloadWeapon();
                     }
                 }
 
@@ -708,6 +711,33 @@ namespace christ_a_2
 
             delta = (sw.ElapsedMilliseconds - startFrame) / 1000; // Calculate deltatime for frame
             startFrame = sw.ElapsedMilliseconds;
+        }
+
+        private async void ReloadWeapon()
+        {
+            if (inventory[0].reserveBullets > 0) // If there are bullets in reserve
+            {
+                reloading = true;
+                game_inventory_reloading_label.Visible = true;
+
+                await Task.Delay(weaponsData[inventory[0].weapon].reload); // Reload time
+
+                int bulletsToAdd = weaponsData[inventory[0].weapon].magCapacity - inventory[0].magBullets;
+                if (bulletsToAdd <= inventory[0].reserveBullets)
+                {
+                    inventory[0].magBullets += bulletsToAdd;
+                    inventory[0].reserveBullets -= bulletsToAdd;
+                }
+                else
+                {
+                    inventory[0].magBullets += inventory[0].reserveBullets;
+                    inventory[0].reserveBullets = 0;
+                }
+                UpdateInventoryAmmo();
+
+                game_inventory_reloading_label.Visible = false;
+                reloading = false;
+            }
         }
 
         private void UpdateInventoryAmmo() // Update only current weapon ammo graphics in inventory
@@ -755,7 +785,7 @@ namespace christ_a_2
 
         private void main_game_panel_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e) // Change weapon on scroll
         {
-            if (lastRotate < sw.ElapsedMilliseconds - Constants.weaponSwitchCooldown) // Can only rotate after weapon switch cooldown
+            if (!reloading && lastRotate < sw.ElapsedMilliseconds - Constants.weaponSwitchCooldown) // Can only rotate if not reloading and after weapon switch cooldown
             {
                 RotateWeapons(e.Delta > 0);
                 lastRotate = sw.ElapsedMilliseconds;
