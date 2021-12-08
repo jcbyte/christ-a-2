@@ -24,6 +24,8 @@ namespace christ_a_2
 
             public static readonly Vector2 playerSize = new Vector2(0.02f, 0.06f); // Scaled relative Vector2
             public static readonly Vector2 enemySize = new Vector2(0.02f, 0.06f); // Scaled relative Vector2
+
+            public static int velocityDivisor = 4000;
         }
 
         #endregion
@@ -82,6 +84,11 @@ namespace christ_a_2
         private static Point FromRelativeV2(Vector2 v, Size formSize) // Convert from a relative Vector2 to a Windows Point
         {
             return new Point((int)(v.x * formSize.Width), (int)(v.y * formSize.Height));
+        }
+
+        private static Point FromRelativeV2Center(Vector2 v, Size obSize, Size formSize)
+        {
+            return new Point((int)(v.x * formSize.Width) - (obSize.Width / 2), (int)(v.y * formSize.Height) - (obSize.Height / 2));
         }
 
         private static Size SystemPointToSystemSize(Point p) // Change Windows Point to Windows Scale 
@@ -268,7 +275,7 @@ namespace christ_a_2
             public Vector2 bulletSize; // Scaled relative Vector2
             public string country;
 
-            public float damage;
+            public int damage;
             public float weight; // (kg)
             public int velocity; // Muzzle velocity (m/s)
             public int firerate; // rate of fire (rpm)
@@ -283,7 +290,7 @@ namespace christ_a_2
             public float maxGrenadeDistance; // Relative - Grendade only
             public float explosionRadius; // Relative - Grenade and RPG only
 
-            public WeaponOb(string _name, WeaponClass _type, Image _img, Image _bulletImg, Vector2 _bulletSize, string _country, float _damage, float _weight, int _velocity, int _firerate, int _reload, int _magCapacity, int _maxAmmoMultiplier, float _accuracy, float _recoil, float _pushBack = 0, int _shotgunShots = 0, float _maxGrenadeDistance = 0, float _explosionRadius = 0)
+            public WeaponOb(string _name, WeaponClass _type, Image _img, Image _bulletImg, Vector2 _bulletSize, string _country, int _damage, float _weight, int _velocity, int _firerate, int _reload, int _magCapacity, int _maxAmmoMultiplier, float _accuracy, float _recoil, float _pushBack = 0, int _shotgunShots = 0, float _maxGrenadeDistance = 0, float _explosionRadius = 0)
             {
                 name = _name;
                 type = _type;
@@ -318,25 +325,27 @@ namespace christ_a_2
             public Vector2 pos;
             public Vector2 dir;
             public float speed;
+            public int damage;
             public PictureBox pb;
 
-            public Bullet(Vector2 _pos, Vector2 _dir, float _speed, System.Drawing.Size size) // probably dont want size here
+            public Bullet(Vector2 _pos, Vector2 _dir, float _speed, int _damage, Image img, Size size)
             {
                 pos = _pos;
                 dir = _dir;
                 speed = _speed;
+                damage = _damage;
 
                 pb = new PictureBox(); // Add new picturebox (bullet) to the form
                 pb.BackgroundImageLayout = ImageLayout.Stretch;
                 pb.Size = size;
                 pb.BackColor = Color.Transparent;
-                pb.BackgroundImage = Properties.Resources.bullet_pistol;
+                pb.BackgroundImage = img;
             }
 
-            public void UpdatePos(System.Drawing.Size formSize)
+            public void UpdatePos(float delta, Size formSize)
             {
-                pos += dir * speed;
-                pb.Location = FromRelativeV2(pos, formSize);
+                pos += dir * speed * delta;
+                pb.Location = FromRelativeV2Center(pos, pb.Size, formSize);
             }
         }
 
@@ -421,7 +430,7 @@ namespace christ_a_2
             // http://www.military-today.com/firearms.htm
             weaponsData = new Dictionary<Weapons, WeaponOb> {
                 {Weapons.None, new WeaponOb("None", WeaponClass.Pistol, Properties.Resources.weapon_none, Properties.Resources.bullet_other, new Vector2(0.00f, 0.00f), "None", 0, 0, 0, 0, 0, 0, 0, 0, 0) },
-            //  Weapon,                            Name,           Type,                        Img,                                   BulletImg,                          BulletSize,                Country,          Damage, Weight, Velocity, Firerate,  Reload, MagCapacity, MaxAmmoMultiplier, Accuracy, Recoil, PushBack, ShotgunShots, maxGrenadeDistance, ExplosionRadius
+            //  Weapon,                            Name,           Type,                        Img,                                   BulletImg,                           BulletSize,                Country,          Damage, Weight, Velocity, Firerate,  Reload, MagCapacity, MaxAmmoMultiplier, Accuracy, Recoil, PushBack, ShotgunShots, maxGrenadeDistance, ExplosionRadius
                 {Weapons.Glock19,     new WeaponOb("Glock-19",     WeaponClass.Pistol,          Properties.Resources.weapon_glock19,   Properties.Resources.bullet_pistol,  new Vector2(0.01f, 0.01f), "Austria",        0,      0.67f,  380,      60,/**/   800,    15,          3,                 0.00f,    0.00f) },
                 {Weapons.FiveSeven,   new WeaponOb("Five SeveN",   WeaponClass.Pistol,          Properties.Resources.weapon_fiveseven, Properties.Resources.bullet_pistol,  new Vector2(0.01f, 0.01f), "Belgium",        0,      0.62f,  650,      80,/**/   0,      20,          3,                 0.00f,    0.00f) },
                 {Weapons.DesertEagle, new WeaponOb("Desert Eagle", WeaponClass.Pistol,          Properties.Resources.weapon_deagle,    Properties.Resources.bullet_pistol,  new Vector2(0.01f, 0.01f), "USA",            0,      2.00f,  470,      45,/**/   0,      7,           2,                 0.00f,    0.00f) },
@@ -578,8 +587,8 @@ namespace christ_a_2
             UpdateInventoryGraphics(); // Update inventory graphics - useful on first load
 
             playerPos = new Vector2(0.5f, 0.5f);
-            playerPictureBox.Location = FromRelativeV2(playerPos, this.Size); // Have player start in centre // Could change depending on level?
-            playerPictureBox.Size = SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(Constants.playerSize, this.Size), this.Size));
+            game_player_pictureBox.Location = FromRelativeV2(playerPos, this.Size); // Have player start in centre // Could change depending on level?
+            game_player_pictureBox.Size = SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(Constants.playerSize, this.Size), this.Size));
 
             Random rng = new Random(2);
             for (int i = 0; i < levelsData[level].enemyAmount; i++) // Create the enemys in random locations // Could have specfic locations later?
@@ -621,7 +630,7 @@ namespace christ_a_2
                     movement.x += Constants.playerSpeed;
 
                 playerPos += movement * delta; // Player Movement
-                playerPictureBox.Location = FromRelativeV2(playerPos, main_game_panel.Size);
+                game_player_pictureBox.Location = FromRelativeV2Center(playerPos, game_player_pictureBox.Size, main_game_panel.Size);
 
                 bool click = MouseButtons == MouseButtons.Left;
                 if (click) // Player clicks to try and shoot
@@ -637,8 +646,10 @@ namespace christ_a_2
                                     inventory[0].magBullets--;
                                     UpdateInventoryAmmo();
 
-                                    Vector2 bulletdir = (ToRelativeV2(MousePosition, this.Size) - playerPos).Normalise();
-                                    bullets.Add(new Bullet(playerPos, bulletdir, 0.04f, SystemPointToSystemSize(FromRelativeV2(new Vector2(0.01f, 0.04f), this.Size)))); // Instatiate bullet
+                                    Vector2 bulletDir = (ToRelativeV2(MousePosition, this.Size) - playerPos).Normalise();
+                                    float speed = (float)weaponsData[inventory[0].weapon].velocity / Constants.velocityDivisor;
+                                    Size bulletSize = SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(weaponsData[inventory[0].weapon].bulletSize, this.Size), this.Size));
+                                    bullets.Add(new Bullet(playerPos, bulletDir, speed, weaponsData[inventory[0].weapon].damage, weaponsData[inventory[0].weapon].bulletImg, bulletSize)); // Instatiate bullet
 
                                     int bulleti = bullets.Count - 1;
                                     main_game_panel.Controls.Add(bullets[bulleti].pb);
@@ -657,9 +668,14 @@ namespace christ_a_2
                     // TODO
                 }
 
-                for (int i = 0; i < bullets.Count; i++) // (needs work)
+                for (int i = 0; i < bullets.Count; i++) // (needs work) - should check for enemys or such in this loop
                 {
-                    bullets[i].UpdatePos(this.Size);
+                    bullets[i].UpdatePos(delta, this.Size);
+                }
+
+                for (int i = 0; i < enemys.Count; i++) //  Enemy AI?
+                {
+
                 }
             }
 
