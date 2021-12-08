@@ -318,7 +318,7 @@ namespace christ_a_2
 
         #endregion
 
-        #region "Bullet (Needs work)"
+        #region "Bullet"
 
         class Bullet
         {
@@ -370,12 +370,13 @@ namespace christ_a_2
         #endregion
 
         private List<byte[]> meme = new List<byte[]>(); // Totally useful memory
+        private Random rng = new Random();
 
         private List<Enemy> enemys = new List<Enemy>();
         private List<Bullet> bullets = new List<Bullet>();
 
         private Vector2 playerPos = new Vector2(0.5f, 0.5f);
-        private inventoryOb[] inventory = new inventoryOb[3] { new inventoryOb(Weapons.Glock19, 14, 30), new inventoryOb(Weapons.AK47, 0, 0), new inventoryOb(Weapons.RPG7, 1, 2) };
+        private inventoryOb[] inventory = new inventoryOb[3] { new inventoryOb(Weapons.Glock19, 14, 30), new inventoryOb(Weapons.AK47, 1000, 0), new inventoryOb(Weapons.RPG7, 1, 2) };
 
         private SoundPlayer backgroundMusicPlayer = new SoundPlayer();
         private SoundPlayer soundEffectsPlayer = new SoundPlayer();
@@ -437,7 +438,7 @@ namespace christ_a_2
                 {Weapons.Galil,       new WeaponOb("Galil",        WeaponClass.AR,              Properties.Resources.weapon_galil,     Properties.Resources.bullet_other,   new Vector2(0.01f, 0.01f), "Israel",         0,      3.95f,  950,      80,       0,      35,          6,                 0.00f,    0.00f) },
                 {Weapons.AMD65,       new WeaponOb("AMD-65",       WeaponClass.AR,              Properties.Resources.weapon_amd65,     Properties.Resources.bullet_other,   new Vector2(0.01f, 0.01f), "Hungary",        0,      3.13f,  710,      70,       0,      30,          6,                 0.00f,    0.00f) },
                 {Weapons.AEK971,      new WeaponOb("AEK-971",      WeaponClass.AR,              Properties.Resources.weapon_aek971,    Properties.Resources.bullet_other,   new Vector2(0.01f, 0.01f), "Russia",         0,      3.30f,  880,      70,       0,      30,          6,                 0.00f,    0.00f) },
-                {Weapons.AK47,        new WeaponOb("AK-47",        WeaponClass.AR,              Properties.Resources.weapon_ak47,      Properties.Resources.bullet_other,   new Vector2(0.01f, 0.01f), "Russia",         0,      4.30f,  715,      70,       0,      30,          6,                 0.00f,    0.00f) },
+                {Weapons.AK47,        new WeaponOb("AK-47",        WeaponClass.AR,              Properties.Resources.weapon_ak47,      Properties.Resources.bullet_other,   new Vector2(0.02f, 0.01f), "Russia",         0,      4.30f,  715,      120,/**/  0,      30,          6,                 0.05f,    0.02f) },
                 {Weapons.M107,        new WeaponOb("M107",         WeaponClass.Marksman,        Properties.Resources.weapon_m107,      Properties.Resources.bullet_other,   new Vector2(0.01f, 0.01f), "USA",            0,      12.90f, 853,      20,/**/   0,      1,           10,                0.00f,    0.00f) },
                 {Weapons.L115A3,      new WeaponOb("L115A3",       WeaponClass.Marksman,        Properties.Resources.weapon_l115a3,    Properties.Resources.bullet_other,   new Vector2(0.01f, 0.01f), "United Kingdom", 0,      6.80f,  936,      20,/**/   0,      2,           5,                 0.00f,    0.00f) },
                 {Weapons.SCAR,        new WeaponOb("SCAR SSR",     WeaponClass.Marksman,        Properties.Resources.weapon_scar,      Properties.Resources.bullet_other,   new Vector2(0.01f, 0.01f), "Belgium",        0,      3.50f,  715,      60,/**/   0,      10,          2,                 0.00f,    0.00f) },
@@ -466,6 +467,11 @@ namespace christ_a_2
         Point getCenter(PictureBox pb)
         {
             return new Point(pb.Location.X - (pb.Size.Width / 2), pb.Location.Y - (pb.Height / 2));
+        }
+
+        float GetFloatRng(float min, float max)
+        {
+            return (float)rng.NextDouble() * (max - min) + min;
         }
 
         #region "Async"
@@ -593,7 +599,10 @@ namespace christ_a_2
             Random rng = new Random(2);
             for (int i = 0; i < levelsData[level].enemyAmount; i++) // Create the enemys in random locations // Could have specfic locations later?
             {
-                enemys.Add(new Enemy(new Vector2((float)rng.NextDouble(), (float)rng.NextDouble()), SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(Constants.enemySize, this.Size), this.Size)))); // Instatiate enemys
+                enemys.Add(new Enemy( // Instatiate enemys
+                    new Vector2((float)rng.NextDouble(), (float)rng.NextDouble()),
+                    SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(Constants.enemySize, this.Size), this.Size))
+                )); 
                 main_game_panel.Controls.Add(enemys[i].pb);
                 enemys[i].UpdatePos(this.Size);
                 enemys[i].pb.BringToFront();
@@ -643,17 +652,27 @@ namespace christ_a_2
                             {
                                 if (inventory[0].magBullets > 0) // Make sure there are bullets in the mag
                                 {
-                                    inventory[0].magBullets--;
+                                    inventory[0].magBullets--; // Remove bullet from mag
                                     UpdateInventoryAmmo();
 
-                                    Vector2 bulletDir = (ToRelativeV2(MousePosition, this.Size) - playerPos).Normalise();
-                                    float speed = (float)weaponsData[inventory[0].weapon].velocity / Constants.velocityDivisor;
-                                    Size bulletSize = SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(weaponsData[inventory[0].weapon].bulletSize, this.Size), this.Size));
-                                    bullets.Add(new Bullet(playerPos, bulletDir, speed, weaponsData[inventory[0].weapon].damage, weaponsData[inventory[0].weapon].bulletImg, bulletSize)); // Instatiate bullet
-
+                                    float accuracyVal = weaponsData[inventory[0].weapon].accuracy / 2;
+                                    Vector2 aimPos = ToRelativeV2(MousePosition, this.Size) + FromScaledRelativeV2ToRealtiveV2(new Vector2(GetFloatRng(-accuracyVal, accuracyVal), GetFloatRng(-accuracyVal, accuracyVal)), this.Size); // Affected by accuracy
+                                    bullets.Add(new Bullet( // Instatiate bullet
+                                        playerPos,
+                                        (aimPos - playerPos).Normalise(),
+                                        (float)weaponsData[inventory[0].weapon].velocity / Constants.velocityDivisor,
+                                        weaponsData[inventory[0].weapon].damage,
+                                        weaponsData[inventory[0].weapon].bulletImg,
+                                        SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(weaponsData[inventory[0].weapon].bulletSize, this.Size), this.Size))
+                                    )); 
                                     int bulleti = bullets.Count - 1;
                                     main_game_panel.Controls.Add(bullets[bulleti].pb);
                                     bullets[bulleti].pb.BringToFront();
+
+                                    float recoilVal = weaponsData[inventory[0].weapon].recoil / 2;
+                                    Vector2 recoil = FromScaledRelativeV2ToRealtiveV2(new Vector2(GetFloatRng(-recoilVal, recoilVal), GetFloatRng(-recoilVal, recoilVal)), this.Size);
+                                    Vector2 newMousePos = ToRelativeV2(System.Windows.Forms.Cursor.Position, this.Size) + recoil; // Change mouse position depending on recoil
+                                    System.Windows.Forms.Cursor.Position = FromRelativeV2(newMousePos, this.Size);
 
                                     lastShot = sw.ElapsedMilliseconds;
                                 }
@@ -665,17 +684,21 @@ namespace christ_a_2
 
                 if (Keyboard.IsKeyDown(Key.R)) // Reload
                 {
-                    // TODO
+                    
                 }
 
-                for (int i = 0; i < bullets.Count; i++) // (needs work) - should check for enemys or such in this loop
+                for (int i = 0; i < bullets.Count; i++) // loop through every bullet
                 {
-                    bullets[i].UpdatePos(delta, this.Size);
+                    bullets[i].UpdatePos(delta, this.Size); // Move bullet in direction
+                    
+                    // Check if enemy hit
+                    
+                    // destory bullet if off game area
                 }
 
-                for (int i = 0; i < enemys.Count; i++) //  Enemy AI?
+                for (int i = 0; i < enemys.Count; i++) //  Loop through every enemy
                 {
-
+                    // Enemy AI
                 }
             }
 
