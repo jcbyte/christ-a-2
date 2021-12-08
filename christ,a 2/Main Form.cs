@@ -622,6 +622,7 @@ namespace christ_a_2
 
         float lastShot = 0;
         bool lastClick = false;
+        bool reloading = false;
 
         void GameLoop(object sender, EventArgs e)
         {
@@ -684,7 +685,10 @@ namespace christ_a_2
 
                 if (Keyboard.IsKeyDown(Key.R)) // Reload
                 {
-                    
+                    if (!reloading)
+                    {
+                        // HERE
+                    }
                 }
 
                 for (int i = 0; i < bullets.Count; i++) // loop through every bullet
