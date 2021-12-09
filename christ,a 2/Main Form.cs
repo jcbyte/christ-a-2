@@ -24,6 +24,8 @@ namespace christ_a_2
 
             public static readonly Vector2 playerSize = new Vector2(0.04f, 0.06f); // Scaled relative Vector2
 
+            public const int enemyHealthBarThickness = 6; // (px)
+
             public static int velocityDivisor = 4000; // Should make this in weapon instead of extra math
         }
 
@@ -186,34 +188,58 @@ namespace christ_a_2
 
         #endregion
 
-        #region "Enemy (Needs work)"
+        #region "Enemy"
 
         private class Enemy // Enemy class containg visual and code objects
         {
-            public Vector2 pos;
             public PictureBox pb;
+
+            public Panel healthPanel;
+            public PictureBox healthPb;
+
+            public Vector2 pos;
             public Weapons weapon;
-            public float health;
+            public int health;
+            public int maxHealth;
             public float speed;
 
-            public Enemy(Vector2 _pos, Image img, Size size, Weapons _weapon, float _health, float _speed) 
+            public Enemy(Vector2 _pos, Image img, Size size, Weapons _weapon, int _health, float _speed) 
             {
-                pos = _pos;
-
                 pb = new PictureBox(); // Add new picturebox (enemy) to the form
                 pb.BackgroundImageLayout = ImageLayout.Stretch;
                 pb.Size = size;
                 pb.BackColor = Color.Transparent;
                 pb.BackgroundImage = img;
 
+                healthPanel = new Panel();
+                healthPanel.Size = new Size(pb.Size.Width, Constants.enemyHealthBarThickness);
+                healthPanel.Location = new Point(pb.Location.X, pb.Location.Y - Constants.enemyHealthBarThickness - 2);
+
+                healthPb = new PictureBox();
+                Bitmap healthImg = new Bitmap(1, 1);
+                healthImg.SetPixel(0, 0, Color.FromArgb(255, 0, 0));
+                healthPb.BackgroundImageLayout = ImageLayout.Stretch;
+                healthPb.BackgroundImage = healthImg;
+                healthPanel.Controls.Add(healthPb);
+                healthPb.Location = new Point(0, 0);
+                healthPb.BringToFront();
+
+                pos = _pos;
                 weapon = _weapon;
                 health = _health;
+                maxHealth = health;
                 speed = _speed;
             }
 
             public void UpdatePos(Size formSize)
             {
                 pb.Location = FromRelativeV2Center(pos, pb.Size, formSize);
+                healthPanel.Location = new Point(pb.Location.X, pb.Location.Y - Constants.enemyHealthBarThickness);
+            }
+
+            public void UpdateHealth()
+            {
+                healthPb.Size = SystemPointToSystemSize(FromRelativeV2(new Vector2((float)health / maxHealth, 1), healthPanel.Size));
             }
         }
 
@@ -425,6 +451,8 @@ namespace christ_a_2
 
         #endregion
 
+        #region "Global vars"
+
         private List<byte[]> meme = new List<byte[]>(); // Totally useful memory
         private Random rng = new Random();
 
@@ -447,9 +475,13 @@ namespace christ_a_2
         private Scenes cScene = Scenes.Menu;
         private Levels cLevel = Levels.Level1;
 
+        #endregion
+
         public mainForm()
         {
             InitializeComponent();
+
+            #region "Data"
 
             scenesData = new Dictionary<Scenes, SceneOb> { 
                 {Scenes.Menu, new SceneOb(main_menu_panel) }, 
@@ -489,7 +521,7 @@ namespace christ_a_2
             weaponsData = new Dictionary<Weapons, WeaponOb> {
                 {Weapons.None, new WeaponOb("None", WeaponClass.Pistol, Properties.Resources.weapon_none, Properties.Resources.bullet_other, 0, "None", 0, 0, 0, 0, 0, 0, 0, 0, 0) },
             //  Weapon,                            Name,           Type,                        Img,                                   BulletImg,                           BulletSize, Country,          Damage, Weight, Velocity, Firerate, Reload, MagCapacity, MaxAmmoMultiplier, Accuracy, Recoil, PushBack, ShotgunShots, maxGrenadeDistance, ExplosionRadius
-                {Weapons.Glock19,     new WeaponOb("Glock-19",     WeaponClass.Pistol,          Properties.Resources.weapon_glock19,   Properties.Resources.bullet_pistol,  0.10f,      "Austria",        0,      0.67f,  380,      60,/**/   800,    15,          3,                 0.00f,    0.00f) },
+                {Weapons.Glock19,     new WeaponOb("Glock-19",     WeaponClass.Pistol,          Properties.Resources.weapon_glock19,   Properties.Resources.bullet_pistol,  0.01f,      "Austria",        0,      0.67f,  380,      60,/**/   800,    15,          3,                 0.00f,    0.00f) },
                 {Weapons.FiveSeven,   new WeaponOb("Five SeveN",   WeaponClass.Pistol,          Properties.Resources.weapon_fiveseven, Properties.Resources.bullet_pistol,  0.01f,      "Belgium",        0,      0.62f,  650,      80,/**/   0,      20,          3,                 0.00f,    0.00f) },
                 {Weapons.DesertEagle, new WeaponOb("Desert Eagle", WeaponClass.Pistol,          Properties.Resources.weapon_deagle,    Properties.Resources.bullet_pistol,  0.01f,      "USA",            0,      2.00f,  470,      45,/**/   0,      7,           2,                 0.00f,    0.00f) },
                 {Weapons.Galil,       new WeaponOb("Galil",        WeaponClass.AR,              Properties.Resources.weapon_galil,     Properties.Resources.bullet_other,   0.01f,      "Israel",         0,      3.95f,  950,      80,       0,      35,          6,                 0.00f,    0.00f) },
@@ -512,13 +544,15 @@ namespace christ_a_2
 
             enemysData = new Dictionary<Enemys, EnemyOb> {
             //   Enemy                       Img,                                Size,                      Health, Speed, Weapon
-                {Enemys.Regular, new EnemyOb(Properties.Resources.enemy_regular, new Vector2(0.04f, 0.06f), 0,      0.00f, Weapons.Glock19 ) },
-                {Enemys.Tank,    new EnemyOb(Properties.Resources.enemy_tank,    new Vector2(0.04f, 0.06f), 0,      0.00f, Weapons.Glock19 ) },
-                {Enemys.Scout,   new EnemyOb(Properties.Resources.enemy_scout,   new Vector2(0.04f, 0.06f), 0,      0.00f, Weapons.Glock19 ) },
-                {Enemys.Sniper,  new EnemyOb(Properties.Resources.enemy_sniper,  new Vector2(0.04f, 0.06f), 0,      0.00f, Weapons.Glock19 ) },
-                {Enemys.Rowland, new EnemyOb(Properties.Resources.enemy_rowland, new Vector2(0.04f, 0.06f), 0,      0.00f, Weapons.Glock19 ) },
-                {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.04f, 0.06f), 0,      0.00f, Weapons.Glock19 ) },
+                {Enemys.Regular, new EnemyOb(Properties.Resources.enemy_regular, new Vector2(0.04f, 0.06f), 100,    0.00f, Weapons.Glock19 ) },
+                {Enemys.Tank,    new EnemyOb(Properties.Resources.enemy_tank,    new Vector2(0.04f, 0.06f), 100,    0.00f, Weapons.Glock19 ) },
+                {Enemys.Scout,   new EnemyOb(Properties.Resources.enemy_scout,   new Vector2(0.04f, 0.06f), 100,    0.00f, Weapons.Glock19 ) },
+                {Enemys.Sniper,  new EnemyOb(Properties.Resources.enemy_sniper,  new Vector2(0.04f, 0.06f), 100,    0.00f, Weapons.Glock19 ) },
+                {Enemys.Rowland, new EnemyOb(Properties.Resources.enemy_rowland, new Vector2(0.04f, 0.06f), 100,    0.00f, Weapons.Glock19 ) },
+                {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.04f, 0.06f), 100,    0.00f, Weapons.Glock19 ) },
             };
+
+            #endregion
 
             foreach (KeyValuePair<Scenes, SceneOb> s in scenesData)
                 s.Value.panel.Visible = false;
@@ -531,6 +565,8 @@ namespace christ_a_2
             Application.Idle += GameLoop;
         }
 
+        #region "Misc"
+
         Point getCenter(PictureBox pb)
         {
             return new Point(pb.Location.X - (pb.Size.Width / 2), pb.Location.Y - (pb.Height / 2));
@@ -540,6 +576,8 @@ namespace christ_a_2
         {
             return (float)rng.NextDouble() * (max - min) + min;
         }
+
+        #endregion
 
         #region "Async"
 
@@ -681,6 +719,9 @@ namespace christ_a_2
                     main_game_panel.Controls.Add(enemys[j].pb);
                     enemys[j].UpdatePos(this.Size);
                     enemys[j].pb.BringToFront();
+                    main_game_panel.Controls.Add(enemys[j].healthPanel);
+                    enemys[j].UpdateHealth();
+                    enemys[j].healthPanel.BringToFront();
                 }
             }
 
