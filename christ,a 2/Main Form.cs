@@ -23,9 +23,8 @@ namespace christ_a_2
             public const int weaponSwitchCooldown = 100;
 
             public static readonly Vector2 playerSize = new Vector2(0.04f, 0.06f); // Scaled relative Vector2
-            public static readonly Vector2 enemySize = new Vector2(0.04f, 0.06f); // Scaled relative Vector2
 
-            public static int velocityDivisor = 4000;
+            public static int velocityDivisor = 4000; // Should make this in weapon instead of extra math
         }
 
         #endregion
@@ -175,10 +174,10 @@ namespace christ_a_2
 
         private struct levelOb
         {
-            public System.Drawing.Bitmap floorImg;
-            public int enemyAmount;
+            public Image floorImg;
+            public Dictionary<Enemys, int> enemyAmount;
 
-            public levelOb(System.Drawing.Bitmap _floorImg, int _enemyAmount)
+            public levelOb(Image _floorImg, Dictionary<Enemys, int> _enemyAmount)
             {
                 floorImg = _floorImg;
                 enemyAmount = _enemyAmount;
@@ -187,14 +186,17 @@ namespace christ_a_2
 
         #endregion
 
-        #region "Enemy (Needs work, multiple)"
+        #region "Enemy (Needs work)"
 
         private class Enemy // Enemy class containg visual and code objects
         {
             public Vector2 pos;
             public PictureBox pb;
+            public Weapons weapon;
+            public float health;
+            public float speed;
 
-            public Enemy(Vector2 _pos, System.Drawing.Size size)  // probably dont want size here
+            public Enemy(Vector2 _pos, Image img, Size size, Weapons _weapon, float _health, float _speed) 
             {
                 pos = _pos;
 
@@ -202,12 +204,44 @@ namespace christ_a_2
                 pb.BackgroundImageLayout = ImageLayout.Stretch;
                 pb.Size = size;
                 pb.BackColor = Color.Transparent;
-                pb.BackgroundImage = Properties.Resources.enemy_snowman; // different enemys?
+                pb.BackgroundImage = img;
+
+                weapon = _weapon;
+                health = _health;
+                speed = _speed;
             }
 
-            public void UpdatePos(System.Drawing.Size formSize)
+            public void UpdatePos(Size formSize)
             {
-                pb.Location = FromRelativeV2(pos, formSize);
+                pb.Location = FromRelativeV2Center(pos, pb.Size, formSize);
+            }
+        }
+
+        private enum Enemys : byte
+        {
+            Regular,
+            Tank,
+            Scout,
+            Sniper,
+            Rowland,
+            Boss,
+        }
+
+        private struct EnemyOb
+        {
+            public Image img;
+            public Vector2 size; // Relative scaled vector2
+            public int health;
+            public float speed;
+            public Weapons weapon;
+
+            public EnemyOb(Image _img, Vector2 _size, int _health, float _speed, Weapons _weapon)
+            {
+                img = _img;
+                size = _size;
+                health = _health;
+                speed = _speed;
+                weapon = _weapon;
             }
         }
 
@@ -361,7 +395,7 @@ namespace christ_a_2
                 pb.BackgroundImageLayout = ImageLayout.Stretch;
                 pb.Size = size;
                 pb.BackColor = Color.Transparent;
-                pb.BackgroundImage = bmp;//img;
+                pb.BackgroundImage = bmp;
             }
 
             public void UpdatePos(float delta, Size formSize)
@@ -408,6 +442,7 @@ namespace christ_a_2
         private Dictionary<Levels, levelOb> levelsData;
         private Dictionary<WeaponClass, WeaponClassOb> weaponClassData;
         private Dictionary<Weapons, WeaponOb> weaponsData;
+        private Dictionary<Enemys, EnemyOb> enemysData;
 
         private Scenes cScene = Scenes.Menu;
         private Levels cLevel = Levels.Level1;
@@ -432,10 +467,10 @@ namespace christ_a_2
             };
 
             levelsData = new Dictionary<Levels, levelOb> {
-                {Levels.Level1,    new levelOb(Properties.Resources.level_1Factory, 10) },
-                {Levels.Level2,    new levelOb(Properties.Resources.level_1Factory, 20) },
-                {Levels.Level3,    new levelOb(Properties.Resources.level_1Factory, 30) },
-                {Levels.BossLevel, new levelOb(Properties.Resources.level_1Factory, 50) }
+                {Levels.Level1,    new levelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int> { { Enemys.Regular, 6 }, { Enemys.Scout, 2 }, { Enemys.Rowland, 2 } }) },
+                {Levels.Level2,    new levelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int> { }) },
+                {Levels.Level3,    new levelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int> { }) },
+                {Levels.BossLevel, new levelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int> { }) }
             };
 
             weaponClassData = new Dictionary<WeaponClass, WeaponClassOb> {
@@ -453,7 +488,7 @@ namespace christ_a_2
             // http://www.military-today.com/firearms.htm
             weaponsData = new Dictionary<Weapons, WeaponOb> {
                 {Weapons.None, new WeaponOb("None", WeaponClass.Pistol, Properties.Resources.weapon_none, Properties.Resources.bullet_other, 0, "None", 0, 0, 0, 0, 0, 0, 0, 0, 0) },
-            //  Weapon,                            Name,           Type,                        Img,                                   BulletImg,                           BulletSize, Country,          Damage, Weight, Velocity, Firerate,  Reload, MagCapacity, MaxAmmoMultiplier, Accuracy, Recoil, PushBack, ShotgunShots, maxGrenadeDistance, ExplosionRadius
+            //  Weapon,                            Name,           Type,                        Img,                                   BulletImg,                           BulletSize, Country,          Damage, Weight, Velocity, Firerate, Reload, MagCapacity, MaxAmmoMultiplier, Accuracy, Recoil, PushBack, ShotgunShots, maxGrenadeDistance, ExplosionRadius
                 {Weapons.Glock19,     new WeaponOb("Glock-19",     WeaponClass.Pistol,          Properties.Resources.weapon_glock19,   Properties.Resources.bullet_pistol,  0.10f,      "Austria",        0,      0.67f,  380,      60,/**/   800,    15,          3,                 0.00f,    0.00f) },
                 {Weapons.FiveSeven,   new WeaponOb("Five SeveN",   WeaponClass.Pistol,          Properties.Resources.weapon_fiveseven, Properties.Resources.bullet_pistol,  0.01f,      "Belgium",        0,      0.62f,  650,      80,/**/   0,      20,          3,                 0.00f,    0.00f) },
                 {Weapons.DesertEagle, new WeaponOb("Desert Eagle", WeaponClass.Pistol,          Properties.Resources.weapon_deagle,    Properties.Resources.bullet_pistol,  0.01f,      "USA",            0,      2.00f,  470,      45,/**/   0,      7,           2,                 0.00f,    0.00f) },
@@ -475,6 +510,16 @@ namespace christ_a_2
                 {Weapons.RPG7,        new WeaponOb("RPG-7",        WeaponClass.RPG,             Properties.Resources.weapon_rpg7,      Properties.Resources.bullet_rpg,     0.01f,      "Russia",         0,      7.90f,  208,      30,/**/   0,      1,           4,                 0.00f,    0.00f,  0.00f,    0,            0.00f,              0.05f) },
             };
 
+            enemysData = new Dictionary<Enemys, EnemyOb> {
+            //   Enemy                       Img,                                Size,                      Health, Speed, Weapon
+                {Enemys.Regular, new EnemyOb(Properties.Resources.enemy_regular, new Vector2(0.04f, 0.06f), 0,      0.00f, Weapons.Glock19 ) },
+                {Enemys.Tank,    new EnemyOb(Properties.Resources.enemy_tank,    new Vector2(0.04f, 0.06f), 0,      0.00f, Weapons.Glock19 ) },
+                {Enemys.Scout,   new EnemyOb(Properties.Resources.enemy_scout,   new Vector2(0.04f, 0.06f), 0,      0.00f, Weapons.Glock19 ) },
+                {Enemys.Sniper,  new EnemyOb(Properties.Resources.enemy_sniper,  new Vector2(0.04f, 0.06f), 0,      0.00f, Weapons.Glock19 ) },
+                {Enemys.Rowland, new EnemyOb(Properties.Resources.enemy_rowland, new Vector2(0.04f, 0.06f), 0,      0.00f, Weapons.Glock19 ) },
+                {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.04f, 0.06f), 0,      0.00f, Weapons.Glock19 ) },
+            };
+
             foreach (KeyValuePair<Scenes, SceneOb> s in scenesData)
                 s.Value.panel.Visible = false;
             //LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
@@ -491,7 +536,7 @@ namespace christ_a_2
             return new Point(pb.Location.X - (pb.Size.Width / 2), pb.Location.Y - (pb.Height / 2));
         }
 
-        float GetFloatRng(float min, float max)
+        float GetFloatRng(float min = 0, float max = 1)
         {
             return (float)rng.NextDouble() * (max - min) + min;
         }
@@ -619,16 +664,24 @@ namespace christ_a_2
             game_player_pictureBox.Size = SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(Constants.playerSize, this.Size), this.Size));
             game_player_pictureBox.BringToFront();
 
-            Random rng = new Random(2);
-            for (int i = 0; i < levelsData[level].enemyAmount; i++) // Create the enemys in random locations // Could have specfic locations later?
+            foreach (KeyValuePair<Enemys, int> enemyType in levelsData[level].enemyAmount) // Create the enemys for the level
             {
-                enemys.Add(new Enemy( // Instatiate enemys
-                    new Vector2((float)rng.NextDouble(), (float)rng.NextDouble()),
-                    SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(Constants.enemySize, this.Size), this.Size))
-                )); 
-                main_game_panel.Controls.Add(enemys[i].pb);
-                enemys[i].UpdatePos(this.Size);
-                enemys[i].pb.BringToFront();
+                for (int i = 0; i < enemyType.Value; i++)
+                {
+                    enemys.Add(new Enemy( // Instatiate enemys
+                        new Vector2(GetFloatRng(0.1f, 0.9f), GetFloatRng(0.1f, 0.9f)),
+                        enemysData[enemyType.Key].img,
+                        SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(enemysData[enemyType.Key].size, this.Size), this.Size)),
+                        enemysData[enemyType.Key].weapon,
+                        enemysData[enemyType.Key].health,
+                        enemysData[enemyType.Key].speed
+                    ));
+
+                    int j = enemys.Count - 1;
+                    main_game_panel.Controls.Add(enemys[j].pb);
+                    enemys[j].UpdatePos(this.Size);
+                    enemys[j].pb.BringToFront();
+                }
             }
 
             switch(level) // Level specialitys

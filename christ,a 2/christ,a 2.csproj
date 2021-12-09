@@ -204,5 +204,23 @@
   <ItemGroup>
     <None Include="Resources\weapon_none.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\enemy_boss.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\enemy_regular.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\enemy_rowland.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\enemy_scout.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\enemy_sniper.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\enemy_tank.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

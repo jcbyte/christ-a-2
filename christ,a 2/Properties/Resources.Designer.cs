@@ -113,9 +113,59 @@ namespace christ_a_2.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap enemy_snowman {
+        internal static System.Drawing.Bitmap enemy_boss {
             get {
-                object obj = ResourceManager.GetObject("enemy_snowman", resourceCulture);
+                object obj = ResourceManager.GetObject("enemy_boss", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap enemy_regular {
+            get {
+                object obj = ResourceManager.GetObject("enemy_regular", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap enemy_rowland {
+            get {
+                object obj = ResourceManager.GetObject("enemy_rowland", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap enemy_scout {
+            get {
+                object obj = ResourceManager.GetObject("enemy_scout", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap enemy_sniper {
+            get {
+                object obj = ResourceManager.GetObject("enemy_sniper", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap enemy_tank {
+            get {
+                object obj = ResourceManager.GetObject("enemy_tank", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
