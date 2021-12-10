@@ -525,7 +525,7 @@ namespace christ_a_2
                 {Weapons.Galil,       new WeaponOb("Galil",        WeaponClass.AR,              Properties.Resources.weapon_galil,     Properties.Resources.bullet_other,   0.01f,      "Israel",         0,      1.00f,  0.50f,    1.00f,    500,    35,          6,                 0.00f,    0.00f) },
                 {Weapons.AMD65,       new WeaponOb("AMD-65",       WeaponClass.AR,              Properties.Resources.weapon_amd65,     Properties.Resources.bullet_other,   0.01f,      "Hungary",        0,      1.00f,  0.50f,    1.00f,    500,    30,          6,                 0.00f,    0.00f) },
                 {Weapons.AEK971,      new WeaponOb("AEK-971",      WeaponClass.AR,              Properties.Resources.weapon_aek971,    Properties.Resources.bullet_other,   0.01f,      "Russia",         0,      1.00f,  0.50f,    1.00f,    500,    30,          6,                 0.00f,    0.00f) },
-                {Weapons.AK47,        new WeaponOb("AK-47",        WeaponClass.AR,              Properties.Resources.weapon_ak47,      Properties.Resources.bullet_other,   0.02f,      "Russia",         0,      1.00f,  0.50f,    1.00f,    500,    30,          6,                 0.05f,    0.02f) },
+                {Weapons.AK47,        new WeaponOb("AK-47",        WeaponClass.AR,              Properties.Resources.weapon_ak47,      Properties.Resources.bullet_other,   0.02f,      "Russia",         0,      1.00f,  0.50f,    4.00f,    500,    30,          6,                 0.05f,    0.02f) },
                 {Weapons.M107,        new WeaponOb("M107",         WeaponClass.Marksman,        Properties.Resources.weapon_m107,      Properties.Resources.bullet_other,   0.01f,      "USA",            0,      1.00f,  0.50f,    1.00f,    500,    1,           10,                0.00f,    0.00f) },
                 {Weapons.L115A3,      new WeaponOb("L115A3",       WeaponClass.Marksman,        Properties.Resources.weapon_l115a3,    Properties.Resources.bullet_other,   0.01f,      "United Kingdom", 0,      1.00f,  0.50f,    1.00f,    500,    2,           5,                 0.00f,    0.00f) },
                 {Weapons.SCAR,        new WeaponOb("SCAR SSR",     WeaponClass.Marksman,        Properties.Resources.weapon_scar,      Properties.Resources.bullet_other,   0.01f,      "Belgium",        0,      1.00f,  0.50f,    1.00f,    500,    10,          2,                 0.00f,    0.00f) },
@@ -811,13 +811,22 @@ namespace christ_a_2
                     }
                 }
 
+                List<int> deleteBullets = new List<int>();
                 for (int i = 0; i < bullets.Count; i++) // loop through every bullet
                 {
                     bullets[i].UpdatePos(delta, this.Size); // Move bullet in direction
                     
                     // Check if enemy hit
                     
-                    // destory bullet if off game area
+                    if (bullets[i].pos.x > 1 || bullets[i].pos.x < 0 || bullets[i].pos.y > 1 || bullets[i].pos.y < 0)
+                    {
+                        deleteBullets.Add(i);
+                        bullets[i].pb.Dispose();
+                    }
+                }
+                for (int i = deleteBullets.Count - 1; i >= 0; i--)
+                {
+                    bullets.RemoveAt(deleteBullets[i]);
                 }
 
                 for (int i = 0; i < enemys.Count; i++) //  Loop through every enemy
