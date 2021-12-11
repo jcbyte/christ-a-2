@@ -72,6 +72,11 @@ namespace christ_a_2
                 return new Vector2(x / mag, y / mag);
             }
 
+            public override string ToString()
+            {
+                return "(" + x.ToString() + ", " + y.ToString() + ")";
+            }
+
             static public Vector2 operator +(Vector2 lhs, Vector2 rhs)
             {
                 return new Vector2(lhs.x + rhs.x, lhs.y + rhs.y);
@@ -106,6 +111,11 @@ namespace christ_a_2
         private static Size SystemPointToSystemSize(Point p) // Change Windows Point to Windows Scale 
         {
             return new Size(p.X, p.Y);
+        }
+
+        private static Point SystemSizeToSystemPoint(Size s) // Change Windows Size to Windows Point 
+        {
+            return new Point(s.Width, s.Height);
         }
 
         private static Vector2 FromScaledRelativeV2ToRealtiveV2(Vector2 c, Size formSize) // A scaled relative Vector2 so that the proportions are 1:1, used for scaling
@@ -497,7 +507,7 @@ namespace christ_a_2
             };
 
             levelsData = new Dictionary<Levels, levelOb> {
-                {Levels.Level1,    new levelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int> { { Enemys.Regular, 6 }, { Enemys.Scout, 2 }, { Enemys.Rowland, 2 } }) },
+                {Levels.Level1,    new levelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int> { { Enemys.Regular, 1 } /*{ Enemys.Regular, 6 }, { Enemys.Scout, 2 }, { Enemys.Rowland, 2 }*/ }) },
                 {Levels.Level2,    new levelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int> { }) },
                 {Levels.Level3,    new levelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int> { }) },
                 {Levels.BossLevel, new levelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int> { }) }
@@ -519,25 +529,25 @@ namespace christ_a_2
             weaponsData = new Dictionary<Weapons, WeaponOb> {
                 {Weapons.None, new WeaponOb("None", WeaponClass.Pistol, Properties.Resources.weapon_none, Properties.Resources.bullet_other, 0, "None", 0, 0, 0, 0, 0, 0, 0, 0, 0) },
             //  Weapon,                            Name,           Type,                        Img,                                   BulletImg,                           BulletSize, Country,          Damage, Weight, Velocity, Firerate, Reload, MagCapacity, MaxAmmoMultiplier, Accuracy, Recoil, PushBack, ShotgunShots, maxGrenadeDistance, ExplosionRadius
-                {Weapons.Glock19,     new WeaponOb("Glock-19",     WeaponClass.Pistol,          Properties.Resources.weapon_glock19,   Properties.Resources.bullet_pistol,  0.01f,      "Austria",        0,      1.00f,  0.20f,    0.50f,    800,    15,          3,                 0.00f,    0.00f) },
-                {Weapons.FiveSeven,   new WeaponOb("Five SeveN",   WeaponClass.Pistol,          Properties.Resources.weapon_fiveseven, Properties.Resources.bullet_pistol,  0.01f,      "Belgium",        0,      1.00f,  0.50f,    1.00f,    500,    20,          3,                 0.00f,    0.00f) },
-                {Weapons.DesertEagle, new WeaponOb("Desert Eagle", WeaponClass.Pistol,          Properties.Resources.weapon_deagle,    Properties.Resources.bullet_pistol,  0.01f,      "USA",            0,      1.00f,  0.50f,    1.00f,    500,    7,           2,                 0.00f,    0.00f) },
-                {Weapons.Galil,       new WeaponOb("Galil",        WeaponClass.AR,              Properties.Resources.weapon_galil,     Properties.Resources.bullet_other,   0.01f,      "Israel",         0,      1.00f,  0.50f,    1.00f,    500,    35,          6,                 0.00f,    0.00f) },
-                {Weapons.AMD65,       new WeaponOb("AMD-65",       WeaponClass.AR,              Properties.Resources.weapon_amd65,     Properties.Resources.bullet_other,   0.01f,      "Hungary",        0,      1.00f,  0.50f,    1.00f,    500,    30,          6,                 0.00f,    0.00f) },
-                {Weapons.AEK971,      new WeaponOb("AEK-971",      WeaponClass.AR,              Properties.Resources.weapon_aek971,    Properties.Resources.bullet_other,   0.01f,      "Russia",         0,      1.00f,  0.50f,    1.00f,    500,    30,          6,                 0.00f,    0.00f) },
-                {Weapons.AK47,        new WeaponOb("AK-47",        WeaponClass.AR,              Properties.Resources.weapon_ak47,      Properties.Resources.bullet_other,   0.02f,      "Russia",         0,      1.00f,  0.50f,    4.00f,    500,    30,          6,                 0.05f,    0.02f) },
-                {Weapons.M107,        new WeaponOb("M107",         WeaponClass.Marksman,        Properties.Resources.weapon_m107,      Properties.Resources.bullet_other,   0.01f,      "USA",            0,      1.00f,  0.50f,    1.00f,    500,    1,           10,                0.00f,    0.00f) },
-                {Weapons.L115A3,      new WeaponOb("L115A3",       WeaponClass.Marksman,        Properties.Resources.weapon_l115a3,    Properties.Resources.bullet_other,   0.01f,      "United Kingdom", 0,      1.00f,  0.50f,    1.00f,    500,    2,           5,                 0.00f,    0.00f) },
-                {Weapons.SCAR,        new WeaponOb("SCAR SSR",     WeaponClass.Marksman,        Properties.Resources.weapon_scar,      Properties.Resources.bullet_other,   0.01f,      "Belgium",        0,      1.00f,  0.50f,    1.00f,    500,    10,          2,                 0.00f,    0.00f) },
-                {Weapons.UMP,         new WeaponOb("UMP",          WeaponClass.SMG,             Properties.Resources.weapon_ump,       Properties.Resources.bullet_other,   0.01f,      "Germany",        0,      1.00f,  0.50f,    1.00f,    500,    25,          10,                0.00f,    0.00f) },
-                {Weapons.MAC10,       new WeaponOb("MAC-10",       WeaponClass.SMG,             Properties.Resources.weapon_mac10,     Properties.Resources.bullet_other,   0.01f,      "USA",            0,      1.00f,  0.50f,    1.00f,    500,    30,          10,                0.00f,    0.00f) },
-                {Weapons.Uzi,         new WeaponOb("Uzi",          WeaponClass.SMG,             Properties.Resources.weapon_uzi,       Properties.Resources.bullet_other,   0.01f,      "Israel",         0,      1.00f,  0.50f,    1.00f,    500,    20,          10,                0.00f,    0.00f) },
-                {Weapons.M249,        new WeaponOb("M249",         WeaponClass.LMG,             Properties.Resources.weapon_m249,      Properties.Resources.bullet_other,   0.01f,      "USA",            0,      1.00f,  0.50f,    1.00f,    500,    30,          15,                0.00f,    0.00f) },
-                {Weapons.M2,          new WeaponOb("M2",           WeaponClass.HMG,             Properties.Resources.weapon_m2,        Properties.Resources.bullet_other,   0.01f,      "USA",            0,      1.00f,  0.50f,    1.00f,    500,    100,         4,                 0.00f,    0.00f) },
-                {Weapons.FP6,         new WeaponOb("FP6",          WeaponClass.Shotgun,         Properties.Resources.weapon_fp6,       Properties.Resources.bullet_shotgun, 0.01f,      "Germany",        0,      1.00f,  0.50f,    1.00f,    500,    6,           2,                 0.00f,    0.00f,  0.00f,    3) },
-                {Weapons.M1014,       new WeaponOb("M1014",        WeaponClass.Shotgun,         Properties.Resources.weapon_m1014,     Properties.Resources.bullet_shotgun, 0.01f,      "Italy",          0,      1.00f,  0.50f,    1.00f,    500,    8,           3,                 0.00f,    0.00f,  0.00f,    3) },
-                {Weapons.MGL105,      new WeaponOb("MGL-105",      WeaponClass.GrenadeLauncher, Properties.Resources.weapon_mgl105,    Properties.Resources.bullet_grenade, 0.01f,      "South Africa",   0,      1.00f,  0.50f,    1.00f,    500,    6,           1,                 0.00f,    0.00f,  0.00f,    0,            0.50f,              0.05f) },
-                {Weapons.RPG7,        new WeaponOb("RPG-7",        WeaponClass.RPG,             Properties.Resources.weapon_rpg7,      Properties.Resources.bullet_rpg,     0.01f,      "Russia",         0,      10.00f, 0.50f,    1.00f,    500,    1,           4,                 0.00f,    0.00f,  0.00f,    0,            0.00f,              0.05f) },
+                {Weapons.Glock19,     new WeaponOb("Glock-19",     WeaponClass.Pistol,          Properties.Resources.weapon_glock19,   Properties.Resources.bullet_pistol,  0.01f,      "Austria",        10,     1.00f,  0.20f,    0.50f,    800,    15,          3,                 0.00f,    0.00f) },
+                {Weapons.FiveSeven,   new WeaponOb("Five SeveN",   WeaponClass.Pistol,          Properties.Resources.weapon_fiveseven, Properties.Resources.bullet_pistol,  0.01f,      "Belgium",        10,     1.00f,  0.50f,    1.00f,    500,    20,          3,                 0.00f,    0.00f) },
+                {Weapons.DesertEagle, new WeaponOb("Desert Eagle", WeaponClass.Pistol,          Properties.Resources.weapon_deagle,    Properties.Resources.bullet_pistol,  0.01f,      "USA",            10,     1.00f,  0.50f,    1.00f,    500,    7,           2,                 0.00f,    0.00f) },
+                {Weapons.Galil,       new WeaponOb("Galil",        WeaponClass.AR,              Properties.Resources.weapon_galil,     Properties.Resources.bullet_other,   0.01f,      "Israel",         10,     1.00f,  0.50f,    1.00f,    500,    35,          6,                 0.00f,    0.00f) },
+                {Weapons.AMD65,       new WeaponOb("AMD-65",       WeaponClass.AR,              Properties.Resources.weapon_amd65,     Properties.Resources.bullet_other,   0.01f,      "Hungary",        10,     1.00f,  0.50f,    1.00f,    500,    30,          6,                 0.00f,    0.00f) },
+                {Weapons.AEK971,      new WeaponOb("AEK-971",      WeaponClass.AR,              Properties.Resources.weapon_aek971,    Properties.Resources.bullet_other,   0.01f,      "Russia",         10,     1.00f,  0.50f,    1.00f,    500,    30,          6,                 0.00f,    0.00f) },
+                {Weapons.AK47,        new WeaponOb("AK-47",        WeaponClass.AR,              Properties.Resources.weapon_ak47,      Properties.Resources.bullet_other,   0.02f,      "Russia",         10,     1.00f,  0.50f,    4.00f,    500,    30,          6,                 0.05f,    0.02f) },
+                {Weapons.M107,        new WeaponOb("M107",         WeaponClass.Marksman,        Properties.Resources.weapon_m107,      Properties.Resources.bullet_other,   0.01f,      "USA",            10,     1.00f,  0.50f,    1.00f,    500,    1,           10,                0.00f,    0.00f) },
+                {Weapons.L115A3,      new WeaponOb("L115A3",       WeaponClass.Marksman,        Properties.Resources.weapon_l115a3,    Properties.Resources.bullet_other,   0.01f,      "United Kingdom", 10,     1.00f,  0.50f,    1.00f,    500,    2,           5,                 0.00f,    0.00f) },
+                {Weapons.SCAR,        new WeaponOb("SCAR SSR",     WeaponClass.Marksman,        Properties.Resources.weapon_scar,      Properties.Resources.bullet_other,   0.01f,      "Belgium",        10,     1.00f,  0.50f,    1.00f,    500,    10,          2,                 0.00f,    0.00f) },
+                {Weapons.UMP,         new WeaponOb("UMP",          WeaponClass.SMG,             Properties.Resources.weapon_ump,       Properties.Resources.bullet_other,   0.01f,      "Germany",        10,     1.00f,  0.50f,    1.00f,    500,    25,          10,                0.00f,    0.00f) },
+                {Weapons.MAC10,       new WeaponOb("MAC-10",       WeaponClass.SMG,             Properties.Resources.weapon_mac10,     Properties.Resources.bullet_other,   0.01f,      "USA",            10,     1.00f,  0.50f,    1.00f,    500,    30,          10,                0.00f,    0.00f) },
+                {Weapons.Uzi,         new WeaponOb("Uzi",          WeaponClass.SMG,             Properties.Resources.weapon_uzi,       Properties.Resources.bullet_other,   0.01f,      "Israel",         10,     1.00f,  0.50f,    1.00f,    500,    20,          10,                0.00f,    0.00f) },
+                {Weapons.M249,        new WeaponOb("M249",         WeaponClass.LMG,             Properties.Resources.weapon_m249,      Properties.Resources.bullet_other,   0.01f,      "USA",            10,     1.00f,  0.50f,    1.00f,    500,    30,          15,                0.00f,    0.00f) },
+                {Weapons.M2,          new WeaponOb("M2",           WeaponClass.HMG,             Properties.Resources.weapon_m2,        Properties.Resources.bullet_other,   0.01f,      "USA",            10,     1.00f,  0.50f,    1.00f,    500,    100,         4,                 0.00f,    0.00f) },
+                {Weapons.FP6,         new WeaponOb("FP6",          WeaponClass.Shotgun,         Properties.Resources.weapon_fp6,       Properties.Resources.bullet_shotgun, 0.01f,      "Germany",        10,     1.00f,  0.50f,    1.00f,    500,    6,           2,                 0.00f,    0.00f,  0.00f,    3) },
+                {Weapons.M1014,       new WeaponOb("M1014",        WeaponClass.Shotgun,         Properties.Resources.weapon_m1014,     Properties.Resources.bullet_shotgun, 0.01f,      "Italy",          10,     1.00f,  0.50f,    1.00f,    500,    8,           3,                 0.00f,    0.00f,  0.00f,    3) },
+                {Weapons.MGL105,      new WeaponOb("MGL-105",      WeaponClass.GrenadeLauncher, Properties.Resources.weapon_mgl105,    Properties.Resources.bullet_grenade, 0.01f,      "South Africa",   10,     1.00f,  0.50f,    1.00f,    500,    6,           1,                 0.00f,    0.00f,  0.00f,    0,            0.50f,              0.05f) },
+                {Weapons.RPG7,        new WeaponOb("RPG-7",        WeaponClass.RPG,             Properties.Resources.weapon_rpg7,      Properties.Resources.bullet_rpg,     0.01f,      "Russia",         10,     10.00f, 0.50f,    1.00f,    500,    1,           4,                 0.00f,    0.00f,  0.00f,    0,            0.00f,              0.05f) },
             };
 
             enemysData = new Dictionary<Enemys, EnemyOb> {
@@ -565,14 +575,61 @@ namespace christ_a_2
 
         #region "Misc"
 
-        Point getCenter(PictureBox pb)
+        private Point getCenter(PictureBox pb)
         {
             return new Point(pb.Location.X - (pb.Size.Width / 2), pb.Location.Y - (pb.Height / 2));
         }
 
-        float GetFloatRng(float min = 0, float max = 1)
+        private float GetFloatRng(float min = 0, float max = 1)
         {
             return (float)rng.NextDouble() * (max - min) + min;
+        }
+
+        private bool LineIntersectsVerticalLine(Vector2 lineAPointA, Vector2 lineAPointB, Vector2 lineBPointA, Vector2 lineBPointB, bool vertical)
+        {
+            float lineAXCoefficient = (lineAPointB.y - lineAPointA.y) / (lineAPointB.x - lineAPointA.x); // y = (m)x +  c
+            float lineAOffset = lineAXCoefficient * lineAPointA.x + lineAPointA.y;                       // y =  mx  + (c)
+
+            if (vertical)
+            {
+                if (Math.Min(lineAPointA.x, lineAPointB.x) <= lineBPointA.x && Math.Max(lineAPointA.x, lineAPointB.x) >= lineBPointA.x) // Line is within x bounds
+                {
+                    float lineATempY = lineAXCoefficient * lineBPointA.x + lineAOffset; // Find y value at x of line
+                    if (Math.Min(lineBPointA.y, lineBPointB.y) <= lineATempY && Math.Max(lineBPointA.y, lineBPointB.y) >= lineATempY) // y value is within y bounds
+                    {
+                        return true;
+                    }
+                }
+            }
+            else
+            {
+                if (Math.Min(lineAPointA.y, lineAPointB.y) <= lineBPointA.y && Math.Max(lineAPointA.y, lineAPointB.y) >= lineBPointA.y) // Line is within y bounds
+                {
+                    float lineATempX = (lineBPointA.y - lineAOffset) / lineAXCoefficient; // Find x value at y of line
+                    if (Math.Min(lineBPointA.x, lineBPointB.x) <= lineATempX && Math.Max(lineBPointA.x, lineBPointB.x) >= lineATempX) // x value is within y bounds
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private bool LineIntersectsRect(Vector2 linePointA, Vector2 linePointB, Vector2 rectPointA, Vector2 rectPointB) // Check if the line intersects any of the lines of the rect (ra = top left, rb = bottom right)
+        {
+            Console.WriteLine(linePointA.ToString() + " : " + linePointB.ToString() + " : " + rectPointA.ToString() + " : " + rectPointB.ToString());
+            //System.Threading.Thread.Sleep(100);
+            //System.Windows.Forms.Cursor.Position = FromRelativeV2(linePointB, this.Size);
+
+            debugPic1.Location = FromRelativeV2(rectPointA, main_game_panel.Size);
+            debugPic1.BringToFront();
+            debugPic2.Location = FromRelativeV2(rectPointB, main_game_panel.Size);
+            debugPic2.BringToFront();
+
+            return LineIntersectsVerticalLine(linePointA, linePointB, rectPointA, new Vector2(rectPointB.x, rectPointA.y), false) ||
+                   LineIntersectsVerticalLine(linePointA, linePointB, new Vector2(rectPointB.x, rectPointA.y), rectPointB, true) ||
+                   LineIntersectsVerticalLine(linePointA, linePointB, rectPointB, new Vector2(rectPointA.x, rectPointB.y), false) ||
+                   LineIntersectsVerticalLine(linePointA, linePointB, new Vector2(rectPointA.x, rectPointB.y), rectPointA, true);
         }
 
         #endregion
@@ -696,8 +753,8 @@ namespace christ_a_2
             UpdateInventoryGraphics(); // Update inventory graphics - useful on first load
 
             playerPos = new Vector2(0.5f, 0.5f);
-            game_player_pictureBox.Location = FromRelativeV2(playerPos, this.Size); // Have player start in centre // Could change depending on level?
-            game_player_pictureBox.Size = SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(Constants.playerSize, this.Size), this.Size));
+            game_player_pictureBox.Location = FromRelativeV2(playerPos, main_game_panel.Size); // Have player start in centre // Could change depending on level?
+            game_player_pictureBox.Size = SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(Constants.playerSize, main_game_panel.Size), main_game_panel.Size));
             game_player_pictureBox.BringToFront();
 
             foreach (KeyValuePair<Enemys, int> enemyType in levelsData[level].enemyAmount) // Create the enemys for the level
@@ -707,7 +764,7 @@ namespace christ_a_2
                     enemys.Add(new Enemy( // Instatiate enemys
                         new Vector2(GetFloatRng(0.1f, 0.9f), GetFloatRng(0.1f, 0.9f)),
                         enemysData[enemyType.Key].img,
-                        SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(enemysData[enemyType.Key].size, this.Size), this.Size)),
+                        SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(enemysData[enemyType.Key].size, main_game_panel.Size), main_game_panel.Size)),
                         enemysData[enemyType.Key].weapon,
                         enemysData[enemyType.Key].health,
                         enemysData[enemyType.Key].speed
@@ -715,7 +772,7 @@ namespace christ_a_2
 
                     int j = enemys.Count - 1;
                     main_game_panel.Controls.Add(enemys[j].pb);
-                    enemys[j].UpdatePos(this.Size);
+                    enemys[j].UpdatePos(main_game_panel.Size);
                     enemys[j].pb.BringToFront();
                     main_game_panel.Controls.Add(enemys[j].healthPanel);
                     enemys[j].UpdateHealth();
@@ -775,7 +832,7 @@ namespace christ_a_2
                                         UpdateInventoryAmmo();
 
                                         float accuracyVal = weaponsData[inventory[0].weapon].accuracy / 2;
-                                        Vector2 aimPos = ToRelativeV2(MousePosition, this.Size) + FromScaledRelativeV2ToRealtiveV2(new Vector2(GetFloatRng(-accuracyVal, accuracyVal), GetFloatRng(-accuracyVal, accuracyVal)), this.Size); // Affected by accuracy
+                                        Vector2 aimPos = ToRelativeV2(MousePosition, main_game_panel.Size) + FromScaledRelativeV2ToRealtiveV2(new Vector2(GetFloatRng(-accuracyVal, accuracyVal), GetFloatRng(-accuracyVal, accuracyVal)), main_game_panel.Size); // Affected by accuracy
                                         bullets.Add(new Bullet( // Instatiate bullet
                                             playerPos,
                                             (aimPos - playerPos).Normalise(),
@@ -783,7 +840,7 @@ namespace christ_a_2
                                             (float)weaponsData[inventory[0].weapon].velocity,
                                             weaponsData[inventory[0].weapon].damage,
                                             weaponsData[inventory[0].weapon].bulletImg,
-                                            SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(new Vector2(weaponsData[inventory[0].weapon].bulletSize), this.Size), this.Size))
+                                            SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(new Vector2(weaponsData[inventory[0].weapon].bulletSize), main_game_panel.Size), main_game_panel.Size))
                                         ));
                                         int bulleti = bullets.Count - 1;
                                         main_game_panel.Controls.Add(bullets[bulleti].pb);
@@ -791,8 +848,8 @@ namespace christ_a_2
 
                                         float recoilVal = weaponsData[inventory[0].weapon].recoil / 2;
                                         Vector2 recoil = FromScaledRelativeV2ToRealtiveV2(new Vector2(GetFloatRng(-recoilVal, recoilVal), GetFloatRng(-recoilVal, recoilVal)), this.Size);
-                                        Vector2 newMousePos = ToRelativeV2(System.Windows.Forms.Cursor.Position, this.Size) + recoil; // Change mouse position depending on recoil
-                                        System.Windows.Forms.Cursor.Position = FromRelativeV2(newMousePos, this.Size);
+                                        Vector2 newMousePos = ToRelativeV2(System.Windows.Forms.Cursor.Position, main_game_panel.Size) + recoil; // Change mouse position depending on recoil
+                                        System.Windows.Forms.Cursor.Position = FromRelativeV2(newMousePos, main_game_panel.Size);
 
                                         lastShot = sw.ElapsedMilliseconds;
                                     }
@@ -814,11 +871,22 @@ namespace christ_a_2
                 List<int> deleteBullets = new List<int>();
                 for (int i = 0; i < bullets.Count; i++) // loop through every bullet
                 {
+                    Vector2 before = bullets[i].pos;
                     bullets[i].UpdatePos(delta, this.Size); // Move bullet in direction
+                    Vector2 after = bullets[i].pos;
+
+                    for (int j = 0; j < enemys.Count; j++) // Check if enemy hit
+                    {
+                        Vector2 enemyPos = ToRelativeV2(enemys[j].pb.Location, main_game_panel.Size);
+                        if (LineIntersectsRect(before, after, enemyPos, enemyPos + ToRelativeV2(SystemSizeToSystemPoint(enemys[j].pb.Size), main_game_panel.Size)))
+                        {
+                            Console.WriteLine("worked ############");
+                            enemys[j].health -= weaponsData[inventory[0].weapon].damage;
+                            enemys[j].UpdateHealth();
+                        }
+                    }
                     
-                    // Check if enemy hit
-                    
-                    if (bullets[i].pos.x > 1 || bullets[i].pos.x < 0 || bullets[i].pos.y > 1 || bullets[i].pos.y < 0)
+                    if (bullets[i].pos.x > 1 || bullets[i].pos.x < 0 || bullets[i].pos.y > 1 || bullets[i].pos.y < 0) // Dispose of bullets if off screen
                     {
                         deleteBullets.Add(i);
                         bullets[i].pb.Dispose();

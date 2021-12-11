@@ -48,6 +48,8 @@
             this.game_floor_pictureBox = new System.Windows.Forms.PictureBox();
             this.main_cutscene_panel = new System.Windows.Forms.Panel();
             this.cutscene_media_windowsMediaPlayer = new AxWMPLib.AxWindowsMediaPlayer();
+            this.debugPic1 = new System.Windows.Forms.PictureBox();
+            this.debugPic2 = new System.Windows.Forms.PictureBox();
             this.main_menu_panel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.main_game_panel.SuspendLayout();
@@ -59,6 +61,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.game_floor_pictureBox)).BeginInit();
             this.main_cutscene_panel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.cutscene_media_windowsMediaPlayer)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.debugPic1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.debugPic2)).BeginInit();
             this.SuspendLayout();
             // 
             // menu_startGame_button
@@ -154,6 +158,8 @@
             this.main_game_panel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.main_game_panel.Controls.Add(this.debugPic2);
+            this.main_game_panel.Controls.Add(this.debugPic1);
             this.main_game_panel.Controls.Add(this.game_player_pictureBox);
             this.main_game_panel.Controls.Add(this.game_inventory_panel);
             this.main_game_panel.Controls.Add(this.game_floor_pictureBox);
@@ -300,6 +306,24 @@
             this.cutscene_media_windowsMediaPlayer.Size = new System.Drawing.Size(1280, 720);
             this.cutscene_media_windowsMediaPlayer.TabIndex = 0;
             // 
+            // debugPic1
+            // 
+            this.debugPic1.BackColor = System.Drawing.Color.Teal;
+            this.debugPic1.Location = new System.Drawing.Point(808, 309);
+            this.debugPic1.Name = "debugPic1";
+            this.debugPic1.Size = new System.Drawing.Size(29, 31);
+            this.debugPic1.TabIndex = 3;
+            this.debugPic1.TabStop = false;
+            // 
+            // debugPic2
+            // 
+            this.debugPic2.BackColor = System.Drawing.Color.GreenYellow;
+            this.debugPic2.Location = new System.Drawing.Point(772, 364);
+            this.debugPic2.Name = "debugPic2";
+            this.debugPic2.Size = new System.Drawing.Size(12, 14);
+            this.debugPic2.TabIndex = 4;
+            this.debugPic2.TabStop = false;
+            // 
             // mainForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
@@ -330,6 +354,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.game_floor_pictureBox)).EndInit();
             this.main_cutscene_panel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.cutscene_media_windowsMediaPlayer)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.debugPic1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.debugPic2)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -355,6 +381,8 @@
         private System.Windows.Forms.PictureBox game_inventory_nextWeapon_PictureBox;
         private System.Windows.Forms.Label game_inventory_currentWeaponAmmoReserve_Label;
         private System.Windows.Forms.Label game_inventory_reloading_label;
+        private System.Windows.Forms.PictureBox debugPic1;
+        private System.Windows.Forms.PictureBox debugPic2;
     }
 }
 
