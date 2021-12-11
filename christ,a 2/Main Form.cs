@@ -47,16 +47,26 @@ namespace christ_a_2
                 y = 0;
             }
 
-            public Vector2(float a)
+            public Vector2(float both)
             {
-                x = a;
-                y = a;
+                x = both;
+                y = both;
             }
 
             public Vector2(float _x, float _y)
             {
                 x = _x;
                 y = _y;
+            }
+
+            public Vector2(float a, bool deg)
+            {
+                float angle = a;
+                if (deg) angle *= ((float)Math.PI / 180);
+
+                Vector2 dir = (new Vector2(1, (float)Math.Tan(angle))).Normalise();
+                x = dir.x;
+                y = dir.y;
             }
 
             public float Angle(bool deg = false)
@@ -397,9 +407,10 @@ namespace christ_a_2
 
             public float pushBack; // Relative value for how much player is pushed back when shoting - Only for large weapons
             public int shotgunShots; // Shotgun only
+            public int shotgunSpread; // Shotgun only (degrees)
             public float explosionRadius; // Relative - Grenade and RPG only
 
-            public WeaponOb(string _name, WeaponClass _weaponClass, Image _img, Image _bulletImg, float _bulletSize, string _country, int _damage, float _weight, float _velocity, float _firerate, int _penetration, int _reload, int _magCapacity, int _maxAmmoMultiplier, float _accuracy, float _recoil, float _maxDistance, float _pushBack = 0, int _shotgunShots = 0, float _explosionRadius = 0)
+            public WeaponOb(string _name, WeaponClass _weaponClass, Image _img, Image _bulletImg, float _bulletSize, string _country, int _damage, float _weight, float _velocity, float _firerate, int _penetration, int _reload, int _magCapacity, int _maxAmmoMultiplier, float _accuracy, float _recoil, float _maxDistance, float _pushBack = 0, int _shotgunShots = 0, int _shotgunSpread = 0, float _explosionRadius = 0)
             {
                 name = _name;
                 weaponClass = _weaponClass;
@@ -422,6 +433,7 @@ namespace christ_a_2
 
                 pushBack = _pushBack;
                 shotgunShots = _shotgunShots;
+                shotgunSpread = _shotgunSpread;
                 explosionRadius = _explosionRadius;
             }
         }
@@ -580,6 +592,8 @@ namespace christ_a_2
         {
             InitializeComponent();
 
+            Console.WriteLine((new Vector2(0.5f, 1)).Normalise().Angle(true).ToString());
+
             #region "Data"
 
             scenesData = new Dictionary<Scenes, SceneOb> { 
@@ -619,7 +633,7 @@ namespace christ_a_2
             // http://www.military-today.com/firearms.htm
             weaponsData = new Dictionary<Weapons, WeaponOb> {
                 {Weapons.None, new WeaponOb("None", WeaponClass.Pistol, Properties.Resources.weapon_none, Properties.Resources.bullet_other, 0, "None", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) },
-            //  Weapon,                            Name,           Class,                       Img,                                   BulletImg,                           BulletSize, Country,          Damage, Weight, Velocity, Firerate, Penetration Reload, MagCapacity, MaxAmmoMultiplier, Accuracy, Recoil, MaxDistance, PushBack, ShotgunShots, ExplosionRadius
+            //  Weapon,                            Name,           Class,                       Img,                                   BulletImg,                           BulletSize, Country,          Damage, Weight, Velocity, Firerate, Penetration Reload, MagCapacity, MaxAmmoMultiplier, Accuracy, Recoil, MaxDistance, PushBack, ShotgunShots, ShotgunSpread, ExplosionRadius
                 {Weapons.Glock19,     new WeaponOb("Glock-19",     WeaponClass.Pistol,          Properties.Resources.weapon_glock19,   Properties.Resources.bullet_pistol,  0.02f,      "Austria",        10,     1.00f,  0.20f,    0.50f,    1,          800,    15,          3,                 0.00f,    0.00f,  0.50f) },
                 {Weapons.FiveSeven,   new WeaponOb("Five SeveN",   WeaponClass.Pistol,          Properties.Resources.weapon_fiveseven, Properties.Resources.bullet_pistol,  0.01f,      "Belgium",        10,     1.00f,  0.50f,    1.00f,    1,          500,    20,          3,                 0.00f,    0.00f,  1.00f) },
                 {Weapons.DesertEagle, new WeaponOb("Desert Eagle", WeaponClass.Pistol,          Properties.Resources.weapon_deagle,    Properties.Resources.bullet_pistol,  0.01f,      "USA",            10,     1.00f,  0.50f,    1.00f,    1,          500,    7,           2,                 0.00f,    0.00f,  1.00f) },
@@ -635,10 +649,10 @@ namespace christ_a_2
                 {Weapons.Uzi,         new WeaponOb("Uzi",          WeaponClass.SMG,             Properties.Resources.weapon_uzi,       Properties.Resources.bullet_other,   0.01f,      "Israel",         10,     1.00f,  0.50f,    1.00f,    1,          500,    20,          10,                0.00f,    0.00f,  1.00f) },
                 {Weapons.M249,        new WeaponOb("M249",         WeaponClass.LMG,             Properties.Resources.weapon_m249,      Properties.Resources.bullet_other,   0.01f,      "USA",            10,     1.00f,  0.50f,    1.00f,    1,          500,    30,          15,                0.00f,    0.00f,  1.00f) },
                 {Weapons.M2,          new WeaponOb("M2",           WeaponClass.HMG,             Properties.Resources.weapon_m2,        Properties.Resources.bullet_other,   0.01f,      "USA",            10,     1.00f,  0.50f,    1.00f,    1,          500,    100,         4,                 0.00f,    0.00f,  1.00f) },
-                {Weapons.FP6,         new WeaponOb("FP6",          WeaponClass.Shotgun,         Properties.Resources.weapon_fp6,       Properties.Resources.bullet_shotgun, 0.01f,      "Germany",        10,     1.00f,  0.50f,    1.00f,    1,          500,    6,           2,                 0.00f,    0.00f,  1.00f,       0.00f,    3) },
-                {Weapons.M1014,       new WeaponOb("M1014",        WeaponClass.Shotgun,         Properties.Resources.weapon_m1014,     Properties.Resources.bullet_shotgun, 0.04f,      "Italy",          10,     1.00f,  0.50f,    1.00f,    1,          500,    8,           3,                 0.00f,    0.00f,  1.00f,       0.00f,    3) },
-                {Weapons.MGL105,      new WeaponOb("MGL-105",      WeaponClass.GrenadeLauncher, Properties.Resources.weapon_mgl105,    Properties.Resources.bullet_grenade, 0.01f,      "South Africa",   10,     1.00f,  0.50f,    1.00f,    1,          500,    6,           1,                 0.00f,    0.00f,  1.00f,       0.00f,    0,            0.05f) },
-                {Weapons.RPG7,        new WeaponOb("RPG-7",        WeaponClass.RPG,             Properties.Resources.weapon_rpg7,      Properties.Resources.bullet_rpg,     0.01f,      "Russia",         10,     10.00f, 0.50f,    1.00f,    1,          500,    1,           4,                 0.00f,    0.00f,  1.00f,       0.00f,    0,            0.05f) },
+                {Weapons.FP6,         new WeaponOb("FP6",          WeaponClass.Shotgun,         Properties.Resources.weapon_fp6,       Properties.Resources.bullet_shotgun, 0.01f,      "Germany",        10,     1.00f,  0.50f,    1.00f,    1,          500,    6,           2,                 0.00f,    0.00f,  1.00f,       0.00f,    3,            10) },
+                {Weapons.M1014,       new WeaponOb("M1014",        WeaponClass.Shotgun,         Properties.Resources.weapon_m1014,     Properties.Resources.bullet_shotgun, 0.04f,      "Italy",          10,     1.00f,  0.30f,    1.00f,    1,          500,    8,           3,                 0.00f,    0.00f,  0.30f,       0.00f,    10,           90) },
+                {Weapons.MGL105,      new WeaponOb("MGL-105",      WeaponClass.GrenadeLauncher, Properties.Resources.weapon_mgl105,    Properties.Resources.bullet_grenade, 0.01f,      "South Africa",   10,     1.00f,  0.50f,    1.00f,    1,          500,    6,           1,                 0.00f,    0.00f,  1.00f,       0.00f,    0,            0,             0.05f) },
+                {Weapons.RPG7,        new WeaponOb("RPG-7",        WeaponClass.RPG,             Properties.Resources.weapon_rpg7,      Properties.Resources.bullet_rpg,     0.01f,      "Russia",         10,     10.00f, 0.50f,    1.00f,    1,          500,    1,           4,                 0.00f,    0.00f,  1.00f,       0.00f,    0,            0,             0.05f) },
             };
 
             enemysData = new Dictionary<Enemys, EnemyOb> {
@@ -1064,20 +1078,64 @@ namespace christ_a_2
             game_playerHealth_health_label.Text = playerHealth.ToString() + "/" + Constants.maxPlayerHealth.ToString();
         }
 
+        private void CreateBullet(Vector2 pos, float posLimit, Vector2 dir, bool flip, float speed, int damage, int penetration, Image img, Size size, bool playerBullet)
+        {
+            bullets.Add(new Bullet(pos, posLimit, dir, flip, speed, damage, penetration, img, size, playerBullet )); // Instatiate bullet
+
+            int bulleti = bullets.Count - 1;
+            main_game_panel.Controls.Add(bullets[bulleti].pb);
+            bullets[bulleti].pb.BringToFront();
+        }
+
         private void PlayerShoot(Weapons weapon)
         {
-            switch(weaponsData[weapon].weaponClass) // test if its a sepcial weapon?
-            {
-                case WeaponClass.Shotgun:
-                break;
-            }
-
             float accuracyVal = weaponsData[weapon].accuracy / 2;
             Vector2 aimPos = ToRelativeV2(MousePosition, main_game_panel.Size) + FromScaledRelativeV2ToRealtiveV2(new Vector2(GetFloatRng(-accuracyVal, accuracyVal), GetFloatRng(-accuracyVal, accuracyVal)), main_game_panel.Size); // Affected by accuracy
-            bullets.Add(new Bullet( // Instatiate bullet
+            Vector2 dir = (aimPos - playerPos).Normalise();
+
+            switch (weaponsData[weapon].weaponClass) // test if its a sepcial weapon?
+            {
+                case WeaponClass.Shotgun:
+
+                    float angle = dir.Angle(true);
+                    int shots = weaponsData[weapon].shotgunShots;
+                    int spread = weaponsData[weapon].shotgunSpread;
+
+                    float angleDiff = (float)spread / (shots - 1);
+                    float cAngle = angle - ((float)spread / 2);
+
+                    for (int i = 0; i < shots; i++)
+                    {
+                        //cAngle into vector2
+
+                        CreateBullet(
+                            playerPos,
+                            weaponsData[weapon].maxDistance,
+                            new Vector2(cAngle, true),
+                            (playerPos.x > aimPos.x), // For weird negative angle flipping
+                            (float)weaponsData[weapon].velocity,
+                            weaponsData[weapon].damage,
+                            weaponsData[weapon].penetration,
+                            weaponsData[weapon].bulletImg,
+                            SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(new Vector2(weaponsData[weapon].bulletSize), main_game_panel.Size), main_game_panel.Size)),
+                            true
+                        );
+
+                        cAngle += angleDiff;
+                    }
+
+
+                    break;
+
+                default:
+                    break;
+            }
+
+            
+            /*CreateBullet(
                 playerPos,
                 weaponsData[weapon].maxDistance,
-                (aimPos - playerPos).Normalise(),
+                dir,
                 (playerPos.x > aimPos.x), // For weird negative angle flipping
                 (float)weaponsData[weapon].velocity,
                 weaponsData[weapon].damage,
@@ -1085,10 +1143,7 @@ namespace christ_a_2
                 weaponsData[weapon].bulletImg,
                 SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(new Vector2(weaponsData[weapon].bulletSize), main_game_panel.Size), main_game_panel.Size)),
                 true
-            ));
-            int bulleti = bullets.Count - 1;
-            main_game_panel.Controls.Add(bullets[bulleti].pb);
-            bullets[bulleti].pb.BringToFront();
+            );*/
 
             float recoilVal = weaponsData[weapon].recoil / 2;
             Vector2 recoil = FromScaledRelativeV2ToRealtiveV2(new Vector2(GetFloatRng(-recoilVal, recoilVal), GetFloatRng(-recoilVal, recoilVal)), this.Size);
