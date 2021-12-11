@@ -368,7 +368,7 @@ namespace christ_a_2
         private struct WeaponOb
         {
             public string name;
-            public WeaponClass type;
+            public WeaponClass weaponClass;
             public Image img;
             public Image bulletImg;
             public float bulletSize; // Scaled relative
@@ -378,7 +378,7 @@ namespace christ_a_2
             public float weight;
             public float velocity;
             public float firerate; // rate of fire (rps)
-            public int penetration; // Amount of enemys before bullet is absorbed
+            public int penetration; // Amount of enemys before bullet is absorbed - until rocket explodes
             public int reload; // Time to reload (ms)
             public int magCapacity;
             public int maxAmmoMultiplier; // Amount of extra mags (maxAmmo = magCapacity * maxAmmoMultiplier)
@@ -390,10 +390,10 @@ namespace christ_a_2
             public int shotgunShots; // Shotgun only
             public float explosionRadius; // Relative - Grenade and RPG only
 
-            public WeaponOb(string _name, WeaponClass _type, Image _img, Image _bulletImg, float _bulletSize, string _country, int _damage, float _weight, float _velocity, float _firerate, int _penetration, int _reload, int _magCapacity, int _maxAmmoMultiplier, float _accuracy, float _recoil, float _maxDistance, float _pushBack = 0, int _shotgunShots = 0, float _explosionRadius = 0)
+            public WeaponOb(string _name, WeaponClass _weaponClass, Image _img, Image _bulletImg, float _bulletSize, string _country, int _damage, float _weight, float _velocity, float _firerate, int _penetration, int _reload, int _magCapacity, int _maxAmmoMultiplier, float _accuracy, float _recoil, float _maxDistance, float _pushBack = 0, int _shotgunShots = 0, float _explosionRadius = 0)
             {
                 name = _name;
-                type = _type;
+                weaponClass = _weaponClass;
                 img = _img;
                 bulletImg = _bulletImg;
                 bulletSize = _bulletSize;
@@ -565,14 +565,14 @@ namespace christ_a_2
             // http://www.military-today.com/firearms.htm
             weaponsData = new Dictionary<Weapons, WeaponOb> {
                 {Weapons.None, new WeaponOb("None", WeaponClass.Pistol, Properties.Resources.weapon_none, Properties.Resources.bullet_other, 0, "None", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) },
-            //  Weapon,                            Name,           Type,                        Img,                                   BulletImg,                           BulletSize, Country,          Damage, Weight, Velocity, Firerate, Penetration Reload, MagCapacity, MaxAmmoMultiplier, Accuracy, Recoil, MaxDistance, PushBack, ShotgunShots, ExplosionRadius
-                {Weapons.Glock19,     new WeaponOb("Glock-19",     WeaponClass.Pistol,          Properties.Resources.weapon_glock19,   Properties.Resources.bullet_pistol,  0.02f,      "Austria",        10,     1.00f,  0.20f,    0.50f,    1,          800,    15,          3,                 0.00f,    0.00f,  1.00f) },
+            //  Weapon,                            Name,           Class,                       Img,                                   BulletImg,                           BulletSize, Country,          Damage, Weight, Velocity, Firerate, Penetration Reload, MagCapacity, MaxAmmoMultiplier, Accuracy, Recoil, MaxDistance, PushBack, ShotgunShots, ExplosionRadius
+                {Weapons.Glock19,     new WeaponOb("Glock-19",     WeaponClass.Pistol,          Properties.Resources.weapon_glock19,   Properties.Resources.bullet_pistol,  0.02f,      "Austria",        10,     1.00f,  0.20f,    0.50f,    1,          800,    15,          3,                 0.00f,    0.00f,  0.20f) },
                 {Weapons.FiveSeven,   new WeaponOb("Five SeveN",   WeaponClass.Pistol,          Properties.Resources.weapon_fiveseven, Properties.Resources.bullet_pistol,  0.01f,      "Belgium",        10,     1.00f,  0.50f,    1.00f,    1,          500,    20,          3,                 0.00f,    0.00f,  1.00f) },
                 {Weapons.DesertEagle, new WeaponOb("Desert Eagle", WeaponClass.Pistol,          Properties.Resources.weapon_deagle,    Properties.Resources.bullet_pistol,  0.01f,      "USA",            10,     1.00f,  0.50f,    1.00f,    1,          500,    7,           2,                 0.00f,    0.00f,  1.00f) },
                 {Weapons.Galil,       new WeaponOb("Galil",        WeaponClass.AR,              Properties.Resources.weapon_galil,     Properties.Resources.bullet_other,   0.01f,      "Israel",         10,     1.00f,  0.50f,    1.00f,    1,          500,    35,          6,                 0.00f,    0.00f,  1.00f) },
                 {Weapons.AMD65,       new WeaponOb("AMD-65",       WeaponClass.AR,              Properties.Resources.weapon_amd65,     Properties.Resources.bullet_other,   0.01f,      "Hungary",        10,     1.00f,  0.50f,    1.00f,    1,          500,    30,          6,                 0.00f,    0.00f,  1.00f) },
                 {Weapons.AEK971,      new WeaponOb("AEK-971",      WeaponClass.AR,              Properties.Resources.weapon_aek971,    Properties.Resources.bullet_other,   0.01f,      "Russia",         10,     1.00f,  0.50f,    1.00f,    1,          500,    30,          6,                 0.00f,    0.00f,  1.00f) },
-                {Weapons.AK47,        new WeaponOb("AK-47",        WeaponClass.AR,              Properties.Resources.weapon_ak47,      Properties.Resources.bullet_other,   0.02f,      "Russia",         10,     1.00f,  0.50f,    4.00f,    2,          500,    30,          6,                 0.05f,    0.02f,  0.20f) },
+                {Weapons.AK47,        new WeaponOb("AK-47",        WeaponClass.AR,              Properties.Resources.weapon_ak47,      Properties.Resources.bullet_other,   0.02f,      "Russia",         10,     1.00f,  0.50f,    4.00f,    2,          500,    30,          6,                 0.05f,    0.02f,  0.50f) },
                 {Weapons.M107,        new WeaponOb("M107",         WeaponClass.Marksman,        Properties.Resources.weapon_m107,      Properties.Resources.bullet_other,   0.01f,      "USA",            10,     1.00f,  0.50f,    1.00f,    1,          500,    1,           10,                0.00f,    0.00f,  1.00f) },
                 {Weapons.L115A3,      new WeaponOb("L115A3",       WeaponClass.Marksman,        Properties.Resources.weapon_l115a3,    Properties.Resources.bullet_other,   0.01f,      "United Kingdom", 10,     1.00f,  0.50f,    1.00f,    1,          500,    2,           5,                 0.00f,    0.00f,  1.00f) },
                 {Weapons.SCAR,        new WeaponOb("SCAR SSR",     WeaponClass.Marksman,        Properties.Resources.weapon_scar,      Properties.Resources.bullet_other,   0.01f,      "Belgium",        10,     1.00f,  0.50f,    1.00f,    1,          500,    10,          2,                 0.00f,    0.00f,  1.00f) },
@@ -781,11 +781,11 @@ namespace christ_a_2
             UpdateInventoryGraphics(); // Update inventory graphics - useful on first load
 
             playerPos = new Vector2(0.5f, 0.5f);
-            game_player_pictureBox.Location = FromRelativeV2(playerPos, main_game_panel.Size); // Have player start in centre // Could change depending on level?
+            game_player_pictureBox.Location = FromRelativeV2Center(playerPos, game_player_pictureBox.Size, main_game_panel.Size); // Have player start in centre // Could change depending on level?
             game_player_pictureBox.Size = SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(Constants.playerSize, main_game_panel.Size), main_game_panel.Size));
             game_player_pictureBox.BringToFront();
 
-            foreach (KeyValuePair<Enemys, int> enemyType in levelsData[level].enemyAmount) // Create the enemys for the level
+            foreach (KeyValuePair<Enemys, int> enemyType in levelsData[level].enemyAmount) // Create the enemys for the level (change to wave based on level?)
             {
                 for (int i = 0; i < enemyType.Value; i++)
                 {
@@ -809,7 +809,7 @@ namespace christ_a_2
                 }
             }
 
-            switch(level) // Level specialitys
+            switch(level) // Level specialitys - music here?
             {
                 case Levels.BossLevel: 
                 break;
@@ -847,41 +847,20 @@ namespace christ_a_2
                 bool click = MouseButtons == MouseButtons.Left;
                 if (click) // Player clicks to try and shoot
                 {
-                    if (lastRotate < sw.ElapsedMilliseconds - Constants.weaponSwitchCooldown) // Can only shoot after weapon switch cooldown after changing weapon
+                    if (lastShot < sw.ElapsedMilliseconds - (1000 / weaponsData[inventory[0].weapon].firerate)) // Only shoot at firerate (1 / (rps / 1000))
                     {
-                        if (weaponClassData[weaponsData[inventory[0].weapon].type].type == WeaponType.Auto || (weaponClassData[weaponsData[inventory[0].weapon].type].type == WeaponType.Semi && !lastClick)) // If weapon is semi make sure its a new click
+                        if (inventory[0].magBullets > 0) // Make sure there are bullets in the mag
                         {
-                            if (lastShot < sw.ElapsedMilliseconds - (1000 / weaponsData[inventory[0].weapon].firerate)) // Only shoot at firerate (1 / (rps / 1000))
+                            if (weaponClassData[weaponsData[inventory[0].weapon].weaponClass].type == WeaponType.Auto || (weaponClassData[weaponsData[inventory[0].weapon].weaponClass].type == WeaponType.Semi && !lastClick)) // If weapon is semi make sure its a new click
                             {
-                                if (inventory[0].magBullets > 0) // Make sure there are bullets in the mag
+                                if (lastRotate < sw.ElapsedMilliseconds - Constants.weaponSwitchCooldown) // Can only shoot after weapon switch cooldown after changing weapon
                                 {
                                     if (!reloading) // Cant shoot while reloading
                                     {
                                         inventory[0].magBullets--; // Remove bullet from mag
                                         UpdateInventoryAmmo();
 
-                                        float accuracyVal = weaponsData[inventory[0].weapon].accuracy / 2;
-                                        Vector2 aimPos = ToRelativeV2(MousePosition, main_game_panel.Size) + FromScaledRelativeV2ToRealtiveV2(new Vector2(GetFloatRng(-accuracyVal, accuracyVal), GetFloatRng(-accuracyVal, accuracyVal)), main_game_panel.Size); // Affected by accuracy
-                                        bullets.Add(new Bullet( // Instatiate bullet
-                                            playerPos,
-                                            weaponsData[inventory[0].weapon].maxDistance,
-                                            (aimPos - playerPos).Normalise(),
-                                            (playerPos.x > aimPos.x), // For weird negative angle flipping
-                                            (float)weaponsData[inventory[0].weapon].velocity,
-                                            weaponsData[inventory[0].weapon].damage,
-                                            weaponsData[inventory[0].weapon].penetration,
-                                            weaponsData[inventory[0].weapon].bulletImg,
-                                            SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(new Vector2(weaponsData[inventory[0].weapon].bulletSize), main_game_panel.Size), main_game_panel.Size)),
-                                            true
-                                        ));
-                                        int bulleti = bullets.Count - 1;
-                                        main_game_panel.Controls.Add(bullets[bulleti].pb);
-                                        bullets[bulleti].pb.BringToFront();
-
-                                        float recoilVal = weaponsData[inventory[0].weapon].recoil / 2;
-                                        Vector2 recoil = FromScaledRelativeV2ToRealtiveV2(new Vector2(GetFloatRng(-recoilVal, recoilVal), GetFloatRng(-recoilVal, recoilVal)), this.Size);
-                                        Vector2 newMousePos = ToRelativeV2(System.Windows.Forms.Cursor.Position, main_game_panel.Size) + recoil; // Change mouse position depending on recoil
-                                        System.Windows.Forms.Cursor.Position = FromRelativeV2(newMousePos, main_game_panel.Size);
+                                        PlayerShoot(inventory[0].weapon);
 
                                         lastShot = sw.ElapsedMilliseconds;
                                     }
@@ -946,14 +925,46 @@ namespace christ_a_2
                 for (int i = deleteEnemys.Count - 1; i >= 0; i--)
                     enemys.RemoveAt(deleteEnemys[i]);
 
-                for (int i = 0; i < enemys.Count; i++) //  Loop through every enemy
+                /*for (int i = 0; i < enemys.Count; i++) //  Loop through every enemy
                 {
                     // Enemy AI
-                }
+                }*/
             }
 
             delta = (sw.ElapsedMilliseconds - startFrame) / 1000; // Calculate deltatime for frame
             startFrame = sw.ElapsedMilliseconds;
+        }
+
+        private void PlayerShoot(Weapons weapon)
+        {
+            switch(weaponsData[weapon].weaponClass) // test if its a sepcial weapon?
+            {
+                case WeaponClass.Shotgun:
+                break;
+            }
+
+            float accuracyVal = weaponsData[weapon].accuracy / 2;
+            Vector2 aimPos = ToRelativeV2(MousePosition, main_game_panel.Size) + FromScaledRelativeV2ToRealtiveV2(new Vector2(GetFloatRng(-accuracyVal, accuracyVal), GetFloatRng(-accuracyVal, accuracyVal)), main_game_panel.Size); // Affected by accuracy
+            bullets.Add(new Bullet( // Instatiate bullet
+                playerPos,
+                weaponsData[weapon].maxDistance,
+                (aimPos - playerPos).Normalise(),
+                (playerPos.x > aimPos.x), // For weird negative angle flipping
+                (float)weaponsData[weapon].velocity,
+                weaponsData[weapon].damage,
+                weaponsData[weapon].penetration,
+                weaponsData[weapon].bulletImg,
+                SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(new Vector2(weaponsData[weapon].bulletSize), main_game_panel.Size), main_game_panel.Size)),
+                true
+            ));
+            int bulleti = bullets.Count - 1;
+            main_game_panel.Controls.Add(bullets[bulleti].pb);
+            bullets[bulleti].pb.BringToFront();
+
+            float recoilVal = weaponsData[weapon].recoil / 2;
+            Vector2 recoil = FromScaledRelativeV2ToRealtiveV2(new Vector2(GetFloatRng(-recoilVal, recoilVal), GetFloatRng(-recoilVal, recoilVal)), this.Size);
+            Vector2 newMousePos = ToRelativeV2(System.Windows.Forms.Cursor.Position, main_game_panel.Size) + recoil; // Change mouse position depending on recoil
+            System.Windows.Forms.Cursor.Position = FromRelativeV2(newMousePos, main_game_panel.Size);
         }
 
         private async void ReloadWeapon()
