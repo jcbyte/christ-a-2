@@ -529,7 +529,7 @@ namespace christ_a_2
             weaponsData = new Dictionary<Weapons, WeaponOb> {
                 {Weapons.None, new WeaponOb("None", WeaponClass.Pistol, Properties.Resources.weapon_none, Properties.Resources.bullet_other, 0, "None", 0, 0, 0, 0, 0, 0, 0, 0, 0) },
             //  Weapon,                            Name,           Type,                        Img,                                   BulletImg,                           BulletSize, Country,          Damage, Weight, Velocity, Firerate, Reload, MagCapacity, MaxAmmoMultiplier, Accuracy, Recoil, PushBack, ShotgunShots, maxGrenadeDistance, ExplosionRadius
-                {Weapons.Glock19,     new WeaponOb("Glock-19",     WeaponClass.Pistol,          Properties.Resources.weapon_glock19,   Properties.Resources.bullet_pistol,  0.01f,      "Austria",        10,     1.00f,  0.20f,    0.50f,    800,    15,          3,                 0.00f,    0.00f) },
+                {Weapons.Glock19,     new WeaponOb("Glock-19",     WeaponClass.Pistol,          Properties.Resources.weapon_glock19,   Properties.Resources.bullet_pistol,  0.10f,      "Austria",        10,     1.00f,  0.20f,    0.50f,    800,    15,          3,                 0.00f,    0.00f) },
                 {Weapons.FiveSeven,   new WeaponOb("Five SeveN",   WeaponClass.Pistol,          Properties.Resources.weapon_fiveseven, Properties.Resources.bullet_pistol,  0.01f,      "Belgium",        10,     1.00f,  0.50f,    1.00f,    500,    20,          3,                 0.00f,    0.00f) },
                 {Weapons.DesertEagle, new WeaponOb("Desert Eagle", WeaponClass.Pistol,          Properties.Resources.weapon_deagle,    Properties.Resources.bullet_pistol,  0.01f,      "USA",            10,     1.00f,  0.50f,    1.00f,    500,    7,           2,                 0.00f,    0.00f) },
                 {Weapons.Galil,       new WeaponOb("Galil",        WeaponClass.AR,              Properties.Resources.weapon_galil,     Properties.Resources.bullet_other,   0.01f,      "Israel",         10,     1.00f,  0.50f,    1.00f,    500,    35,          6,                 0.00f,    0.00f) },
@@ -585,10 +585,10 @@ namespace christ_a_2
             return (float)rng.NextDouble() * (max - min) + min;
         }
 
-        private bool LineIntersectsVerticalLine(Vector2 lineAPointA, Vector2 lineAPointB, Vector2 lineBPointA, Vector2 lineBPointB, bool vertical)
+        private bool LineIntersectsStraightLine(Vector2 lineAPointA, Vector2 lineAPointB, Vector2 lineBPointA, Vector2 lineBPointB, bool vertical)
         {
             float lineAXCoefficient = (lineAPointB.y - lineAPointA.y) / (lineAPointB.x - lineAPointA.x); // y = (m)x +  c
-            float lineAOffset = lineAXCoefficient * lineAPointA.x + lineAPointA.y;                       // y =  mx  + (c)
+            float lineAOffset = lineAXCoefficient * -lineAPointA.x + lineAPointA.y;                       // y =  mx  + (c)
 
             if (vertical)
             {
@@ -617,19 +617,10 @@ namespace christ_a_2
 
         private bool LineIntersectsRect(Vector2 linePointA, Vector2 linePointB, Vector2 rectPointA, Vector2 rectPointB) // Check if the line intersects any of the lines of the rect (ra = top left, rb = bottom right)
         {
-            Console.WriteLine(linePointA.ToString() + " : " + linePointB.ToString() + " : " + rectPointA.ToString() + " : " + rectPointB.ToString());
-            //System.Threading.Thread.Sleep(100);
-            //System.Windows.Forms.Cursor.Position = FromRelativeV2(linePointB, this.Size);
-
-            debugPic1.Location = FromRelativeV2(rectPointA, main_game_panel.Size);
-            debugPic1.BringToFront();
-            debugPic2.Location = FromRelativeV2(rectPointB, main_game_panel.Size);
-            debugPic2.BringToFront();
-
-            return LineIntersectsVerticalLine(linePointA, linePointB, rectPointA, new Vector2(rectPointB.x, rectPointA.y), false) ||
-                   LineIntersectsVerticalLine(linePointA, linePointB, new Vector2(rectPointB.x, rectPointA.y), rectPointB, true) ||
-                   LineIntersectsVerticalLine(linePointA, linePointB, rectPointB, new Vector2(rectPointA.x, rectPointB.y), false) ||
-                   LineIntersectsVerticalLine(linePointA, linePointB, new Vector2(rectPointA.x, rectPointB.y), rectPointA, true);
+            return LineIntersectsStraightLine(linePointA, linePointB, rectPointA, new Vector2(rectPointB.x, rectPointA.y), false) ||
+                   LineIntersectsStraightLine(linePointA, linePointB, new Vector2(rectPointB.x, rectPointA.y), rectPointB, true) ||
+                   LineIntersectsStraightLine(linePointA, linePointB, rectPointB, new Vector2(rectPointA.x, rectPointB.y), false) ||
+                   LineIntersectsStraightLine(linePointA, linePointB, new Vector2(rectPointA.x, rectPointB.y), rectPointA, true);
         }
 
         #endregion
