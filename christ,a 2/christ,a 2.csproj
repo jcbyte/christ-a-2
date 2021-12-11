@@ -109,9 +109,6 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\floor.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\nullz.png" />
   </ItemGroup>
   <ItemGroup>
@@ -122,9 +119,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\bullet.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\openingCreditsCutscene.mp4" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\menu.png" />
@@ -185,9 +179,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\weapon_m249.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\bullet_ar.html" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\bullet_ar.png" />

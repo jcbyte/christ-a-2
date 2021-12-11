@@ -200,6 +200,8 @@ namespace christ_a_2
 
         private class Enemy // Enemy class containg visual and code objects
         {
+            public string id;
+
             public PictureBox pb;
 
             public Panel healthPanel;
@@ -211,8 +213,10 @@ namespace christ_a_2
             public int maxHealth;
             public float speed;
 
-            public Enemy(Vector2 _pos, Image img, Size size, Weapons _weapon, int _health, float _speed) 
+            public Enemy(string _id, Vector2 _pos, Image img, Size size, Weapons _weapon, int _health, float _speed) 
             {
+                id = _id;
+
                 pb = new PictureBox(); // Add new picturebox (enemy) to the form
                 pb.BackgroundImageLayout = ImageLayout.Stretch;
                 pb.Size = size;
@@ -409,7 +413,10 @@ namespace christ_a_2
             public int damage;
             public PictureBox pb;
 
-            public Bullet(Vector2 _pos, Vector2 _dir, bool flip, float _speed, int _damage, Image img, Size size)
+            public bool playerBullet;
+            public List<string> blacklist;
+
+            public Bullet(Vector2 _pos, Vector2 _dir, bool flip, float _speed, int _damage, Image img, Size size, bool _playerBullet, List<string> _blacklist = null)
             {
                 pos = _pos;
                 dir = _dir;
@@ -430,6 +437,9 @@ namespace christ_a_2
                 pb.Size = size;
                 pb.BackColor = Color.Transparent;
                 pb.BackgroundImage = bmp;
+
+                playerBullet = _playerBullet;
+                blacklist = (_blacklist == null ? new List<string>() : _blacklist);
             }
 
             public void UpdatePos(float delta, Size formSize)
@@ -753,6 +763,7 @@ namespace christ_a_2
                 for (int i = 0; i < enemyType.Value; i++)
                 {
                     enemys.Add(new Enemy( // Instatiate enemys
+                        cLevel.ToString() + "-" + i.ToString(),
                         new Vector2(GetFloatRng(0.1f, 0.9f), GetFloatRng(0.1f, 0.9f)),
                         enemysData[enemyType.Key].img,
                         SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(enemysData[enemyType.Key].size, main_game_panel.Size), main_game_panel.Size)),
@@ -831,7 +842,8 @@ namespace christ_a_2
                                             (float)weaponsData[inventory[0].weapon].velocity,
                                             weaponsData[inventory[0].weapon].damage,
                                             weaponsData[inventory[0].weapon].bulletImg,
-                                            SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(new Vector2(weaponsData[inventory[0].weapon].bulletSize), main_game_panel.Size), main_game_panel.Size))
+                                            SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(new Vector2(weaponsData[inventory[0].weapon].bulletSize), main_game_panel.Size), main_game_panel.Size)),
+                                            true
                                         ));
                                         int bulleti = bullets.Count - 1;
                                         main_game_panel.Controls.Add(bullets[bulleti].pb);
@@ -860,20 +872,36 @@ namespace christ_a_2
                 }
 
                 List<int> deleteBullets = new List<int>();
+                List<int> deleteEnemys = new List<int>();
                 for (int i = 0; i < bullets.Count; i++) // loop through every bullet
                 {
                     Vector2 before = bullets[i].pos;
                     bullets[i].UpdatePos(delta, this.Size); // Move bullet in direction
                     Vector2 after = bullets[i].pos;
 
-                    for (int j = 0; j < enemys.Count; j++) // Check if enemy hit
+                    if (bullets[i].playerBullet)
                     {
-                        Vector2 enemyPos = ToRelativeV2(enemys[j].pb.Location, main_game_panel.Size);
-                        if (LineIntersectsRect(before, after, enemyPos, enemyPos + ToRelativeV2(SystemSizeToSystemPoint(enemys[j].pb.Size), main_game_panel.Size)))
+                        for (int j = 0; j < enemys.Count; j++) // Check if enemy hit
                         {
-                            Console.WriteLine("worked ############");
-                            enemys[j].health -= weaponsData[inventory[0].weapon].damage;
-                            enemys[j].UpdateHealth();
+                            if (!bullets[i].blacklist.Contains(enemys[j].id))
+                            {
+                                Vector2 enemyPos = ToRelativeV2(enemys[j].pb.Location, main_game_panel.Size);
+                                if (LineIntersectsRect(before, after, enemyPos, enemyPos + ToRelativeV2(SystemSizeToSystemPoint(enemys[j].pb.Size), main_game_panel.Size)))
+                                {
+                                    enemys[j].health -= weaponsData[inventory[0].weapon].damage;
+                                    enemys[j].UpdateHealth();
+
+                                    bullets[i].blacklist.Add(enemys[j].id); // Add enemy to blacklist so it cant be hit again by the same bullet
+
+                                    if (enemys[j].health <= 0)
+                                    {
+                                        deleteEnemys.Add(j);
+                                        enemys[j].healthPb.Dispose();
+                                        enemys[j].healthPanel.Dispose();
+                                        enemys[j].pb.Dispose();
+                                    }
+                                }
+                            }
                         }
                     }
                     
@@ -884,9 +912,9 @@ namespace christ_a_2
                     }
                 }
                 for (int i = deleteBullets.Count - 1; i >= 0; i--)
-                {
                     bullets.RemoveAt(deleteBullets[i]);
-                }
+                for (int i = deleteEnemys.Count - 1; i >= 0; i--)
+                    enemys.RemoveAt(deleteEnemys[i]);
 
                 for (int i = 0; i < enemys.Count; i++) //  Loop through every enemy
                 {
