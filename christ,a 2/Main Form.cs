@@ -20,13 +20,16 @@ namespace christ_a_2
             public const int memoryIncrease = 1024 * 1024 * 64;
 
             public const float playerSpeed = 0.15f;
-            public const int weaponSwitchCooldown = 100;
-
+            public const int maxPlayerHealth = 100;
             public static readonly Vector2 playerSize = new Vector2(0.04f, 0.06f); // Scaled relative Vector2
+
+            public const int weaponSwitchCooldown = 100;
 
             public const int enemyHealthBarThickness = 6; // (px)
 
             public const float ammoDropChance = 0.50f; // Ammo chance + health chance = 1 
+            public const float pickupBoxRange = 0.02f; // Relative
+            public const int healthPickupHealth = 20;
         }
 
         #endregion
@@ -554,8 +557,8 @@ namespace christ_a_2
         private List<Drop> drops = new List<Drop>();
 
         private Vector2 playerPos = new Vector2(0.5f, 0.5f);
-        private int playerHealth = 100;
-        private inventoryOb[] inventory = new inventoryOb[3] { new inventoryOb(Weapons.Glock19, 14, 30), new inventoryOb(Weapons.AK47, 1000, 0), new inventoryOb(Weapons.RPG7, 1, 2) };
+        private int playerHealth;
+        private inventoryOb[] inventory = new inventoryOb[3] { new inventoryOb(Weapons.Glock19, 14, 30), new inventoryOb(Weapons.AK47, 1000, 0), new inventoryOb(Weapons.M1014, 7, 14) };
 
         private SoundPlayer backgroundMusicPlayer = new SoundPlayer();
         private SoundPlayer soundEffectsPlayer = new SoundPlayer();
@@ -617,13 +620,13 @@ namespace christ_a_2
             weaponsData = new Dictionary<Weapons, WeaponOb> {
                 {Weapons.None, new WeaponOb("None", WeaponClass.Pistol, Properties.Resources.weapon_none, Properties.Resources.bullet_other, 0, "None", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) },
             //  Weapon,                            Name,           Class,                       Img,                                   BulletImg,                           BulletSize, Country,          Damage, Weight, Velocity, Firerate, Penetration Reload, MagCapacity, MaxAmmoMultiplier, Accuracy, Recoil, MaxDistance, PushBack, ShotgunShots, ExplosionRadius
-                {Weapons.Glock19,     new WeaponOb("Glock-19",     WeaponClass.Pistol,          Properties.Resources.weapon_glock19,   Properties.Resources.bullet_pistol,  0.02f,      "Austria",        10,     1.00f,  0.20f,    0.50f,    1,          800,    15,          3,                 0.00f,    0.00f,  0.20f) },
+                {Weapons.Glock19,     new WeaponOb("Glock-19",     WeaponClass.Pistol,          Properties.Resources.weapon_glock19,   Properties.Resources.bullet_pistol,  0.02f,      "Austria",        10,     1.00f,  0.20f,    0.50f,    1,          800,    15,          3,                 0.00f,    0.00f,  0.50f) },
                 {Weapons.FiveSeven,   new WeaponOb("Five SeveN",   WeaponClass.Pistol,          Properties.Resources.weapon_fiveseven, Properties.Resources.bullet_pistol,  0.01f,      "Belgium",        10,     1.00f,  0.50f,    1.00f,    1,          500,    20,          3,                 0.00f,    0.00f,  1.00f) },
                 {Weapons.DesertEagle, new WeaponOb("Desert Eagle", WeaponClass.Pistol,          Properties.Resources.weapon_deagle,    Properties.Resources.bullet_pistol,  0.01f,      "USA",            10,     1.00f,  0.50f,    1.00f,    1,          500,    7,           2,                 0.00f,    0.00f,  1.00f) },
                 {Weapons.Galil,       new WeaponOb("Galil",        WeaponClass.AR,              Properties.Resources.weapon_galil,     Properties.Resources.bullet_other,   0.01f,      "Israel",         10,     1.00f,  0.50f,    1.00f,    1,          500,    35,          6,                 0.00f,    0.00f,  1.00f) },
                 {Weapons.AMD65,       new WeaponOb("AMD-65",       WeaponClass.AR,              Properties.Resources.weapon_amd65,     Properties.Resources.bullet_other,   0.01f,      "Hungary",        10,     1.00f,  0.50f,    1.00f,    1,          500,    30,          6,                 0.00f,    0.00f,  1.00f) },
                 {Weapons.AEK971,      new WeaponOb("AEK-971",      WeaponClass.AR,              Properties.Resources.weapon_aek971,    Properties.Resources.bullet_other,   0.01f,      "Russia",         10,     1.00f,  0.50f,    1.00f,    1,          500,    30,          6,                 0.00f,    0.00f,  1.00f) },
-                {Weapons.AK47,        new WeaponOb("AK-47",        WeaponClass.AR,              Properties.Resources.weapon_ak47,      Properties.Resources.bullet_other,   0.02f,      "Russia",         10,     1.00f,  0.50f,    4.00f,    2,          500,    30,          6,                 0.05f,    0.02f,  0.50f) },
+                {Weapons.AK47,        new WeaponOb("AK-47",        WeaponClass.AR,              Properties.Resources.weapon_ak47,      Properties.Resources.bullet_other,   0.02f,      "Russia",         10,     1.00f,  0.50f,    4.00f,    2,          500,    30,          6,                 0.05f,    0.02f,  0.75f) },
                 {Weapons.M107,        new WeaponOb("M107",         WeaponClass.Marksman,        Properties.Resources.weapon_m107,      Properties.Resources.bullet_other,   0.01f,      "USA",            10,     1.00f,  0.50f,    1.00f,    1,          500,    1,           10,                0.00f,    0.00f,  1.00f) },
                 {Weapons.L115A3,      new WeaponOb("L115A3",       WeaponClass.Marksman,        Properties.Resources.weapon_l115a3,    Properties.Resources.bullet_other,   0.01f,      "United Kingdom", 10,     1.00f,  0.50f,    1.00f,    1,          500,    2,           5,                 0.00f,    0.00f,  1.00f) },
                 {Weapons.SCAR,        new WeaponOb("SCAR SSR",     WeaponClass.Marksman,        Properties.Resources.weapon_scar,      Properties.Resources.bullet_other,   0.01f,      "Belgium",        10,     1.00f,  0.50f,    1.00f,    1,          500,    10,          2,                 0.00f,    0.00f,  1.00f) },
@@ -633,7 +636,7 @@ namespace christ_a_2
                 {Weapons.M249,        new WeaponOb("M249",         WeaponClass.LMG,             Properties.Resources.weapon_m249,      Properties.Resources.bullet_other,   0.01f,      "USA",            10,     1.00f,  0.50f,    1.00f,    1,          500,    30,          15,                0.00f,    0.00f,  1.00f) },
                 {Weapons.M2,          new WeaponOb("M2",           WeaponClass.HMG,             Properties.Resources.weapon_m2,        Properties.Resources.bullet_other,   0.01f,      "USA",            10,     1.00f,  0.50f,    1.00f,    1,          500,    100,         4,                 0.00f,    0.00f,  1.00f) },
                 {Weapons.FP6,         new WeaponOb("FP6",          WeaponClass.Shotgun,         Properties.Resources.weapon_fp6,       Properties.Resources.bullet_shotgun, 0.01f,      "Germany",        10,     1.00f,  0.50f,    1.00f,    1,          500,    6,           2,                 0.00f,    0.00f,  1.00f,       0.00f,    3) },
-                {Weapons.M1014,       new WeaponOb("M1014",        WeaponClass.Shotgun,         Properties.Resources.weapon_m1014,     Properties.Resources.bullet_shotgun, 0.01f,      "Italy",          10,     1.00f,  0.50f,    1.00f,    1,          500,    8,           3,                 0.00f,    0.00f,  1.00f,       0.00f,    3) },
+                {Weapons.M1014,       new WeaponOb("M1014",        WeaponClass.Shotgun,         Properties.Resources.weapon_m1014,     Properties.Resources.bullet_shotgun, 0.04f,      "Italy",          10,     1.00f,  0.50f,    1.00f,    1,          500,    8,           3,                 0.00f,    0.00f,  1.00f,       0.00f,    3) },
                 {Weapons.MGL105,      new WeaponOb("MGL-105",      WeaponClass.GrenadeLauncher, Properties.Resources.weapon_mgl105,    Properties.Resources.bullet_grenade, 0.01f,      "South Africa",   10,     1.00f,  0.50f,    1.00f,    1,          500,    6,           1,                 0.00f,    0.00f,  1.00f,       0.00f,    0,            0.05f) },
                 {Weapons.RPG7,        new WeaponOb("RPG-7",        WeaponClass.RPG,             Properties.Resources.weapon_rpg7,      Properties.Resources.bullet_rpg,     0.01f,      "Russia",         10,     10.00f, 0.50f,    1.00f,    1,          500,    1,           4,                 0.00f,    0.00f,  1.00f,       0.00f,    0,            0.05f) },
             };
@@ -656,6 +659,9 @@ namespace christ_a_2
             };
 
             #endregion
+
+            playerHealth = 30;//Constants.maxPlayerHealth;
+            UpdatePlayerHealth();
 
             foreach (KeyValuePair<Scenes, SceneOb> s in scenesData)
                 s.Value.panel.Visible = false;
@@ -842,6 +848,7 @@ namespace christ_a_2
             game_player_pictureBox.Location = FromRelativeV2Center(playerPos, game_player_pictureBox.Size, main_game_panel.Size); // Have player start in centre // Could change depending on level?
             game_player_pictureBox.Size = SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(Constants.playerSize, main_game_panel.Size), main_game_panel.Size));
             game_player_pictureBox.BringToFront();
+            UpdatePlayerHealth();
 
             foreach (KeyValuePair<Enemys, int> enemyType in levelsData[level].enemyAmount) // Create the enemys for the level (change to wave based on level?)
             {
@@ -902,6 +909,42 @@ namespace christ_a_2
                 float speedWeightModifier = (float)1 / weaponsData[inventory[0].weapon].weight;
                 playerPos += movement * Constants.playerSpeed * speedWeightModifier * delta; // Player Movement
                 game_player_pictureBox.Location = FromRelativeV2Center(playerPos, game_player_pictureBox.Size, main_game_panel.Size);
+
+                List<int> deleteDrops = new List<int>();
+                for (int i = 0; i < drops.Count; i++)
+                {
+                    if ((drops[i].pos - playerPos).ScaledMagnitude(main_game_panel.Size) <= Constants.pickupBoxRange) // Player should pick up box
+                    { 
+                        switch (drops[i].type)
+                        {
+                            case Drops.Ammo:
+                                for (int j = 0; j < inventory.Length; j++)
+                                {
+                                    int magCapacity = weaponsData[inventory[j].weapon].magCapacity;
+                                    int maxAmmo = magCapacity * weaponsData[inventory[j].weapon].maxAmmoMultiplier;
+                                    inventory[j].reserveBullets = Math.Min(inventory[j].reserveBullets + magCapacity, maxAmmo);
+                                }
+                                UpdateInventoryAmmo();
+                                break;
+
+                            case Drops.Health:
+                                playerHealth = Math.Min(playerHealth + Constants.healthPickupHealth, Constants.maxPlayerHealth);
+                                UpdatePlayerHealth();
+                                break;
+
+                            case Drops.Weapon:
+                                // Weapon drop
+                                break;
+                        }
+
+                        deleteDrops.Add(i);
+                        drops[i].pb.Dispose();
+                    }
+                }
+                for (int i = deleteDrops.Count - 1; i >= 0; i--)
+                {
+                    drops.RemoveAt(deleteDrops[i]);
+                }
 
                 bool click = (MouseButtons == MouseButtons.Left) && ClientRectangle.Contains(MousePosition);
                 if (click) // Player clicks to try and shoot
@@ -1013,6 +1056,12 @@ namespace christ_a_2
 
             delta = (sw.ElapsedMilliseconds - startFrame) / 1000; // Calculate deltatime for frame
             startFrame = sw.ElapsedMilliseconds;
+        }
+
+        private void UpdatePlayerHealth()
+        {
+            game_playerHealth_healthBar_pictureBox.Size = SystemPointToSystemSize(FromRelativeV2(new Vector2((float)playerHealth / Constants.maxPlayerHealth, 1), game_playerHealth_panel.Size));
+            game_playerHealth_health_label.Text = playerHealth.ToString() + "/" + Constants.maxPlayerHealth.ToString();
         }
 
         private void PlayerShoot(Weapons weapon)

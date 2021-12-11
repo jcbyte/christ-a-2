@@ -36,6 +36,7 @@
             this.main_menu_panel = new System.Windows.Forms.Panel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.main_game_panel = new System.Windows.Forms.Panel();
+            this.debugPic3 = new System.Windows.Forms.PictureBox();
             this.debugPic2 = new System.Windows.Forms.PictureBox();
             this.debugPic1 = new System.Windows.Forms.PictureBox();
             this.game_player_pictureBox = new System.Windows.Forms.PictureBox();
@@ -50,10 +51,13 @@
             this.game_floor_pictureBox = new System.Windows.Forms.PictureBox();
             this.main_cutscene_panel = new System.Windows.Forms.Panel();
             this.cutscene_media_windowsMediaPlayer = new AxWMPLib.AxWindowsMediaPlayer();
-            this.debugPic3 = new System.Windows.Forms.PictureBox();
+            this.game_playerHealth_panel = new System.Windows.Forms.Panel();
+            this.game_playerHealth_health_label = new System.Windows.Forms.Label();
+            this.game_playerHealth_healthBar_pictureBox = new System.Windows.Forms.PictureBox();
             this.main_menu_panel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.main_game_panel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.debugPic3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.debugPic2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.debugPic1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.game_player_pictureBox)).BeginInit();
@@ -64,7 +68,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.game_floor_pictureBox)).BeginInit();
             this.main_cutscene_panel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.cutscene_media_windowsMediaPlayer)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.debugPic3)).BeginInit();
+            this.game_playerHealth_panel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.game_playerHealth_healthBar_pictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // menu_startGame_button
@@ -160,6 +165,7 @@
             this.main_game_panel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.main_game_panel.Controls.Add(this.game_playerHealth_panel);
             this.main_game_panel.Controls.Add(this.debugPic3);
             this.main_game_panel.Controls.Add(this.debugPic2);
             this.main_game_panel.Controls.Add(this.debugPic1);
@@ -172,6 +178,15 @@
             this.main_game_panel.TabIndex = 1;
             this.main_game_panel.Paint += new System.Windows.Forms.PaintEventHandler(this.main_game_panel_Paint);
             this.main_game_panel.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.main_game_panel_MouseWheel);
+            // 
+            // debugPic3
+            // 
+            this.debugPic3.BackColor = System.Drawing.Color.Magenta;
+            this.debugPic3.Location = new System.Drawing.Point(826, 391);
+            this.debugPic3.Name = "debugPic3";
+            this.debugPic3.Size = new System.Drawing.Size(12, 14);
+            this.debugPic3.TabIndex = 5;
+            this.debugPic3.TabStop = false;
             // 
             // debugPic2
             // 
@@ -327,14 +342,36 @@
             this.cutscene_media_windowsMediaPlayer.Size = new System.Drawing.Size(1280, 720);
             this.cutscene_media_windowsMediaPlayer.TabIndex = 0;
             // 
-            // debugPic3
+            // game_playerHealth_panel
             // 
-            this.debugPic3.BackColor = System.Drawing.Color.Magenta;
-            this.debugPic3.Location = new System.Drawing.Point(826, 391);
-            this.debugPic3.Name = "debugPic3";
-            this.debugPic3.Size = new System.Drawing.Size(12, 14);
-            this.debugPic3.TabIndex = 5;
-            this.debugPic3.TabStop = false;
+            this.game_playerHealth_panel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.game_playerHealth_panel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.game_playerHealth_panel.Controls.Add(this.game_playerHealth_health_label);
+            this.game_playerHealth_panel.Controls.Add(this.game_playerHealth_healthBar_pictureBox);
+            this.game_playerHealth_panel.Location = new System.Drawing.Point(20, 660);
+            this.game_playerHealth_panel.Name = "game_playerHealth_panel";
+            this.game_playerHealth_panel.Size = new System.Drawing.Size(880, 40);
+            this.game_playerHealth_panel.TabIndex = 6;
+            // 
+            // game_playerHealth_health_label
+            // 
+            this.game_playerHealth_health_label.BackColor = System.Drawing.Color.Transparent;
+            this.game_playerHealth_health_label.Font = new System.Drawing.Font("Metropolis Thin", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.game_playerHealth_health_label.Location = new System.Drawing.Point(10, 8);
+            this.game_playerHealth_health_label.Name = "game_playerHealth_health_label";
+            this.game_playerHealth_health_label.Size = new System.Drawing.Size(100, 24);
+            this.game_playerHealth_health_label.TabIndex = 7;
+            this.game_playerHealth_health_label.Text = "70/100";
+            this.game_playerHealth_health_label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // game_playerHealth_healthBar_pictureBox
+            // 
+            this.game_playerHealth_healthBar_pictureBox.BackColor = System.Drawing.Color.Red;
+            this.game_playerHealth_healthBar_pictureBox.Location = new System.Drawing.Point(0, 0);
+            this.game_playerHealth_healthBar_pictureBox.Name = "game_playerHealth_healthBar_pictureBox";
+            this.game_playerHealth_healthBar_pictureBox.Size = new System.Drawing.Size(600, 40);
+            this.game_playerHealth_healthBar_pictureBox.TabIndex = 8;
+            this.game_playerHealth_healthBar_pictureBox.TabStop = false;
             // 
             // mainForm
             // 
@@ -358,6 +395,7 @@
             this.main_menu_panel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.main_game_panel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.debugPic3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.debugPic2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.debugPic1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.game_player_pictureBox)).EndInit();
@@ -368,7 +406,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.game_floor_pictureBox)).EndInit();
             this.main_cutscene_panel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.cutscene_media_windowsMediaPlayer)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.debugPic3)).EndInit();
+            this.game_playerHealth_panel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.game_playerHealth_healthBar_pictureBox)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -397,6 +436,9 @@
         private System.Windows.Forms.PictureBox debugPic1;
         private System.Windows.Forms.PictureBox debugPic2;
         private System.Windows.Forms.PictureBox debugPic3;
+        private System.Windows.Forms.Panel game_playerHealth_panel;
+        private System.Windows.Forms.Label game_playerHealth_health_label;
+        private System.Windows.Forms.PictureBox game_playerHealth_healthBar_pictureBox;
     }
 }
 
