@@ -213,5 +213,14 @@
   <ItemGroup>
     <None Include="Resources\enemy_tank.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\weapon_box.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ammo_box.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\healthbox.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

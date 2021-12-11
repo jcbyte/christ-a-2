@@ -25,6 +25,8 @@ namespace christ_a_2
             public static readonly Vector2 playerSize = new Vector2(0.04f, 0.06f); // Scaled relative Vector2
 
             public const int enemyHealthBarThickness = 6; // (px)
+
+            public const float ammoDropChance = 0.50f; // Ammo chance + health chance = 1 
         }
 
         #endregion
@@ -215,6 +217,7 @@ namespace christ_a_2
         private class Enemy // Enemy class containg visual and code objects
         {
             public string id;
+            public Enemys type;
 
             public PictureBox pb;
 
@@ -227,9 +230,10 @@ namespace christ_a_2
             public int maxHealth;
             public float speed;
 
-            public Enemy(string _id, Vector2 _pos, Image img, Size size, Weapons _weapon, int _health, float _speed) 
+            public Enemy(string _id, Enemys _type, Vector2 _pos, Image img, Size size, Weapons _weapon, int _health, float _speed) 
             {
                 id = _id;
+                type = _type;
 
                 pb = new PictureBox(); // Add new picturebox (enemy) to the form
                 pb.BackgroundImageLayout = ImageLayout.Stretch;
@@ -286,14 +290,16 @@ namespace christ_a_2
             public int health;
             public float speed;
             public Weapons weapon;
+            public float dropRate;
 
-            public EnemyOb(Image _img, Vector2 _size, int _health, float _speed, Weapons _weapon)
+            public EnemyOb(Image _img, Vector2 _size, int _health, float _speed, Weapons _weapon, float _dropRate)
             {
                 img = _img;
                 size = _size;
                 health = _health;
                 speed = _speed;
                 weapon = _weapon;
+                dropRate = _dropRate;
             }
         }
 
@@ -478,6 +484,48 @@ namespace christ_a_2
 
         #endregion
 
+        #region "Drops"
+
+        class Drop
+        {
+            public Drops type;
+            public Vector2 pos;
+            public PictureBox pb;
+
+            public Drop(Drops _type, Vector2 _pos, Image img, Size size)
+            {
+                type = _type;
+                pos = _pos;
+
+                pb = new PictureBox(); // Add new picturebox (drop) to the form
+                pb.BackgroundImageLayout = ImageLayout.Stretch;
+                pb.Size = size;
+                pb.BackColor = Color.Transparent;
+                pb.BackgroundImage = img;
+            }
+        }
+
+        private enum Drops : byte 
+        { 
+            Ammo,
+            Health,
+            Weapon
+        }
+
+        private class DropOb
+        {
+            public Image img;
+            public Vector2 size; // Scaled relative vector2
+
+            public DropOb(Image _img, Vector2 _size)
+            {
+                img = _img;
+                size = _size;
+            }
+        }
+
+        #endregion
+
         #region "Inventory"
 
         private struct inventoryOb
@@ -503,8 +551,10 @@ namespace christ_a_2
 
         private List<Enemy> enemys = new List<Enemy>();
         private List<Bullet> bullets = new List<Bullet>();
+        private List<Drop> drops = new List<Drop>();
 
         private Vector2 playerPos = new Vector2(0.5f, 0.5f);
+        private int playerHealth = 100;
         private inventoryOb[] inventory = new inventoryOb[3] { new inventoryOb(Weapons.Glock19, 14, 30), new inventoryOb(Weapons.AK47, 1000, 0), new inventoryOb(Weapons.RPG7, 1, 2) };
 
         private SoundPlayer backgroundMusicPlayer = new SoundPlayer();
@@ -516,6 +566,7 @@ namespace christ_a_2
         private Dictionary<WeaponClass, WeaponClassOb> weaponClassData;
         private Dictionary<Weapons, WeaponOb> weaponsData;
         private Dictionary<Enemys, EnemyOb> enemysData;
+        private Dictionary<Drops, DropOb> dropsData;
 
         private Scenes cScene = Scenes.Menu;
         private Levels cLevel = Levels.Level1;
@@ -544,7 +595,7 @@ namespace christ_a_2
             };
 
             levelsData = new Dictionary<Levels, levelOb> {
-                {Levels.Level1,    new levelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int> { { Enemys.Regular, 1 } /*{ Enemys.Regular, 6 }, { Enemys.Scout, 2 }, { Enemys.Rowland, 2 }*/ }) },
+                {Levels.Level1,    new levelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int> { { Enemys.Regular, 6 }, { Enemys.Scout, 2 }, { Enemys.Rowland, 2 } }) },
                 {Levels.Level2,    new levelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int> { }) },
                 {Levels.Level3,    new levelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int> { }) },
                 {Levels.BossLevel, new levelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int> { }) }
@@ -588,13 +639,20 @@ namespace christ_a_2
             };
 
             enemysData = new Dictionary<Enemys, EnemyOb> {
-            //   Enemy                       Img,                                Size,                      Health, Speed, Weapon
-                {Enemys.Regular, new EnemyOb(Properties.Resources.enemy_regular, new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19 ) },
-                {Enemys.Tank,    new EnemyOb(Properties.Resources.enemy_tank,    new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19 ) },
-                {Enemys.Scout,   new EnemyOb(Properties.Resources.enemy_scout,   new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19 ) },
-                {Enemys.Sniper,  new EnemyOb(Properties.Resources.enemy_sniper,  new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19 ) },
-                {Enemys.Rowland, new EnemyOb(Properties.Resources.enemy_rowland, new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19 ) },
-                {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19 ) },
+            //   Enemy                       Img,                                Size,                      Health, Speed, Weapon,          DropRate
+                {Enemys.Regular, new EnemyOb(Properties.Resources.enemy_regular, new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f ) },
+                {Enemys.Tank,    new EnemyOb(Properties.Resources.enemy_tank,    new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f ) },
+                {Enemys.Scout,   new EnemyOb(Properties.Resources.enemy_scout,   new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f ) },
+                {Enemys.Sniper,  new EnemyOb(Properties.Resources.enemy_sniper,  new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f ) },
+                {Enemys.Rowland, new EnemyOb(Properties.Resources.enemy_rowland, new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f ) },
+                {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f ) },
+            };
+
+            dropsData = new Dictionary<Drops, DropOb>
+            {
+                {Drops.Ammo,   new DropOb(Properties.Resources.pickup_ammoBox,   new Vector2(0.03f)) },
+                {Drops.Health, new DropOb(Properties.Resources.pickup_healthBox, new Vector2(0.03f)) },
+                {Drops.Weapon, new DropOb(Properties.Resources.pickup_weaponBox, new Vector2(0.03f)) },
             };
 
             #endregion
@@ -791,6 +849,7 @@ namespace christ_a_2
                 {
                     enemys.Add(new Enemy( // Instatiate enemys
                         cLevel.ToString() + "-" + i.ToString(),
+                        enemyType.Key,
                         new Vector2(GetFloatRng(0.1f, 0.9f), GetFloatRng(0.1f, 0.9f)),
                         enemysData[enemyType.Key].img,
                         SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(enemysData[enemyType.Key].size, main_game_panel.Size), main_game_panel.Size)),
@@ -844,7 +903,7 @@ namespace christ_a_2
                 playerPos += movement * Constants.playerSpeed * speedWeightModifier * delta; // Player Movement
                 game_player_pictureBox.Location = FromRelativeV2Center(playerPos, game_player_pictureBox.Size, main_game_panel.Size);
 
-                bool click = MouseButtons == MouseButtons.Left;
+                bool click = (MouseButtons == MouseButtons.Left) && ClientRectangle.Contains(MousePosition);
                 if (click) // Player clicks to try and shoot
                 {
                     if (lastShot < sw.ElapsedMilliseconds - (1000 / weaponsData[inventory[0].weapon].firerate)) // Only shoot at firerate (1 / (rps / 1000))
@@ -921,9 +980,30 @@ namespace christ_a_2
                     }
                 }
                 for (int i = deleteBullets.Count - 1; i >= 0; i--)
+                {
                     bullets.RemoveAt(deleteBullets[i]);
+                }
                 for (int i = deleteEnemys.Count - 1; i >= 0; i--)
+                {
+                    if (enemysData[enemys[deleteEnemys[i]].type].dropRate >= GetFloatRng()) // Enemy should drop
+                    {
+                        Drops dropType = (Constants.ammoDropChance >= GetFloatRng()) ? Drops.Ammo : Drops.Health;
+
+                        drops.Add(new Drop(
+                            dropType,
+                            enemys[deleteEnemys[i]].pos,
+                            dropsData[dropType].img,
+                            SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(dropsData[dropType].size, main_game_panel.Size), main_game_panel.Size))
+                        ));
+
+                        int j = drops.Count - 1; 
+                        main_game_panel.Controls.Add(drops[j].pb);
+                        drops[j].pb.Location = FromRelativeV2Center(drops[j].pos, drops[j].pb.Size, main_game_panel.Size);
+                        drops[j].pb.BringToFront();
+                    }
+
                     enemys.RemoveAt(deleteEnemys[i]);
+                }
 
                 /*for (int i = 0; i < enemys.Count; i++) //  Loop through every enemy
                 {

@@ -223,4 +223,13 @@
   <data name="enemy_tank" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\enemy_tank.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="pickup_ammoBox" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ammo_box.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pickup_healthBox" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\healthbox.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pickup_weaponBox" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\weapon_box.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>
