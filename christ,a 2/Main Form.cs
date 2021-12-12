@@ -215,12 +215,12 @@ namespace christ_a_2
         private struct LevelOb
         {
             public Image floorImg;
-            public Dictionary<Enemys, int> enemyAmount;
+            public Dictionary<Enemys, int>[] waves;
 
-            public LevelOb(Image _floorImg, Dictionary<Enemys, int> _enemyAmount)
+            public LevelOb(Image _floorImg, Dictionary<Enemys, int>[] _waves)
             {
                 floorImg = _floorImg;
-                enemyAmount = _enemyAmount;
+                waves = _waves;
             }
         }
 
@@ -508,9 +508,11 @@ namespace christ_a_2
             public int damage;
             public float radius;
             public float maxRadius;
+
+            public bool playerExplosion;
             public List<string> blacklist;
 
-            public Explosion(Vector2 _pos, Image img, int _damage, float _maxRadius, float initialRadius = 0, List<string> _blacklist = null)
+            public Explosion(Vector2 _pos, Image img, int _damage, float _maxRadius, bool _playerExplosion, float initialRadius = 0, List<string> _blacklist = null)
             {
                 pos = _pos;
 
@@ -522,6 +524,8 @@ namespace christ_a_2
                 damage = _damage;
                 radius = initialRadius;
                 maxRadius = _maxRadius;
+
+                playerExplosion = _playerExplosion;
                 blacklist = _blacklist ?? new List<string>();
             }
 
@@ -612,7 +616,7 @@ namespace christ_a_2
 
         private Vector2 playerPos = new Vector2(0.5f, 0.5f);
         private int playerHealth;
-        private InventoryOb[] inventory = new InventoryOb[3] { new InventoryOb(Weapons.Glock19, 14, 30), new InventoryOb(Weapons.AK47, 1000, 0), new InventoryOb(Weapons.RPG7, 7, 14) };
+        private InventoryOb[] inventory = new InventoryOb[3] { new InventoryOb(Weapons.Glock19, 14, 30), new InventoryOb(Weapons.MGL105, 1000, 0), new InventoryOb(Weapons.RPG7, 7, 14) };
 
         private SoundPlayer backgroundMusicPlayer = new SoundPlayer();
         private SoundPlayer soundEffectsPlayer = new SoundPlayer();
@@ -652,10 +656,20 @@ namespace christ_a_2
             };
 
             levelsData = new Dictionary<Levels, LevelOb> {
-                {Levels.Level1,    new LevelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int> { { Enemys.Regular, 6 }, { Enemys.Scout, 2 }, { Enemys.Rowland, 2 } }) },
-                {Levels.Level2,    new LevelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int> { }) },
-                {Levels.Level3,    new LevelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int> { }) },
-                {Levels.BossLevel, new LevelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int> { }) }
+                {Levels.Level1,    new LevelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int>[] { 
+                    new Dictionary<Enemys, int> { { Enemys.Regular, 2 }, { Enemys.Scout, 2 }, { Enemys.Rowland, 4 } },
+                    new Dictionary<Enemys, int> { { Enemys.Regular, 4 }, { Enemys.Scout, 2 }, { Enemys.Rowland, 4 } },
+                    new Dictionary<Enemys, int> { { Enemys.Regular, 3 }, { Enemys.Scout, 3 }, { Enemys.Rowland, 3 }, { Enemys.Tank, 1 } },
+                })},
+                {Levels.Level2,    new LevelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int>[] {
+                    new Dictionary<Enemys, int> { },
+                })},
+                {Levels.Level3,    new LevelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int>[] {
+                    new Dictionary<Enemys, int> { },
+                })},
+                {Levels.BossLevel, new LevelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int>[] {
+                    new Dictionary<Enemys, int> { },
+                })},
             };
 
             weaponClassData = new Dictionary<WeaponClass, WeaponClassOb> {
@@ -691,8 +705,8 @@ namespace christ_a_2
                 {Weapons.M2,          new WeaponOb("M2",           WeaponClass.HMG,             Properties.Resources.weapon_m2,        Properties.Resources.bullet_other,   0.01f,      "USA",            10,     1.00f,  0.50f,    1.00f,    1,          500,    100,         4,                 0.00f,    0.00f,  1.00f) },
                 {Weapons.FP6,         new WeaponOb("FP6",          WeaponClass.Shotgun,         Properties.Resources.weapon_fp6,       Properties.Resources.bullet_shotgun, 0.01f,      "Germany",        10,     1.00f,  0.50f,    1.00f,    1,          500,    6,           2,                 0.00f,    0.00f,  1.00f,       0.00f,    3,            10) },
                 {Weapons.M1014,       new WeaponOb("M1014",        WeaponClass.Shotgun,         Properties.Resources.weapon_m1014,     Properties.Resources.bullet_shotgun, 0.04f,      "Italy",          10,     1.00f,  0.40f,    1.00f,    1,          500,    8,           3,                 0.00f,    0.00f,  0.30f,       0.00f,    5,            20) },
-                {Weapons.MGL105,      new WeaponOb("MGL-105",      WeaponClass.GrenadeLauncher, Properties.Resources.weapon_mgl105,    Properties.Resources.bullet_grenade, 0.01f,      "South Africa",   0,      3.00f,  0.50f,    1.00f,    1000,       500,    6,           1,                 0.00f,    0.00f,  0.50f,       0.00f,    0,            0,             0.35f,           80) },
-                {Weapons.RPG7,        new WeaponOb("RPG-7",        WeaponClass.RPG,             Properties.Resources.weapon_rpg7,      Properties.Resources.bullet_rpg,     0.01f,      "Russia",         0,      2.00f,  0.50f,    1.00f,    1,          500,    1,           4,                 0.00f,    0.00f,  1.00f,       0.00f,    0,            0,             0.25f,           40) },
+                {Weapons.MGL105,      new WeaponOb("MGL-105",      WeaponClass.GrenadeLauncher, Properties.Resources.weapon_mgl105,    Properties.Resources.bullet_grenade, 0.01f,      "South Africa",   0,      3.00f,  0.50f,    1.00f,    1000,       500,    6,           1,                 0.00f,    0.00f,  0.50f,       0.00f,    0,            0,             0.50f,           80) },
+                {Weapons.RPG7,        new WeaponOb("RPG-7",        WeaponClass.RPG,             Properties.Resources.weapon_rpg7,      Properties.Resources.bullet_rpg,     0.01f,      "Russia",         0,      2.00f,  0.50f,    1.00f,    1,          500,    1,           4,                 0.00f,    0.00f,  1.00f,       0.00f,    0,            0,             2f,           40) },
             };
 
             enemysData = new Dictionary<Enemys, EnemyOb> {
@@ -743,6 +757,12 @@ namespace christ_a_2
         private Vector2 GetMousePos(Size formSize)
         {
             return ToRelativeV2(PointToClient(MousePosition), formSize);
+        }
+
+        private bool PointInStraightRect(Vector2 point, Vector2 rectPointA, Vector2 rectPointB) // Check if the point is within bounds of the rect (rectPointA = top left, rectPointB = bottom right)
+        {
+            return (point.x >= Math.Min(rectPointA.x, rectPointB.x)) && (point.x <= Math.Max(rectPointA.x, rectPointB.x)) &&
+                   (point.y >= Math.Min(rectPointA.y, rectPointB.y)) && (point.y <= Math.Max(rectPointA.y, rectPointB.y));
         }
 
         private bool LineIntersectsStraightLine(Vector2 lineAPointA, Vector2 lineAPointB, Vector2 lineBPointA, Vector2 lineBPointB, bool vertical)
@@ -912,17 +932,18 @@ namespace christ_a_2
             UpdateInventoryGraphics(); // Update inventory graphics - useful on first load
 
             playerPos = new Vector2(0.5f, 0.5f);
-            game_player_pictureBox.Location = FromRelativeV2Center(playerPos, game_player_pictureBox.Size, main_game_panel.Size); // Have player start in centre // Could change depending on level?
+            game_player_pictureBox.Location = FromRelativeV2Center(playerPos, game_player_pictureBox.Size, main_game_panel.Size); // Have player start in centre
             game_player_pictureBox.Size = SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(Constants.playerSize, main_game_panel.Size), main_game_panel.Size));
             game_player_pictureBox.BringToFront();
             UpdatePlayerHealth();
 
-            foreach (KeyValuePair<Enemys, int> enemyType in levelsData[level].enemyAmount) // Create the enemys for the level (change to wave based)
+            int enemyi = 0;
+            foreach (KeyValuePair<Enemys, int> enemyType in levelsData[level].waves[0]) // Create the enemys for the level (change to wave based)
             {
                 for (int i = 0; i < enemyType.Value; i++)
                 {
                     enemys.Add(new Enemy( // Instatiate enemys
-                        cLevel.ToString() + "-" + i.ToString(),
+                        cLevel.ToString() + "-" + 0 + enemyi.ToString(),
                         enemyType.Key,
                         new Vector2(GetFloatRng(0.1f, 0.9f), GetFloatRng(0.1f, 0.9f)),
                         enemysData[enemyType.Key].img,
@@ -939,6 +960,8 @@ namespace christ_a_2
                     main_game_panel.Controls.Add(enemys[j].healthPanel);
                     enemys[j].UpdateHealth();
                     enemys[j].healthPanel.BringToFront();
+
+                    enemyi++;
                 }
             }
 
@@ -1013,7 +1036,7 @@ namespace christ_a_2
                     drops.RemoveAt(deleteDrops[i]);
                 }
 
-                bool click = (MouseButtons == MouseButtons.Left) && ClientRectangle.Contains(MousePosition);
+                bool click = (MouseButtons == MouseButtons.Left) && ClientRectangle.Contains(FromRelativeV2(GetMousePos(main_game_panel.Size), main_game_panel.Size));
                 if (click) // Player clicks to try and shoot
                 {
                     if (lastShot < sw.ElapsedMilliseconds - (1000 / weaponsData[inventory[0].weapon].firerate)) // Only shoot at firerate (1 / (rps / 1000))
@@ -1083,7 +1106,8 @@ namespace christ_a_2
                                     bullets[i].pos,
                                     Properties.Resources.effect_explosion,
                                     weaponsData[bullets[i].fromWeapon].explosionDamage,
-                                    weaponsData[bullets[i].fromWeapon].explosionRadius
+                                    weaponsData[bullets[i].fromWeapon].explosionRadius,
+                                    bullets[i].playerBullet
                                 ));
 
                                 int j = explosions.Count - 1;
@@ -1106,7 +1130,8 @@ namespace christ_a_2
                                     bullets[i].pos,
                                     Properties.Resources.effect_explosion,
                                     weaponsData[bullets[i].fromWeapon].explosionDamage,
-                                    weaponsData[bullets[i].fromWeapon].explosionRadius
+                                    weaponsData[bullets[i].fromWeapon].explosionRadius,
+                                    bullets[i].playerBullet
                                 ));
 
                                 int j = explosions.Count - 1;
@@ -1137,23 +1162,31 @@ namespace christ_a_2
             {
                 explosions[i].UpdateSize(delta, main_game_panel.Size);
 
-                for (int j = 0; j < enemys.Count; j++)
+                Vector2 explosionRectA = ToRelativeV2(explosions[i].pb.Location, main_game_panel.Size);
+                Vector2 explosionRectB = explosionRectA + ToRelativeV2(SystemSizeToSystemPoint(explosions[i].pb.Size), main_game_panel.Size);
+
+                if (explosions[i].playerExplosion)
                 {
-                    if (!explosions[i].blacklist.Contains(enemys[j].id))
+                    for (int j = 0; j < enemys.Count; j++)
                     {
-                        Vector2 explosionPos = ToRelativeV2(explosions[i].pb.Location, main_game_panel.Size);
-                        Vector2 enemyPos = ToRelativeV2(enemys[j].pb.Location, main_game_panel.Size);
-                        if (StraightRectIntersectsStraightRect(explosionPos, explosionPos + ToRelativeV2(SystemSizeToSystemPoint(explosions[i].pb.Size), main_game_panel.Size), enemyPos, enemyPos + ToRelativeV2(SystemSizeToSystemPoint(enemys[j].pb.Size), main_game_panel.Size)))
+                        if (!explosions[i].blacklist.Contains(enemys[j].id))
                         {
-                            float distance = (explosions[i].pos - enemys[j].pos).Magnitude();
-                            float explosionDamage = explosions[i].damage;
-                            float maxExplosion = explosions[i].maxRadius;
-                            float experiencedDamage = (explosionDamage / maxExplosion) * (-distance + maxExplosion); // damage = ( k / maxr )( -r + maxr)
+                            //Vector2 enemyPos = ToRelativeV2(enemys[j].pb.Location, main_game_panel.Size);
+                            //if (StraightRectIntersectsStraightRect(explosionPos, explosionPos + ToRelativeV2(SystemSizeToSystemPoint(explosions[i].pb.Size), main_game_panel.Size), enemyPos, enemyPos + ToRelativeV2(SystemSizeToSystemPoint(enemys[j].pb.Size), main_game_panel.Size)))
+                            if (PointInStraightRect(enemys[j].pos, explosionRectA, explosionRectB)) // If explosion goes into enemy
+                            {
+                                float distance = (explosions[i].pos - enemys[j].pos).Magnitude();
+                                float explosionDamage = explosions[i].damage;
+                                float maxExplosion = explosions[i].maxRadius;
+                                float experiencedDamage = (explosionDamage / maxExplosion) * (-distance + maxExplosion); // damage = ( k / maxr )( -r + maxr)
 
-                            enemys[j].health -= (int)experiencedDamage;
-                            enemys[j].UpdateHealth();
+                                Console.WriteLine(experiencedDamage.ToString());
 
-                            explosions[i].blacklist.Add(enemys[j].id); // Add enemy to blacklist so it cant be hit again by the same bullet
+                                enemys[j].health -= (int)experiencedDamage;
+                                enemys[j].UpdateHealth();
+
+                                explosions[i].blacklist.Add(enemys[j].id); // Add enemy to blacklist so it cant be hit again by the same bullet
+                            }
                         }
                     }
                 }
