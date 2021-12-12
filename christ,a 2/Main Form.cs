@@ -696,6 +696,11 @@ namespace christ_a_2
             return (float)rng.NextDouble() * (max - min) + min;
         }
 
+        private Vector2 GetMousePos(Size formSize)
+        {
+            return ToRelativeV2(PointToClient(MousePosition), formSize);
+        }
+
         private bool LineIntersectsStraightLine(Vector2 lineAPointA, Vector2 lineAPointB, Vector2 lineBPointA, Vector2 lineBPointB, bool vertical)
         {
             float lineAXCoefficient = (lineAPointB.y - lineAPointA.y) / (lineAPointB.x - lineAPointA.x); // y = (m)x +  c
@@ -1086,12 +1091,12 @@ namespace christ_a_2
         private void PlayerShoot(Weapons weapon)
         {
             float accuracyVal = weaponsData[weapon].accuracy / 2;
-            Vector2 aimPos = ToRelativeV2(MousePosition, main_game_panel.Size) + FromScaledRelativeV2ToRealtiveV2(new Vector2(GetFloatRng(-accuracyVal, accuracyVal), GetFloatRng(-accuracyVal, accuracyVal)), main_game_panel.Size); // Affected by accuracy
+            Vector2 aimPos = GetMousePos(main_game_panel.Size) + FromScaledRelativeV2ToRealtiveV2(new Vector2(GetFloatRng(-accuracyVal, accuracyVal), GetFloatRng(-accuracyVal, accuracyVal)), main_game_panel.Size); // Affected by accuracy
             Vector2 dir = (aimPos - playerPos).Normalise();
 
-            switch (weaponsData[weapon].weaponClass) // test if its a sepcial weapon?
+            switch (weaponsData[weapon].weaponClass) // Test if its a special weapon
             {
-                case WeaponClass.Shotgun:
+                case WeaponClass.Shotgun: // Multiple bullets at defined spread
 
                     float angle = dir.Angle(true);
                     int shots = weaponsData[weapon].shotgunShots;
@@ -1100,10 +1105,8 @@ namespace christ_a_2
                     float angleDiff = (float)spread / (shots - 1);
                     float cAngle = angle - ((float)spread / 2);
 
-                    for (int i = 0; i < shots; i++)
+                    for (int i = 0; i < shots; i++) 
                     {
-                        //cAngle into vector2
-
                         CreateBullet(
                             playerPos,
                             weaponsData[weapon].maxDistance,
@@ -1136,20 +1139,6 @@ namespace christ_a_2
 
                     break;
             }
-
-            
-            /*CreateBullet(
-                playerPos,
-                weaponsData[weapon].maxDistance,
-                dir,
-                (playerPos.x > aimPos.x), // For weird negative angle flipping
-                (float)weaponsData[weapon].velocity,
-                weaponsData[weapon].damage,
-                weaponsData[weapon].penetration,
-                weaponsData[weapon].bulletImg,
-                SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(new Vector2(weaponsData[weapon].bulletSize), main_game_panel.Size), main_game_panel.Size)),
-                true
-            );*/
 
             float recoilVal = weaponsData[weapon].recoil / 2;
             Vector2 recoil = FromScaledRelativeV2ToRealtiveV2(new Vector2(GetFloatRng(-recoilVal, recoilVal), GetFloatRng(-recoilVal, recoilVal)), this.Size);
