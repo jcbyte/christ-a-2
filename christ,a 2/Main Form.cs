@@ -30,6 +30,8 @@ namespace christ_a_2
             public const float ammoDropChance = 0.50f; // Ammo chance + health chance = 1 
             public const float pickupBoxRange = 0.02f; // Relative
             public const int healthPickupHealth = 20;
+
+            public const float explosionIncrease = 0.005f;
         }
 
         #endregion
@@ -452,10 +454,11 @@ namespace christ_a_2
             public int penetration;
             public PictureBox pb;
 
+            public Weapons fromWeapon;
             public bool playerBullet;
             public List<string> blacklist;
 
-            public Bullet(Vector2 _pos, float _posLimit, Vector2 _dir, float _speed, int _damage, int _penetration, Image img, Size size, bool _playerBullet, List<string> _blacklist = null)
+            public Bullet(Vector2 _pos, float _posLimit, Vector2 _dir, float _speed, int _damage, int _penetration, Image img, Size size, Weapons _fromWeapon, bool _playerBullet, List<string> _blacklist = null)
             {
                 pos = _pos;
                 originalPos = pos;
@@ -479,6 +482,7 @@ namespace christ_a_2
                 pb.BackColor = Color.Transparent;
                 pb.BackgroundImage = bmp;
 
+                fromWeapon = _fromWeapon;
                 playerBullet = _playerBullet;
                 blacklist = (_blacklist == null ? new List<string>() : _blacklist);
             }
@@ -492,6 +496,39 @@ namespace christ_a_2
             public bool ReachedPosLimit(Size formSize)
             {
                 return (pos - originalPos).ScaledMagnitude(formSize) >= posLimit;
+            }
+        }
+
+        private class Explosion
+        {
+            public Vector2 pos;
+            public PictureBox pb;
+            public float radius;
+            public float maxRadius;
+            
+            public Explosion(Vector2 _pos, Image img, float _maxRadius, float initialRadius = 0)
+            {
+                pos = _pos;
+
+                pb = new PictureBox(); // Add new picturebox (explosion) to the form
+                pb.BackgroundImageLayout = ImageLayout.Stretch;
+                pb.BackColor = Color.Transparent;
+                pb.BackgroundImage = img;
+
+                radius = initialRadius;
+                maxRadius = _maxRadius;
+            }
+
+            public void UpdateSize(Size formSize)
+            {
+                radius += Constants.explosionIncrease;
+                pb.Size = SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(new Vector2(radius), formSize), formSize));
+                pb.Location = FromRelativeV2Center(pos, pb.Size, formSize);
+            }
+
+            public bool ReachedSizeLimit()
+            {
+                return radius >= maxRadius;
             }
         }
 
@@ -865,7 +902,7 @@ namespace christ_a_2
             game_player_pictureBox.BringToFront();
             UpdatePlayerHealth();
 
-            foreach (KeyValuePair<Enemys, int> enemyType in levelsData[level].enemyAmount) // Create the enemys for the level (change to wave based on level?)
+            foreach (KeyValuePair<Enemys, int> enemyType in levelsData[level].enemyAmount) // Create the enemys for the level (change to wave based)
             {
                 for (int i = 0; i < enemyType.Value; i++)
                 {
@@ -1079,9 +1116,9 @@ namespace christ_a_2
             game_playerHealth_health_label.Text = playerHealth.ToString() + "/" + Constants.maxPlayerHealth.ToString();
         }
 
-        private void CreateBullet(Vector2 pos, float posLimit, Vector2 dir, float speed, int damage, int penetration, Image img, Size size, bool playerBullet)
+        private void CreateBullet(Vector2 pos, float posLimit, Vector2 dir, float speed, int damage, int penetration, Image img, Size size, Weapons fromWeapon, bool playerBullet)
         {
-            bullets.Add(new Bullet(pos, posLimit, dir, speed, damage, penetration, img, size, playerBullet )); // Instatiate bullet
+            bullets.Add(new Bullet(pos, posLimit, dir, speed, damage, penetration, img, size, fromWeapon, playerBullet )); // Instatiate bullet
 
             int bulleti = bullets.Count - 1;
             main_game_panel.Controls.Add(bullets[bulleti].pb);
@@ -1116,6 +1153,7 @@ namespace christ_a_2
                             weaponsData[weapon].penetration,
                             weaponsData[weapon].bulletImg,
                             SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(new Vector2(weaponsData[weapon].bulletSize), main_game_panel.Size), main_game_panel.Size)),
+                            weapon,
                             true
                         );
 
@@ -1134,6 +1172,7 @@ namespace christ_a_2
                         weaponsData[weapon].penetration,
                         weaponsData[weapon].bulletImg,
                         SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(new Vector2(weaponsData[weapon].bulletSize), main_game_panel.Size), main_game_panel.Size)),
+                        weapon,
                         true
                     );
 
