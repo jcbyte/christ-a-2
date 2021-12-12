@@ -31,7 +31,7 @@ namespace christ_a_2
             public const float pickupBoxRange = 0.02f; // Relative
             public const int healthPickupHealth = 20;
 
-            public const float explosionIncrease = 0.005f;
+            public const float explosionSpeed = 0.6f;
         }
 
         #endregion
@@ -410,8 +410,9 @@ namespace christ_a_2
             public int shotgunShots; // Shotgun only
             public int shotgunSpread; // Shotgun only (degrees)
             public float explosionRadius; // Relative - Grenade and RPG only
+            public int explosionDamage; // Damage at explosion radius (linearly fades to 0) - Grenade and RPG only
 
-            public WeaponOb(string _name, WeaponClass _weaponClass, Image _img, Image _bulletImg, float _bulletSize, string _country, int _damage, float _weight, float _velocity, float _firerate, int _penetration, int _reload, int _magCapacity, int _maxAmmoMultiplier, float _accuracy, float _recoil, float _maxDistance, float _pushBack = 0, int _shotgunShots = 0, int _shotgunSpread = 0, float _explosionRadius = 0)
+            public WeaponOb(string _name, WeaponClass _weaponClass, Image _img, Image _bulletImg, float _bulletSize, string _country, int _damage, float _weight, float _velocity, float _firerate, int _penetration, int _reload, int _magCapacity, int _maxAmmoMultiplier, float _accuracy, float _recoil, float _maxDistance, float _pushBack = 0, int _shotgunShots = 0, int _shotgunSpread = 0, float _explosionRadius = 0, int _explosionDamage = 0)
             {
                 name = _name;
                 weaponClass = _weaponClass;
@@ -436,6 +437,7 @@ namespace christ_a_2
                 shotgunShots = _shotgunShots;
                 shotgunSpread = _shotgunSpread;
                 explosionRadius = _explosionRadius;
+                explosionDamage = _explosionDamage;
             }
         }
 
@@ -484,7 +486,7 @@ namespace christ_a_2
 
                 fromWeapon = _fromWeapon;
                 playerBullet = _playerBullet;
-                blacklist = (_blacklist == null ? new List<string>() : _blacklist);
+                blacklist = _blacklist ?? new List<string>(); //blacklist = (_blacklist == null ? new List<string>() : _blacklist);
             }
 
             public void UpdatePos(float delta, Size formSize)
@@ -503,10 +505,12 @@ namespace christ_a_2
         {
             public Vector2 pos;
             public PictureBox pb;
+            public int damage;
             public float radius;
             public float maxRadius;
-            
-            public Explosion(Vector2 _pos, Image img, float _maxRadius, float initialRadius = 0)
+            public List<string> blacklist;
+
+            public Explosion(Vector2 _pos, Image img, int _damage, float _maxRadius, float initialRadius = 0, List<string> _blacklist = null)
             {
                 pos = _pos;
 
@@ -515,13 +519,15 @@ namespace christ_a_2
                 pb.BackColor = Color.Transparent;
                 pb.BackgroundImage = img;
 
+                damage = _damage;
                 radius = initialRadius;
                 maxRadius = _maxRadius;
+                blacklist = _blacklist ?? new List<string>();
             }
 
-            public void UpdateSize(Size formSize)
+            public void UpdateSize(float delta, Size formSize)
             {
-                radius += Constants.explosionIncrease;
+                radius += Constants.explosionSpeed * delta;
                 pb.Size = SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(new Vector2(radius), formSize), formSize));
                 pb.Location = FromRelativeV2Center(pos, pb.Size, formSize);
             }
@@ -602,10 +608,11 @@ namespace christ_a_2
         private List<Enemy> enemys = new List<Enemy>();
         private List<Bullet> bullets = new List<Bullet>();
         private List<Drop> drops = new List<Drop>();
+        private List<Explosion> explosions = new List<Explosion>();
 
         private Vector2 playerPos = new Vector2(0.5f, 0.5f);
         private int playerHealth;
-        private InventoryOb[] inventory = new InventoryOb[3] { new InventoryOb(Weapons.Glock19, 14, 30), new InventoryOb(Weapons.AK47, 1000, 0), new InventoryOb(Weapons.M1014, 7, 14) };
+        private InventoryOb[] inventory = new InventoryOb[3] { new InventoryOb(Weapons.Glock19, 14, 30), new InventoryOb(Weapons.AK47, 1000, 0), new InventoryOb(Weapons.RPG7, 7, 14) };
 
         private SoundPlayer backgroundMusicPlayer = new SoundPlayer();
         private SoundPlayer soundEffectsPlayer = new SoundPlayer();
@@ -665,8 +672,8 @@ namespace christ_a_2
 
             // http://www.military-today.com/firearms.htm
             weaponsData = new Dictionary<Weapons, WeaponOb> {
-                {Weapons.None, new WeaponOb("None", WeaponClass.Pistol, Properties.Resources.weapon_none, Properties.Resources.bullet_other, 0, "None", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) },
-            //  Weapon,                            Name,           Class,                       Img,                                   BulletImg,                           BulletSize, Country,          Damage, Weight, Velocity, Firerate, Penetration Reload, MagCapacity, MaxAmmoMultiplier, Accuracy, Recoil, MaxDistance, PushBack, ShotgunShots, ShotgunSpread, ExplosionRadius
+                {Weapons.None, new WeaponOb("None", WeaponClass.Pistol, Properties.Resources.weapon_none, Properties.Resources.bullet_other, 0, "None", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) },
+            //  Weapon,                            Name,           Class,                       Img,                                   BulletImg,                           BulletSize, Country,          Damage, Weight, Velocity, Firerate, Penetration Reload, MagCapacity, MaxAmmoMultiplier, Accuracy, Recoil, MaxDistance, PushBack, ShotgunShots, ShotgunSpread, ExplosionRadius, ExplosionDamage
                 {Weapons.Glock19,     new WeaponOb("Glock-19",     WeaponClass.Pistol,          Properties.Resources.weapon_glock19,   Properties.Resources.bullet_pistol,  0.02f,      "Austria",        10,     1.00f,  0.20f,    0.50f,    1,          800,    15,          3,                 0.00f,    0.00f,  0.50f) },
                 {Weapons.FiveSeven,   new WeaponOb("Five SeveN",   WeaponClass.Pistol,          Properties.Resources.weapon_fiveseven, Properties.Resources.bullet_pistol,  0.01f,      "Belgium",        10,     1.00f,  0.50f,    1.00f,    1,          500,    20,          3,                 0.00f,    0.00f,  1.00f) },
                 {Weapons.DesertEagle, new WeaponOb("Desert Eagle", WeaponClass.Pistol,          Properties.Resources.weapon_deagle,    Properties.Resources.bullet_pistol,  0.01f,      "USA",            10,     1.00f,  0.50f,    1.00f,    1,          500,    7,           2,                 0.00f,    0.00f,  1.00f) },
@@ -684,8 +691,8 @@ namespace christ_a_2
                 {Weapons.M2,          new WeaponOb("M2",           WeaponClass.HMG,             Properties.Resources.weapon_m2,        Properties.Resources.bullet_other,   0.01f,      "USA",            10,     1.00f,  0.50f,    1.00f,    1,          500,    100,         4,                 0.00f,    0.00f,  1.00f) },
                 {Weapons.FP6,         new WeaponOb("FP6",          WeaponClass.Shotgun,         Properties.Resources.weapon_fp6,       Properties.Resources.bullet_shotgun, 0.01f,      "Germany",        10,     1.00f,  0.50f,    1.00f,    1,          500,    6,           2,                 0.00f,    0.00f,  1.00f,       0.00f,    3,            10) },
                 {Weapons.M1014,       new WeaponOb("M1014",        WeaponClass.Shotgun,         Properties.Resources.weapon_m1014,     Properties.Resources.bullet_shotgun, 0.04f,      "Italy",          10,     1.00f,  0.40f,    1.00f,    1,          500,    8,           3,                 0.00f,    0.00f,  0.30f,       0.00f,    5,            20) },
-                {Weapons.MGL105,      new WeaponOb("MGL-105",      WeaponClass.GrenadeLauncher, Properties.Resources.weapon_mgl105,    Properties.Resources.bullet_grenade, 0.01f,      "South Africa",   10,     1.00f,  0.50f,    1.00f,    1,          500,    6,           1,                 0.00f,    0.00f,  1.00f,       0.00f,    0,            0,             0.05f) },
-                {Weapons.RPG7,        new WeaponOb("RPG-7",        WeaponClass.RPG,             Properties.Resources.weapon_rpg7,      Properties.Resources.bullet_rpg,     0.01f,      "Russia",         10,     10.00f, 0.50f,    1.00f,    1,          500,    1,           4,                 0.00f,    0.00f,  1.00f,       0.00f,    0,            0,             0.05f) },
+                {Weapons.MGL105,      new WeaponOb("MGL-105",      WeaponClass.GrenadeLauncher, Properties.Resources.weapon_mgl105,    Properties.Resources.bullet_grenade, 0.01f,      "South Africa",   0,      3.00f,  0.50f,    1.00f,    1000,       500,    6,           1,                 0.00f,    0.00f,  0.50f,       0.00f,    0,            0,             0.35f,           80) },
+                {Weapons.RPG7,        new WeaponOb("RPG-7",        WeaponClass.RPG,             Properties.Resources.weapon_rpg7,      Properties.Resources.bullet_rpg,     0.01f,      "Russia",         0,      2.00f,  0.50f,    1.00f,    1,          500,    1,           4,                 0.00f,    0.00f,  1.00f,       0.00f,    0,            0,             0.25f,           40) },
             };
 
             enemysData = new Dictionary<Enemys, EnemyOb> {
@@ -768,12 +775,20 @@ namespace christ_a_2
             return false;
         }
 
-        private bool LineIntersectsRect(Vector2 linePointA, Vector2 linePointB, Vector2 rectPointA, Vector2 rectPointB) // Check if the line intersects any of the lines of the rect (ra = top left, rb = bottom right)
+        private bool LineIntersectsStraightRect(Vector2 linePointA, Vector2 linePointB, Vector2 rectPointA, Vector2 rectPointB) // Check if the line intersects any of the lines of the rect (rectPointA = top left, rectPointB = bottom right)
         {
             return LineIntersectsStraightLine(linePointA, linePointB, rectPointA, new Vector2(rectPointB.x, rectPointA.y), false) ||
                    LineIntersectsStraightLine(linePointA, linePointB, new Vector2(rectPointB.x, rectPointA.y), rectPointB, true) ||
                    LineIntersectsStraightLine(linePointA, linePointB, rectPointB, new Vector2(rectPointA.x, rectPointB.y), false) ||
                    LineIntersectsStraightLine(linePointA, linePointB, new Vector2(rectPointA.x, rectPointB.y), rectPointA, true);
+        }
+
+        private bool StraightRectIntersectsStraightRect(Vector2 rectAPointA, Vector2 rectAPointB, Vector2 rectBPointA, Vector2 rectBPointB) // Check if a rect intersects another rect (rectPointA = top left, rectPointB = bottom right)
+        {
+            return LineIntersectsStraightRect(rectAPointA, new Vector2(rectAPointB.x, rectAPointA.y), rectBPointA, rectBPointB) ||
+                   LineIntersectsStraightRect(new Vector2(rectAPointB.x, rectAPointA.y), rectAPointB, rectBPointA, rectBPointB) ||
+                   LineIntersectsStraightRect(rectAPointB, new Vector2(rectAPointA.x, rectAPointB.y), rectBPointA, rectBPointB) ||
+                   LineIntersectsStraightRect(new Vector2(rectAPointA.x, rectAPointB.y), rectAPointA, rectBPointA, rectBPointB);
         }
 
         #endregion
@@ -966,7 +981,7 @@ namespace christ_a_2
                 for (int i = 0; i < drops.Count; i++)
                 {
                     if ((drops[i].pos - playerPos).ScaledMagnitude(main_game_panel.Size) <= Constants.pickupBoxRange) // Player should pick up box
-                    { 
+                    {
                         switch (drops[i].type)
                         {
                             case Drops.Ammo:
@@ -985,7 +1000,7 @@ namespace christ_a_2
                                 break;
 
                             case Drops.Weapon:
-                                // Weapon drop
+                                // Weapon drop - ######## TODO ########
                                 break;
                         }
 
@@ -1034,7 +1049,6 @@ namespace christ_a_2
                 }
 
                 List<int> deleteBullets = new List<int>();
-                List<int> deleteEnemys = new List<int>();
                 for (int i = 0; i < bullets.Count; i++) // loop through every bullet
                 {
                     Vector2 before = bullets[i].pos;
@@ -1048,27 +1062,65 @@ namespace christ_a_2
                             if (!bullets[i].blacklist.Contains(enemys[j].id))
                             {
                                 Vector2 enemyPos = ToRelativeV2(enemys[j].pb.Location, main_game_panel.Size);
-                                if (LineIntersectsRect(before, after, enemyPos, enemyPos + ToRelativeV2(SystemSizeToSystemPoint(enemys[j].pb.Size), main_game_panel.Size)))
+                                if (LineIntersectsStraightRect(before, after, enemyPos, enemyPos + ToRelativeV2(SystemSizeToSystemPoint(enemys[j].pb.Size), main_game_panel.Size)))
                                 {
-                                    enemys[j].health -= weaponsData[inventory[0].weapon].damage;
+                                    enemys[j].health -= bullets[i].damage;
                                     enemys[j].UpdateHealth();
 
                                     bullets[i].blacklist.Add(enemys[j].id); // Add enemy to blacklist so it cant be hit again by the same bullet
                                     bullets[i].penetration -= 1;
-
-                                    if (enemys[j].health <= 0)
-                                    {
-                                        deleteEnemys.Add(j);
-                                        enemys[j].healthPb.Dispose();
-                                        enemys[j].healthPanel.Dispose();
-                                        enemys[j].pb.Dispose();
-                                    }
                                 }
                             }
                         }
                     }
-                    
-                    if (bullets[i].penetration <= 0 || bullets[i].ReachedPosLimit(main_game_panel.Size) || (bullets[i].pos.x > 1 || bullets[i].pos.x < 0 || bullets[i].pos.y > 1 || bullets[i].pos.y < 0)) // Dispose of bullets if (penetration reached) or (bullet distance reached) or (off screen)
+
+                    if (bullets[i].ReachedPosLimit(main_game_panel.Size)) // If bullet distance reached
+                    {
+                        switch (weaponsData[bullets[i].fromWeapon].weaponClass)
+                        {
+                            case WeaponClass.GrenadeLauncher: // Grenade should explode
+                                explosions.Add(new Explosion(
+                                    bullets[i].pos,
+                                    Properties.Resources.effect_explosion,
+                                    weaponsData[bullets[i].fromWeapon].explosionDamage,
+                                    weaponsData[bullets[i].fromWeapon].explosionRadius
+                                ));
+
+                                int j = explosions.Count - 1;
+                                main_game_panel.Controls.Add(explosions[j].pb);
+                                explosions[j].UpdateSize(delta, main_game_panel.Size);
+                                explosions[j].pb.BringToFront();
+
+                                break;
+                        }
+
+                        deleteBullets.Add(i);
+                        bullets[i].pb.Dispose();
+                    }
+                    else if (bullets[i].penetration <= 0) // If bullet penetration reached
+                    {
+                        switch (weaponsData[bullets[i].fromWeapon].weaponClass)
+                        {
+                            case WeaponClass.RPG: // Rocket should explode
+                                explosions.Add(new Explosion(
+                                    bullets[i].pos,
+                                    Properties.Resources.effect_explosion,
+                                    weaponsData[bullets[i].fromWeapon].explosionDamage,
+                                    weaponsData[bullets[i].fromWeapon].explosionRadius
+                                ));
+
+                                int j = explosions.Count - 1;
+                                main_game_panel.Controls.Add(explosions[j].pb);
+                                explosions[j].UpdateSize(delta, main_game_panel.Size);
+                                explosions[j].pb.BringToFront();
+
+                                break;
+                        }
+
+                        deleteBullets.Add(i);
+                        bullets[i].pb.Dispose();
+                    }
+                    else if (bullets[i].pos.x > 1 || bullets[i].pos.x < 0 || bullets[i].pos.y > 1 || bullets[i].pos.y < 0) // If bullet off screen
                     {
                         deleteBullets.Add(i);
                         bullets[i].pb.Dispose();
@@ -1078,32 +1130,80 @@ namespace christ_a_2
                 {
                     bullets.RemoveAt(deleteBullets[i]);
                 }
-                for (int i = deleteEnemys.Count - 1; i >= 0; i--)
+            }
+
+            List<int> deleteExplosions = new List<int>();
+            for (int i = 0; i < explosions.Count; i++) // Loop through every explosion
+            {
+                explosions[i].UpdateSize(delta, main_game_panel.Size);
+
+                for (int j = 0; j < enemys.Count; j++)
                 {
-                    if (enemysData[enemys[deleteEnemys[i]].type].dropRate >= GetFloatRng()) // Enemy should drop
+                    if (!explosions[i].blacklist.Contains(enemys[j].id))
                     {
-                        Drops dropType = (Constants.ammoDropChance >= GetFloatRng()) ? Drops.Ammo : Drops.Health;
+                        Vector2 explosionPos = ToRelativeV2(explosions[i].pb.Location, main_game_panel.Size);
+                        Vector2 enemyPos = ToRelativeV2(enemys[j].pb.Location, main_game_panel.Size);
+                        if (StraightRectIntersectsStraightRect(explosionPos, explosionPos + ToRelativeV2(SystemSizeToSystemPoint(explosions[i].pb.Size), main_game_panel.Size), enemyPos, enemyPos + ToRelativeV2(SystemSizeToSystemPoint(enemys[j].pb.Size), main_game_panel.Size)))
+                        {
+                            float distance = (explosions[i].pos - enemys[j].pos).Magnitude();
+                            float explosionDamage = explosions[i].damage;
+                            float maxExplosion = explosions[i].maxRadius;
+                            float experiencedDamage = (explosionDamage / maxExplosion) * (-distance + maxExplosion); // damage = ( k / maxr )( -r + maxr)
 
-                        drops.Add(new Drop(
-                            dropType,
-                            enemys[deleteEnemys[i]].pos,
-                            dropsData[dropType].img,
-                            SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(dropsData[dropType].size, main_game_panel.Size), main_game_panel.Size))
-                        ));
+                            enemys[j].health -= (int)experiencedDamage;
+                            enemys[j].UpdateHealth();
 
-                        int j = drops.Count - 1; 
-                        main_game_panel.Controls.Add(drops[j].pb);
-                        drops[j].pb.Location = FromRelativeV2Center(drops[j].pos, drops[j].pb.Size, main_game_panel.Size);
-                        drops[j].pb.BringToFront();
+                            explosions[i].blacklist.Add(enemys[j].id); // Add enemy to blacklist so it cant be hit again by the same bullet
+                        }
                     }
+                }
+                
+                if (explosions[i].ReachedSizeLimit())
+                {
+                    deleteExplosions.Add(i);
+                    explosions[i].pb.Dispose();
+                }
+            }
+            for (int i = deleteExplosions.Count - 1; i >= 0; i--)
+            {
+                explosions.RemoveAt(deleteExplosions[i]);
+            }
 
-                    enemys.RemoveAt(deleteEnemys[i]);
+            List<int> deleteEnemys = new List<int>();
+            for (int i = 0; i < enemys.Count; i++) // Loop through every enemy
+            {
+                if (enemys[i].health <= 0) // Check if enemy is dead
+                {
+                    deleteEnemys.Add(i);
+                    enemys[i].healthPb.Dispose();
+                    enemys[i].healthPanel.Dispose();
+                    enemys[i].pb.Dispose();
+
+                    continue;
                 }
 
-                /*for (int i = 0; i < enemys.Count; i++) //  Loop through every enemy
+                // Enemy AI - ######## TODO ########
+            }
+            for (int i = deleteEnemys.Count - 1; i >= 0; i--)
+            {
+                if (enemysData[enemys[deleteEnemys[i]].type].dropRate >= GetFloatRng()) // Enemy should drop
                 {
-                    // Enemy AI
-                }*/
+                    Drops dropType = (Constants.ammoDropChance >= GetFloatRng()) ? Drops.Ammo : Drops.Health;
+
+                    drops.Add(new Drop(
+                        dropType,
+                        enemys[deleteEnemys[i]].pos,
+                        dropsData[dropType].img,
+                        SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(dropsData[dropType].size, main_game_panel.Size), main_game_panel.Size))
+                    ));
+
+                    int j = drops.Count - 1;
+                    main_game_panel.Controls.Add(drops[j].pb);
+                    drops[j].pb.Location = FromRelativeV2Center(drops[j].pos, drops[j].pb.Size, main_game_panel.Size);
+                    drops[j].pb.BringToFront();
+                }
+
+                enemys.RemoveAt(deleteEnemys[i]);
             }
 
             delta = (sw.ElapsedMilliseconds - startFrame) / 1000; // Calculate deltatime for frame
