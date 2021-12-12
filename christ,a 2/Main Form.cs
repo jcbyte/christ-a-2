@@ -212,12 +212,12 @@ namespace christ_a_2
             BossLevel,
         }
 
-        private struct levelOb
+        private struct LevelOb
         {
             public Image floorImg;
             public Dictionary<Enemys, int> enemyAmount;
 
-            public levelOb(Image _floorImg, Dictionary<Enemys, int> _enemyAmount)
+            public LevelOb(Image _floorImg, Dictionary<Enemys, int> _enemyAmount)
             {
                 floorImg = _floorImg;
                 enemyAmount = _enemyAmount;
@@ -578,13 +578,13 @@ namespace christ_a_2
 
         #region "Inventory"
 
-        private struct inventoryOb
+        private struct InventoryOb
         {
             public Weapons weapon;
             public int magBullets;
             public int reserveBullets;
 
-            public inventoryOb(Weapons _weapon = Weapons.None, int _magBullets = 0, int _reserveBullets = 0)
+            public InventoryOb(Weapons _weapon = Weapons.None, int _magBullets = 0, int _reserveBullets = 0)
             {
                 weapon = _weapon;
                 magBullets = _magBullets;
@@ -605,14 +605,14 @@ namespace christ_a_2
 
         private Vector2 playerPos = new Vector2(0.5f, 0.5f);
         private int playerHealth;
-        private inventoryOb[] inventory = new inventoryOb[3] { new inventoryOb(Weapons.Glock19, 14, 30), new inventoryOb(Weapons.AK47, 1000, 0), new inventoryOb(Weapons.M1014, 7, 14) };
+        private InventoryOb[] inventory = new InventoryOb[3] { new InventoryOb(Weapons.Glock19, 14, 30), new InventoryOb(Weapons.AK47, 1000, 0), new InventoryOb(Weapons.M1014, 7, 14) };
 
         private SoundPlayer backgroundMusicPlayer = new SoundPlayer();
         private SoundPlayer soundEffectsPlayer = new SoundPlayer();
 
         private Dictionary<Scenes, SceneOb> scenesData;
         private Dictionary<Cutscenes, string> cutscenesData;
-        private Dictionary<Levels, levelOb> levelsData;
+        private Dictionary<Levels, LevelOb> levelsData;
         private Dictionary<WeaponClass, WeaponClassOb> weaponClassData;
         private Dictionary<Weapons, WeaponOb> weaponsData;
         private Dictionary<Enemys, EnemyOb> enemysData;
@@ -644,11 +644,11 @@ namespace christ_a_2
                 {Cutscenes.Win,            "" }
             };
 
-            levelsData = new Dictionary<Levels, levelOb> {
-                {Levels.Level1,    new levelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int> { { Enemys.Regular, 6 }, { Enemys.Scout, 2 }, { Enemys.Rowland, 2 } }) },
-                {Levels.Level2,    new levelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int> { }) },
-                {Levels.Level3,    new levelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int> { }) },
-                {Levels.BossLevel, new levelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int> { }) }
+            levelsData = new Dictionary<Levels, LevelOb> {
+                {Levels.Level1,    new LevelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int> { { Enemys.Regular, 6 }, { Enemys.Scout, 2 }, { Enemys.Rowland, 2 } }) },
+                {Levels.Level2,    new LevelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int> { }) },
+                {Levels.Level3,    new LevelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int> { }) },
+                {Levels.BossLevel, new LevelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int> { }) }
             };
 
             weaponClassData = new Dictionary<WeaponClass, WeaponClassOb> {
@@ -723,7 +723,7 @@ namespace christ_a_2
 
         #region "Misc"
 
-        private Point getCenter(PictureBox pb)
+        private Point GetCenter(PictureBox pb)
         {
             return new Point(pb.Location.X - (pb.Size.Width / 2), pb.Location.Y - (pb.Height / 2));
         }
@@ -1231,18 +1231,18 @@ namespace christ_a_2
 
         private void RotateWeapons(bool next) // Shift inventory either forwards or backwards
         {
-            inventoryOb[] tempInventory = new inventoryOb[inventory.Length];
+            InventoryOb[] tempInventory = new InventoryOb[inventory.Length];
             Array.Copy(inventory, tempInventory, inventory.Length);
 
             if (next)
             {
-                inventoryOb first = inventory[0];
+                InventoryOb first = inventory[0];
                 Array.Copy(tempInventory, 1, inventory, 0, inventory.Length - 1);
                 inventory[inventory.Length - 1] = first;
             }
             else
             {
-                inventoryOb last = inventory[inventory.Length - 1];
+                InventoryOb last = inventory[inventory.Length - 1];
                 Array.Copy(tempInventory, 0, inventory, 1, inventory.Length - 1);
                 inventory[0] = last;
             }
