@@ -64,14 +64,13 @@ namespace christ_a_2
                 float angle = a;
                 if (deg) angle *= ((float)Math.PI / 180);
 
-                Vector2 dir = (new Vector2(1, (float)Math.Tan(angle))).Normalise();
-                x = dir.x;
-                y = dir.y;
+                x = (float)Math.Cos(angle);
+                y = (float)Math.Sin(angle);
             }
 
             public float Angle(bool deg = false)
             {
-                float angle = (float)Math.Atan(y / x);
+                float angle = (float)Math.Atan2(y, x);
                 if (!deg) return angle;
                 else return angle * (180 / (float)Math.PI);
             }
@@ -456,7 +455,7 @@ namespace christ_a_2
             public bool playerBullet;
             public List<string> blacklist;
 
-            public Bullet(Vector2 _pos, float _posLimit, Vector2 _dir, bool flip, float _speed, int _damage, int _penetration, Image img, Size size, bool _playerBullet, List<string> _blacklist = null)
+            public Bullet(Vector2 _pos, float _posLimit, Vector2 _dir, float _speed, int _damage, int _penetration, Image img, Size size, bool _playerBullet, List<string> _blacklist = null)
             {
                 pos = _pos;
                 originalPos = pos;
@@ -470,7 +469,6 @@ namespace christ_a_2
                 Graphics gfx = Graphics.FromImage(bmp);
                 gfx.TranslateTransform((float)bmp.Width / 2, (float)bmp.Height / 2);
                 gfx.RotateTransform(dir.Angle(true));
-                gfx.ScaleTransform((flip ? -1 : 1), 1);
                 gfx.TranslateTransform(-(float)bmp.Width / 2, -(float)bmp.Height / 2);
                 gfx.DrawImage(img, new Point(0, 0));
                 gfx.Dispose();
@@ -592,8 +590,6 @@ namespace christ_a_2
         {
             InitializeComponent();
 
-            Console.WriteLine((new Vector2(0.5f, 1)).Normalise().Angle(true).ToString());
-
             #region "Data"
 
             scenesData = new Dictionary<Scenes, SceneOb> { 
@@ -650,7 +646,7 @@ namespace christ_a_2
                 {Weapons.M249,        new WeaponOb("M249",         WeaponClass.LMG,             Properties.Resources.weapon_m249,      Properties.Resources.bullet_other,   0.01f,      "USA",            10,     1.00f,  0.50f,    1.00f,    1,          500,    30,          15,                0.00f,    0.00f,  1.00f) },
                 {Weapons.M2,          new WeaponOb("M2",           WeaponClass.HMG,             Properties.Resources.weapon_m2,        Properties.Resources.bullet_other,   0.01f,      "USA",            10,     1.00f,  0.50f,    1.00f,    1,          500,    100,         4,                 0.00f,    0.00f,  1.00f) },
                 {Weapons.FP6,         new WeaponOb("FP6",          WeaponClass.Shotgun,         Properties.Resources.weapon_fp6,       Properties.Resources.bullet_shotgun, 0.01f,      "Germany",        10,     1.00f,  0.50f,    1.00f,    1,          500,    6,           2,                 0.00f,    0.00f,  1.00f,       0.00f,    3,            10) },
-                {Weapons.M1014,       new WeaponOb("M1014",        WeaponClass.Shotgun,         Properties.Resources.weapon_m1014,     Properties.Resources.bullet_shotgun, 0.04f,      "Italy",          10,     1.00f,  0.30f,    1.00f,    1,          500,    8,           3,                 0.00f,    0.00f,  0.30f,       0.00f,    10,           90) },
+                {Weapons.M1014,       new WeaponOb("M1014",        WeaponClass.Shotgun,         Properties.Resources.weapon_m1014,     Properties.Resources.bullet_shotgun, 0.04f,      "Italy",          10,     1.00f,  0.40f,    1.00f,    1,          500,    8,           3,                 0.00f,    0.00f,  0.30f,       0.00f,    5,            20) },
                 {Weapons.MGL105,      new WeaponOb("MGL-105",      WeaponClass.GrenadeLauncher, Properties.Resources.weapon_mgl105,    Properties.Resources.bullet_grenade, 0.01f,      "South Africa",   10,     1.00f,  0.50f,    1.00f,    1,          500,    6,           1,                 0.00f,    0.00f,  1.00f,       0.00f,    0,            0,             0.05f) },
                 {Weapons.RPG7,        new WeaponOb("RPG-7",        WeaponClass.RPG,             Properties.Resources.weapon_rpg7,      Properties.Resources.bullet_rpg,     0.01f,      "Russia",         10,     10.00f, 0.50f,    1.00f,    1,          500,    1,           4,                 0.00f,    0.00f,  1.00f,       0.00f,    0,            0,             0.05f) },
             };
@@ -1078,9 +1074,9 @@ namespace christ_a_2
             game_playerHealth_health_label.Text = playerHealth.ToString() + "/" + Constants.maxPlayerHealth.ToString();
         }
 
-        private void CreateBullet(Vector2 pos, float posLimit, Vector2 dir, bool flip, float speed, int damage, int penetration, Image img, Size size, bool playerBullet)
+        private void CreateBullet(Vector2 pos, float posLimit, Vector2 dir, float speed, int damage, int penetration, Image img, Size size, bool playerBullet)
         {
-            bullets.Add(new Bullet(pos, posLimit, dir, flip, speed, damage, penetration, img, size, playerBullet )); // Instatiate bullet
+            bullets.Add(new Bullet(pos, posLimit, dir, speed, damage, penetration, img, size, playerBullet )); // Instatiate bullet
 
             int bulleti = bullets.Count - 1;
             main_game_panel.Controls.Add(bullets[bulleti].pb);
@@ -1112,7 +1108,6 @@ namespace christ_a_2
                             playerPos,
                             weaponsData[weapon].maxDistance,
                             new Vector2(cAngle, true),
-                            (playerPos.x > aimPos.x), // For weird negative angle flipping
                             (float)weaponsData[weapon].velocity,
                             weaponsData[weapon].damage,
                             weaponsData[weapon].penetration,
@@ -1124,10 +1119,21 @@ namespace christ_a_2
                         cAngle += angleDiff;
                     }
 
-
                     break;
 
                 default:
+                    CreateBullet(
+                        playerPos,
+                        weaponsData[weapon].maxDistance,
+                        dir,
+                        (float)weaponsData[weapon].velocity,
+                        weaponsData[weapon].damage,
+                        weaponsData[weapon].penetration,
+                        weaponsData[weapon].bulletImg,
+                        SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(new Vector2(weaponsData[weapon].bulletSize), main_game_panel.Size), main_game_panel.Size)),
+                        true
+                    );
+
                     break;
             }
 
