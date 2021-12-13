@@ -34,7 +34,7 @@ namespace christ_a_2
             public const float ammoDropChance = 0.50f; // Ammo chance + health chance = 1 
             public const float pickupBoxRange = 0.02f; // Relative
             public const int healthPickupHealth = 20;
-            public static readonly Vector2 weaponDropSize = new Vector2(0.05f);
+            public static readonly Vector2 weaponDropSize = new Vector2(0.08f, 0.06f);
             public const int weaponPickupDelay = 200; // (ms)
 
             public const float explosionSpeed = 0.6f;
@@ -661,7 +661,7 @@ namespace christ_a_2
 
         private Vector2 playerPos = new Vector2(0.5f, 0.5f);
         private int playerHealth;
-        private InventoryOb[] inventory = new InventoryOb[3] { new InventoryOb(Weapons.Glock19, 14, 30), new InventoryOb(Weapons.MGL105, 1000, 0), new InventoryOb(Weapons.RPG7, 7, 14) };
+        private InventoryOb[] inventory = new InventoryOb[3] { new InventoryOb(Weapons.MGL105, 1000, 0), new InventoryOb(), new InventoryOb() };
 
         private SoundPlayer backgroundMusicPlayer = new SoundPlayer();
         private SoundPlayer soundEffectsPlayer = new SoundPlayer();
@@ -771,7 +771,7 @@ namespace christ_a_2
             {
                 {Drops.Ammo,      new DropOb(Properties.Resources.pickup_ammoBox,   0.015f) },
                 {Drops.Health,    new DropOb(Properties.Resources.pickup_healthBox, 0.015f) },
-                {Drops.WeaponBox, new DropOb(Properties.Resources.pickup_weaponBox, 0.015f) },
+                {Drops.WeaponBox, new DropOb(Properties.Resources.pickup_weaponBox, 0.030f) },
                 {Drops.NextWave,  new DropOb(Properties.Resources.pickup_nextWave,  0.040f) },
                 {Drops.NextLevel, new DropOb(Properties.Resources.pickup_nextLevel, 0.040f) },
             };
@@ -1144,7 +1144,15 @@ namespace christ_a_2
                         int noneInventory = (inventory[0].weapon == Weapons.None) ? 1 : (inventory[1].weapon == Weapons.None) ? 1 : (inventory[2].weapon == Weapons.None) ? 2 : -1; 
                         if (noneInventory >= 0) // If there is currenty an empty space in inventory
                         {
-                            inventory[noneInventory] = new InventoryOb(weaponDrops[i].weapon, weaponDrops[i].magBullets, weaponDrops[i].reserveBullets);
+                            inventory[noneInventory] = new InventoryOb(
+                                weaponDrops[i].weapon,
+                                weaponDrops[i].magBullets,
+                                weaponDrops[i].reserveBullets
+                            );
+                            UpdateInventoryGraphics();
+
+                            deleteWeaponDrops.Add(i);
+                            weaponDrops[i].pb.Dispose();
                         }
                         else if (Keyboard.IsKeyDown(Key.E) && lastWeaponPickup < sw.ElapsedMilliseconds - Constants.weaponPickupDelay) // Should switch out weapon
                         {
@@ -1168,6 +1176,9 @@ namespace christ_a_2
                                 weaponDrops[0].reserveBullets
                             );
                             UpdateInventoryGraphics();
+
+                            deleteWeaponDrops.Add(i);
+                            weaponDrops[i].pb.Dispose();
 
                             lastWeaponPickup = sw.ElapsedMilliseconds;
                         }
@@ -1401,7 +1412,7 @@ namespace christ_a_2
                     {
                         drops.Add(new Drop( // Drop weapon box
                             Drops.WeaponBox,
-                            new Vector2(0.5f, 0.40f),
+                            new Vector2(GetFloatRng(0.1f, 0.9f), GetFloatRng(0.1f, 0.9f)),
                             dropsData[Drops.WeaponBox].img,
                             SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(new Vector2(dropsData[Drops.WeaponBox].size), main_game_panel.Size), main_game_panel.Size))
                         ));
@@ -1416,7 +1427,7 @@ namespace christ_a_2
 
                         drops.Add(new Drop( // Drop next level/wave object
                             dropType,
-                            new Vector2(0.5f, 0.60f),
+                            new Vector2(0.5f, 0.50f),
                             dropsData[dropType].img,
                             SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(new Vector2(dropsData[dropType].size), main_game_panel.Size), main_game_panel.Size))
                         ));
@@ -1427,9 +1438,9 @@ namespace christ_a_2
                         drops[j].pb.BringToFront();
                     }
                 }
-            }
 
-            #endregion
+                #endregion
+            }
 
             delta = (sw.ElapsedMilliseconds - startFrame) / 1000; // Calculate deltatime for frame
             startFrame = sw.ElapsedMilliseconds;
