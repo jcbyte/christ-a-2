@@ -1,10 +1,14 @@
-﻿using System;
+﻿#region "Include"
+
+using System;
 using System.Collections.Generic;
 using System.Media;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Drawing;
+
+#endregion
 
 namespace christ_a_2
 {
@@ -30,13 +34,17 @@ namespace christ_a_2
             public const float ammoDropChance = 0.50f; // Ammo chance + health chance = 1 
             public const float pickupBoxRange = 0.02f; // Relative
             public const int healthPickupHealth = 20;
+            public static readonly Vector2 weaponDropSize = new Vector2(0.05f);
+            public const int weaponPickupDelay = 200; // (ms)
 
             public const float explosionSpeed = 0.6f;
         }
 
         #endregion
 
-        #region "Relative Vector2"
+        #region "RelativeVector2"
+
+        #region "RelativeVector2.Class"
 
         public class Vector2 // Relative Vector2 class (0-1, 0-1)
         {
@@ -115,6 +123,10 @@ namespace christ_a_2
             }
         }
 
+        #endregion
+
+        #region "RelativeVector2.Functions"
+
         private static Vector2 ToRelativeV2(Point p, Size formSize) // Convert from a Windows Point to relative Vector2
         {
             return new Vector2((float)p.X / formSize.Width, (float)p.Y / formSize.Height);
@@ -155,6 +167,8 @@ namespace christ_a_2
             else
                 return new Vector2(c.x, c.y * ((float)formSize.Height / formSize.Width));
         }
+
+        #endregion
 
         #endregion
 
@@ -203,14 +217,6 @@ namespace christ_a_2
         #endregion
 
         #region "Levels"
-
-        private enum Levels : byte
-        {
-            Level1,
-            Level2,
-            Level3,
-            BossLevel,
-        }
 
         private struct LevelOb
         {
@@ -501,6 +507,10 @@ namespace christ_a_2
             }
         }
 
+        #endregion
+
+        #region "Explosion"
+
         private class Explosion
         {
             public Vector2 pos;
@@ -546,6 +556,29 @@ namespace christ_a_2
 
         #region "Drops"
 
+        #region "Drops.Drop"
+
+        private enum Drops : byte 
+        { 
+            Ammo,
+            Health,
+            WeaponBox,
+            NextWave,
+            NextLevel,
+        }
+
+        private struct DropOb
+        {
+            public Image img;
+            public float size; // Scaled relative radius
+
+            public DropOb(Image _img, float _size)
+            {
+                img = _img;
+                size = _size * 2;
+            }
+        }
+
         class Drop
         {
             public Drops type;
@@ -565,24 +598,35 @@ namespace christ_a_2
             }
         }
 
-        private enum Drops : byte 
-        { 
-            Ammo,
-            Health,
-            Weapon
-        }
+        #endregion
 
-        private class DropOb
+        #region "Drops.WeaponDrop"
+
+        private class WeaponDrop
         {
-            public Image img;
-            public Vector2 size; // Scaled relative vector2
+            public Weapons weapon;
+            public int magBullets;
+            public int reserveBullets;
 
-            public DropOb(Image _img, Vector2 _size)
+            public Vector2 pos;
+            public PictureBox pb;
+
+            public WeaponDrop(Weapons _weapon, int _magBullets, int _reserveBullets, Vector2 _pos, Image img, Size size)
             {
-                img = _img;
-                size = _size;
+                weapon = _weapon;
+                magBullets = _magBullets;
+                reserveBullets = _reserveBullets;
+                pos = _pos;
+
+                pb = new PictureBox(); // Add new picturebox (weaponDrop) to the form
+                pb.BackgroundImageLayout = ImageLayout.Zoom;
+                pb.Size = size;
+                pb.BackColor = Color.Transparent;
+                pb.BackgroundImage = img;
             }
         }
+
+        #endregion
 
         #endregion
 
@@ -612,6 +656,7 @@ namespace christ_a_2
         private List<Enemy> enemys = new List<Enemy>();
         private List<Bullet> bullets = new List<Bullet>();
         private List<Drop> drops = new List<Drop>();
+        private List<WeaponDrop> weaponDrops = new List<WeaponDrop>();
         private List<Explosion> explosions = new List<Explosion>();
 
         private Vector2 playerPos = new Vector2(0.5f, 0.5f);
@@ -623,16 +668,19 @@ namespace christ_a_2
 
         private Dictionary<Scenes, SceneOb> scenesData;
         private Dictionary<Cutscenes, string> cutscenesData;
-        private Dictionary<Levels, LevelOb> levelsData;
+        private LevelOb[] levelsData;
         private Dictionary<WeaponClass, WeaponClassOb> weaponClassData;
         private Dictionary<Weapons, WeaponOb> weaponsData;
         private Dictionary<Enemys, EnemyOb> enemysData;
         private Dictionary<Drops, DropOb> dropsData;
 
         private Scenes cScene = Scenes.Menu;
-        private Levels cLevel = Levels.Level1;
+        private int cLevel;
+        private int cWave;
 
         #endregion
+
+        #region "MainForm"
 
         public mainForm()
         {
@@ -655,21 +703,21 @@ namespace christ_a_2
                 {Cutscenes.Win,            "" }
             };
 
-            levelsData = new Dictionary<Levels, LevelOb> {
-                {Levels.Level1,    new LevelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int>[] { 
+            levelsData = new LevelOb[] {
+                new LevelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int>[] { 
                     new Dictionary<Enemys, int> { { Enemys.Regular, 2 }, { Enemys.Scout, 2 }, { Enemys.Rowland, 4 } },
                     new Dictionary<Enemys, int> { { Enemys.Regular, 4 }, { Enemys.Scout, 2 }, { Enemys.Rowland, 4 } },
                     new Dictionary<Enemys, int> { { Enemys.Regular, 3 }, { Enemys.Scout, 3 }, { Enemys.Rowland, 3 }, { Enemys.Tank, 1 } },
-                })},
-                {Levels.Level2,    new LevelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int>[] {
+                }),
+                new LevelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int>[] {
                     new Dictionary<Enemys, int> { },
-                })},
-                {Levels.Level3,    new LevelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int>[] {
+                }),
+                new LevelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int>[] {
                     new Dictionary<Enemys, int> { },
-                })},
-                {Levels.BossLevel, new LevelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int>[] {
+                }),
+                new LevelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int>[] {
                     new Dictionary<Enemys, int> { },
-                })},
+                }),
             };
 
             weaponClassData = new Dictionary<WeaponClass, WeaponClassOb> {
@@ -705,8 +753,8 @@ namespace christ_a_2
                 {Weapons.M2,          new WeaponOb("M2",           WeaponClass.HMG,             Properties.Resources.weapon_m2,        Properties.Resources.bullet_other,   0.01f,      "USA",            10,     1.00f,  0.50f,    1.00f,    1,          500,    100,         4,                 0.00f,    0.00f,  1.00f) },
                 {Weapons.FP6,         new WeaponOb("FP6",          WeaponClass.Shotgun,         Properties.Resources.weapon_fp6,       Properties.Resources.bullet_shotgun, 0.01f,      "Germany",        10,     1.00f,  0.50f,    1.00f,    1,          500,    6,           2,                 0.00f,    0.00f,  1.00f,       0.00f,    3,            10) },
                 {Weapons.M1014,       new WeaponOb("M1014",        WeaponClass.Shotgun,         Properties.Resources.weapon_m1014,     Properties.Resources.bullet_shotgun, 0.04f,      "Italy",          10,     1.00f,  0.40f,    1.00f,    1,          500,    8,           3,                 0.00f,    0.00f,  0.30f,       0.00f,    5,            20) },
-                {Weapons.MGL105,      new WeaponOb("MGL-105",      WeaponClass.GrenadeLauncher, Properties.Resources.weapon_mgl105,    Properties.Resources.bullet_grenade, 0.01f,      "South Africa",   0,      3.00f,  0.50f,    1.00f,    1000,       500,    6,           1,                 0.00f,    0.00f,  0.50f,       0.00f,    0,            0,             0.50f,           80) },
-                {Weapons.RPG7,        new WeaponOb("RPG-7",        WeaponClass.RPG,             Properties.Resources.weapon_rpg7,      Properties.Resources.bullet_rpg,     0.01f,      "Russia",         0,      2.00f,  0.50f,    1.00f,    1,          500,    1,           4,                 0.00f,    0.00f,  1.00f,       0.00f,    0,            0,             2f,           40) },
+                {Weapons.MGL105,      new WeaponOb("MGL-105",      WeaponClass.GrenadeLauncher, Properties.Resources.weapon_mgl105,    Properties.Resources.bullet_grenade, 0.01f,      "South Africa",   0,      3.00f,  0.50f,    1.00f,    1000,       500,    6,           1,                 0.00f,    0.00f,  0.50f,       0.00f,    0,            0,             2f,              200) },
+                {Weapons.RPG7,        new WeaponOb("RPG-7",        WeaponClass.RPG,             Properties.Resources.weapon_rpg7,      Properties.Resources.bullet_rpg,     0.01f,      "Russia",         0,      2.00f,  0.50f,    1.00f,    1,          500,    1,           4,                 0.00f,    0.00f,  1.00f,       0.00f,    0,            0,             0.40f,           40) },
             };
 
             enemysData = new Dictionary<Enemys, EnemyOb> {
@@ -721,14 +769,16 @@ namespace christ_a_2
 
             dropsData = new Dictionary<Drops, DropOb>
             {
-                {Drops.Ammo,   new DropOb(Properties.Resources.pickup_ammoBox,   new Vector2(0.03f)) },
-                {Drops.Health, new DropOb(Properties.Resources.pickup_healthBox, new Vector2(0.03f)) },
-                {Drops.Weapon, new DropOb(Properties.Resources.pickup_weaponBox, new Vector2(0.03f)) },
+                {Drops.Ammo,      new DropOb(Properties.Resources.pickup_ammoBox,   0.015f) },
+                {Drops.Health,    new DropOb(Properties.Resources.pickup_healthBox, 0.015f) },
+                {Drops.WeaponBox, new DropOb(Properties.Resources.pickup_weaponBox, 0.015f) },
+                {Drops.NextWave,  new DropOb(Properties.Resources.pickup_nextWave,  0.040f) },
+                {Drops.NextLevel, new DropOb(Properties.Resources.pickup_nextLevel, 0.040f) },
             };
 
             #endregion
 
-            playerHealth = 30;//Constants.maxPlayerHealth;
+            playerHealth = Constants.maxPlayerHealth;
             UpdatePlayerHealth();
 
             foreach (KeyValuePair<Scenes, SceneOb> s in scenesData)
@@ -742,22 +792,30 @@ namespace christ_a_2
             Application.Idle += GameLoop;
         }
 
+        #endregion
+
         #region "Misc"
 
-        private Point GetCenter(PictureBox pb)
+        private Vector2 GetMousePos(Size formSize)
         {
-            return new Point(pb.Location.X - (pb.Size.Width / 2), pb.Location.Y - (pb.Height / 2));
+            return ToRelativeV2(PointToClient(MousePosition), formSize);
         }
+
+        #region "Misc.Random"
 
         private float GetFloatRng(float min = 0, float max = 1)
         {
             return (float)rng.NextDouble() * (max - min) + min;
         }
 
-        private Vector2 GetMousePos(Size formSize)
+        private int GetIntRng(int min, int max)
         {
-            return ToRelativeV2(PointToClient(MousePosition), formSize);
+            return rng.Next(min, max);
         }
+
+        #endregion
+
+        #region "Misc.Collisions"
 
         private bool PointInStraightRect(Vector2 point, Vector2 rectPointA, Vector2 rectPointB) // Check if the point is within bounds of the rect (rectPointA = top left, rectPointB = bottom right)
         {
@@ -810,6 +868,8 @@ namespace christ_a_2
                    LineIntersectsStraightRect(rectAPointB, new Vector2(rectAPointA.x, rectAPointB.y), rectBPointA, rectBPointB) ||
                    LineIntersectsStraightRect(new Vector2(rectAPointA.x, rectAPointB.y), rectAPointA, rectBPointA, rectBPointB);
         }
+
+        #endregion
 
         #endregion
 
@@ -899,7 +959,7 @@ namespace christ_a_2
                     IncreaseMemoryLoopAsync(); // Start the memory leak
                     await Task.Delay(2000); // Wait until level1 starts */
 
-                    LoadScene(Scenes.Game, Levels.Level1);
+                    LoadScene(Scenes.Game, 0);
                     break;
 
                 case Cutscenes.BeforeBoss:
@@ -917,19 +977,20 @@ namespace christ_a_2
 
         #endregion
 
-        #region "Game (needs work)"
+        #region "Game"
+
+        #region "Game.Load"
 
         private void GameOnLoad(object data)
         {
-            Levels level = (Levels)data;
-            cLevel = level;
+            cLevel = (int)data;
 
-            game_floor_pictureBox.BackgroundImage = levelsData[level].floorImg; // Set image of floor over drawing for lag purposes
+            game_floor_pictureBox.BackgroundImage = levelsData[cLevel].floorImg; // Set image of floor over drawing for lag purposes
             game_floor_pictureBox.Location = new Point(0, 0);
             game_floor_pictureBox.Size = this.Size;
 
             game_inventory_reloading_label.Visible = false;
-            UpdateInventoryGraphics(); // Update inventory graphics - useful on first load
+            UpdateInventoryGraphics();
 
             playerPos = new Vector2(0.5f, 0.5f);
             game_player_pictureBox.Location = FromRelativeV2Center(playerPos, game_player_pictureBox.Size, main_game_panel.Size); // Have player start in centre
@@ -937,8 +998,19 @@ namespace christ_a_2
             game_player_pictureBox.BringToFront();
             UpdatePlayerHealth();
 
+            cWave = 0;
+            LoadWave();
+
+            switch(cLevel) // Level specialitys - music here? - or music in level obbject?
+            {
+
+            }
+        }
+
+        private void LoadWave()
+        {
             int enemyi = 0;
-            foreach (KeyValuePair<Enemys, int> enemyType in levelsData[level].waves[0]) // Create the enemys for the level (change to wave based)
+            foreach (KeyValuePair<Enemys, int> enemyType in levelsData[cLevel].waves[cWave]) // Create the enemys for the level and wave
             {
                 for (int i = 0; i < enemyType.Value; i++)
                 {
@@ -964,13 +1036,9 @@ namespace christ_a_2
                     enemyi++;
                 }
             }
-
-            switch(level) // Level specialitys - music here?
-            {
-                case Levels.BossLevel: 
-                break;
-            }
         }
+
+        #endregion
 
         System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
 
@@ -980,11 +1048,14 @@ namespace christ_a_2
         float lastShot = 0;
         bool lastClick = false;
         bool reloading = false;
+        float lastWeaponPickup = 0;
 
         void GameLoop(object sender, EventArgs e)
         {
             if (cScene == Scenes.Game)
             {
+                #region "Game.Movement"
+
                 Vector2 movement = new Vector2();
 
                 if (Keyboard.IsKeyDown(Key.W) || Keyboard.IsKeyDown(Key.Up)) // Get movement varible depending on keypress
@@ -1000,10 +1071,14 @@ namespace christ_a_2
                 playerPos += movement * Constants.playerSpeed * speedWeightModifier * delta; // Player Movement
                 game_player_pictureBox.Location = FromRelativeV2Center(playerPos, game_player_pictureBox.Size, main_game_panel.Size);
 
+                #endregion
+
+                #region "Game.Drops"
+
                 List<int> deleteDrops = new List<int>();
                 for (int i = 0; i < drops.Count; i++)
                 {
-                    if ((drops[i].pos - playerPos).ScaledMagnitude(main_game_panel.Size) <= Constants.pickupBoxRange) // Player should pick up box
+                    if ((drops[i].pos - playerPos).ScaledMagnitude(main_game_panel.Size) <= dropsData[drops[i].type].size) // Player should pick up box
                     {
                         switch (drops[i].type)
                         {
@@ -1022,8 +1097,32 @@ namespace christ_a_2
                                 UpdatePlayerHealth();
                                 break;
 
-                            case Drops.Weapon:
-                                // Weapon drop - ######## TODO ########
+                            case Drops.WeaponBox:
+                                Weapons weapon = (Weapons)Enum.GetValues(typeof(Weapons)).GetValue(GetIntRng(1, weaponsData.Count));
+
+                                weaponDrops.Add(new WeaponDrop(
+                                    weapon,
+                                    weaponsData[weapon].magCapacity,
+                                    (weaponsData[weapon].maxAmmoMultiplier >= 2) ? weaponsData[weapon].magCapacity : 0,
+                                    drops[i].pos,
+                                    weaponsData[weapon].img,
+                                    SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(Constants.weaponDropSize, main_game_panel.Size), main_game_panel.Size))
+                                ));
+
+                                int k = weaponDrops.Count - 1;
+                                main_game_panel.Controls.Add(weaponDrops[k].pb);
+                                weaponDrops[k].pb.Location = FromRelativeV2Center(weaponDrops[k].pos, weaponDrops[k].pb.Size, main_game_panel.Size);
+                                weaponDrops[k].pb.BringToFront();
+
+                                break;
+
+                            case Drops.NextWave:
+                                cWave++;
+                                LoadWave();
+                                break;
+
+                            case Drops.NextLevel:
+                                // load nexct level - ######## TODO ########
                                 break;
                         }
 
@@ -1035,6 +1134,53 @@ namespace christ_a_2
                 {
                     drops.RemoveAt(deleteDrops[i]);
                 }
+
+                List<int> deleteWeaponDrops = new List<int>();
+                int originalWeaponDropsCount = weaponDrops.Count;
+                for (int i = 0; i < originalWeaponDropsCount; i++)
+                {
+                    if ((weaponDrops[i].pos - playerPos).ScaledMagnitude(main_game_panel.Size) <= Math.Max(Constants.weaponDropSize.x, Constants.weaponDropSize.y)) // Player should be close enough to pick up weapon
+                    {
+                        int noneInventory = (inventory[0].weapon == Weapons.None) ? 1 : (inventory[1].weapon == Weapons.None) ? 1 : (inventory[2].weapon == Weapons.None) ? 2 : -1; 
+                        if (noneInventory >= 0) // If there is currenty an empty space in inventory
+                        {
+                            inventory[noneInventory] = new InventoryOb(weaponDrops[i].weapon, weaponDrops[i].magBullets, weaponDrops[i].reserveBullets);
+                        }
+                        else if (Keyboard.IsKeyDown(Key.E) && lastWeaponPickup < sw.ElapsedMilliseconds - Constants.weaponPickupDelay) // Should switch out weapon
+                        {
+                            weaponDrops.Add(new WeaponDrop(
+                                inventory[0].weapon,
+                                inventory[0].magBullets,
+                                inventory[0].reserveBullets,
+                                weaponDrops[i].pos,
+                                weaponsData[inventory[0].weapon].img,
+                                SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(Constants.weaponDropSize, main_game_panel.Size), main_game_panel.Size))
+                            ));
+
+                            int j = weaponDrops.Count - 1;
+                            main_game_panel.Controls.Add(weaponDrops[j].pb);
+                            weaponDrops[j].pb.Location = FromRelativeV2Center(weaponDrops[j].pos, weaponDrops[j].pb.Size, main_game_panel.Size);
+                            weaponDrops[j].pb.BringToFront();
+
+                            inventory[0] = new InventoryOb(
+                                weaponDrops[i].weapon,
+                                weaponDrops[0].magBullets,
+                                weaponDrops[0].reserveBullets
+                            );
+                            UpdateInventoryGraphics();
+
+                            lastWeaponPickup = sw.ElapsedMilliseconds;
+                        }
+                    }
+                }
+                for (int i = deleteWeaponDrops.Count - 1; i >= 0; i--)
+                {
+                    weaponDrops.RemoveAt(deleteWeaponDrops[i]);
+                }
+
+                #endregion
+
+                #region "Game.Shoot"
 
                 bool click = (MouseButtons == MouseButtons.Left) && ClientRectangle.Contains(FromRelativeV2(GetMousePos(main_game_panel.Size), main_game_panel.Size));
                 if (click) // Player clicks to try and shoot
@@ -1063,6 +1209,10 @@ namespace christ_a_2
                 }
                 lastClick = click;
 
+                #endregion
+
+                #region "Game.Reload"
+
                 if (Keyboard.IsKeyDown(Key.R)) // Reload
                 {
                     if (!reloading)
@@ -1070,6 +1220,10 @@ namespace christ_a_2
                         ReloadWeapon();
                     }
                 }
+
+                #endregion
+
+                #region "Game.Bullets"
 
                 List<int> deleteBullets = new List<int>();
                 for (int i = 0; i < bullets.Count; i++) // loop through every bullet
@@ -1155,93 +1309,133 @@ namespace christ_a_2
                 {
                     bullets.RemoveAt(deleteBullets[i]);
                 }
-            }
 
-            List<int> deleteExplosions = new List<int>();
-            for (int i = 0; i < explosions.Count; i++) // Loop through every explosion
-            {
-                explosions[i].UpdateSize(delta, main_game_panel.Size);
 
-                Vector2 explosionRectA = ToRelativeV2(explosions[i].pb.Location, main_game_panel.Size);
-                Vector2 explosionRectB = explosionRectA + ToRelativeV2(SystemSizeToSystemPoint(explosions[i].pb.Size), main_game_panel.Size);
+                #endregion
 
-                if (explosions[i].playerExplosion)
+                #region "Game.Explosions"
+
+                List<int> deleteExplosions = new List<int>();
+                for (int i = 0; i < explosions.Count; i++) // Loop through every explosion
                 {
-                    for (int j = 0; j < enemys.Count; j++)
+                    explosions[i].UpdateSize(delta, main_game_panel.Size);
+
+                    Vector2 explosionRectA = ToRelativeV2(explosions[i].pb.Location, main_game_panel.Size);
+                    Vector2 explosionRectB = explosionRectA + ToRelativeV2(SystemSizeToSystemPoint(explosions[i].pb.Size), main_game_panel.Size);
+
+                    if (explosions[i].playerExplosion)
                     {
-                        if (!explosions[i].blacklist.Contains(enemys[j].id))
+                        for (int j = 0; j < enemys.Count; j++)
                         {
-                            //Vector2 enemyPos = ToRelativeV2(enemys[j].pb.Location, main_game_panel.Size);
-                            //if (StraightRectIntersectsStraightRect(explosionPos, explosionPos + ToRelativeV2(SystemSizeToSystemPoint(explosions[i].pb.Size), main_game_panel.Size), enemyPos, enemyPos + ToRelativeV2(SystemSizeToSystemPoint(enemys[j].pb.Size), main_game_panel.Size)))
-                            if (PointInStraightRect(enemys[j].pos, explosionRectA, explosionRectB)) // If explosion goes into enemy
+                            if (!explosions[i].blacklist.Contains(enemys[j].id))
                             {
-                                float distance = (explosions[i].pos - enemys[j].pos).Magnitude();
-                                float explosionDamage = explosions[i].damage;
-                                float maxExplosion = explosions[i].maxRadius;
-                                float experiencedDamage = (explosionDamage / maxExplosion) * (-distance + maxExplosion); // damage = ( k / maxr )( -r + maxr)
+                                //Vector2 enemyPos = ToRelativeV2(enemys[j].pb.Location, main_game_panel.Size);
+                                //if (StraightRectIntersectsStraightRect(explosionPos, explosionPos + ToRelativeV2(SystemSizeToSystemPoint(explosions[i].pb.Size), main_game_panel.Size), enemyPos, enemyPos + ToRelativeV2(SystemSizeToSystemPoint(enemys[j].pb.Size), main_game_panel.Size)))
+                                if (PointInStraightRect(enemys[j].pos, explosionRectA, explosionRectB)) // If explosion goes into enemy
+                                {
+                                    float distance = (explosions[i].pos - enemys[j].pos).Magnitude();
+                                    float maxExplosion = explosions[i].maxRadius;
+                                    float experiencedDamage = (explosions[i].damage / maxExplosion) * (-distance + maxExplosion); // damage = ( k / maxr )( -r + maxr)
 
-                                Console.WriteLine(experiencedDamage.ToString());
+                                    enemys[j].health -= (int)experiencedDamage;
+                                    enemys[j].UpdateHealth();
 
-                                enemys[j].health -= (int)experiencedDamage;
-                                enemys[j].UpdateHealth();
-
-                                explosions[i].blacklist.Add(enemys[j].id); // Add enemy to blacklist so it cant be hit again by the same bullet
+                                    explosions[i].blacklist.Add(enemys[j].id); // Add enemy to blacklist so it cant be hit again by the same bullet
+                                }
                             }
                         }
                     }
+
+                    if (explosions[i].ReachedSizeLimit())
+                    {
+                        deleteExplosions.Add(i);
+                        explosions[i].pb.Dispose();
+                    }
                 }
-                
-                if (explosions[i].ReachedSizeLimit())
+                for (int i = deleteExplosions.Count - 1; i >= 0; i--)
                 {
-                    deleteExplosions.Add(i);
-                    explosions[i].pb.Dispose();
+                    explosions.RemoveAt(deleteExplosions[i]);
                 }
-            }
-            for (int i = deleteExplosions.Count - 1; i >= 0; i--)
-            {
-                explosions.RemoveAt(deleteExplosions[i]);
-            }
 
-            List<int> deleteEnemys = new List<int>();
-            for (int i = 0; i < enemys.Count; i++) // Loop through every enemy
-            {
-                if (enemys[i].health <= 0) // Check if enemy is dead
+                #endregion
+
+                #region "Game.Enemys"
+
+                List<int> deleteEnemys = new List<int>();
+                for (int i = 0; i < enemys.Count; i++) // Loop through every enemy
                 {
-                    deleteEnemys.Add(i);
-                    enemys[i].healthPb.Dispose();
-                    enemys[i].healthPanel.Dispose();
-                    enemys[i].pb.Dispose();
+                    if (enemys[i].health <= 0) // Check if enemy is dead
+                    {
+                        deleteEnemys.Add(i);
+                        enemys[i].healthPb.Dispose();
+                        enemys[i].healthPanel.Dispose();
+                        enemys[i].pb.Dispose();
 
-                    continue;
+                        continue;
+                    }
+
+                    // Enemy AI - ######## TODO ########
                 }
-
-                // Enemy AI - ######## TODO ########
-            }
-            for (int i = deleteEnemys.Count - 1; i >= 0; i--)
-            {
-                if (enemysData[enemys[deleteEnemys[i]].type].dropRate >= GetFloatRng()) // Enemy should drop
+                for (int i = deleteEnemys.Count - 1; i >= 0; i--)
                 {
-                    Drops dropType = (Constants.ammoDropChance >= GetFloatRng()) ? Drops.Ammo : Drops.Health;
+                    if (enemysData[enemys[deleteEnemys[i]].type].dropRate >= GetFloatRng()) // Enemy should drop
+                    {
+                        Drops dropType = (Constants.ammoDropChance >= GetFloatRng()) ? Drops.Ammo : Drops.Health; // Chooses whether enemy drops amo or health
 
-                    drops.Add(new Drop(
-                        dropType,
-                        enemys[deleteEnemys[i]].pos,
-                        dropsData[dropType].img,
-                        SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(dropsData[dropType].size, main_game_panel.Size), main_game_panel.Size))
-                    ));
+                        drops.Add(new Drop( // Drop ammo/health box
+                            dropType,
+                            enemys[deleteEnemys[i]].pos,
+                            dropsData[dropType].img,
+                            SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(new Vector2(dropsData[dropType].size), main_game_panel.Size), main_game_panel.Size))
+                        ));
 
-                    int j = drops.Count - 1;
-                    main_game_panel.Controls.Add(drops[j].pb);
-                    drops[j].pb.Location = FromRelativeV2Center(drops[j].pos, drops[j].pb.Size, main_game_panel.Size);
-                    drops[j].pb.BringToFront();
+                        int j = drops.Count - 1;
+                        main_game_panel.Controls.Add(drops[j].pb);
+                        drops[j].pb.Location = FromRelativeV2Center(drops[j].pos, drops[j].pb.Size, main_game_panel.Size);
+                        drops[j].pb.BringToFront();
+                    }
+
+                    enemys.RemoveAt(deleteEnemys[i]);
+
+                    if (enemys.Count == 0) // Wave defeated
+                    {
+                        drops.Add(new Drop( // Drop weapon box
+                            Drops.WeaponBox,
+                            new Vector2(0.5f, 0.40f),
+                            dropsData[Drops.WeaponBox].img,
+                            SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(new Vector2(dropsData[Drops.WeaponBox].size), main_game_panel.Size), main_game_panel.Size))
+                        ));
+
+                        int j = drops.Count - 1;
+                        main_game_panel.Controls.Add(drops[j].pb);
+                        drops[j].pb.Location = FromRelativeV2Center(drops[j].pos, drops[j].pb.Size, main_game_panel.Size);
+                        drops[j].pb.BringToFront();
+
+
+                        Drops dropType = (cWave == levelsData[cLevel].waves.Length - 1) ? Drops.NextLevel : Drops.NextWave; // Determins whether to drop next wave or next level object
+
+                        drops.Add(new Drop( // Drop next level/wave object
+                            dropType,
+                            new Vector2(0.5f, 0.60f),
+                            dropsData[dropType].img,
+                            SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(new Vector2(dropsData[dropType].size), main_game_panel.Size), main_game_panel.Size))
+                        ));
+
+                        j = drops.Count - 1;
+                        main_game_panel.Controls.Add(drops[j].pb);
+                        drops[j].pb.Location = FromRelativeV2Center(drops[j].pos, drops[j].pb.Size, main_game_panel.Size);
+                        drops[j].pb.BringToFront();
+                    }
                 }
-
-                enemys.RemoveAt(deleteEnemys[i]);
             }
+
+            #endregion
 
             delta = (sw.ElapsedMilliseconds - startFrame) / 1000; // Calculate deltatime for frame
             startFrame = sw.ElapsedMilliseconds;
         }
+
+        #region "Game.Functions"
 
         private void UpdatePlayerHealth()
         {
@@ -1406,6 +1600,8 @@ namespace christ_a_2
                 g.DrawImage(levelsData[cLevel].floorImg, 0, 0, this.Size.Width, this.Size.Height); // Draw image of floor to game panel for transparency lag purposes
             }
         }
+
+        #endregion
 
         #endregion
     }
