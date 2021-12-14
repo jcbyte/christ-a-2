@@ -42,9 +42,11 @@ namespace christ_a_2
 
         #endregion
 
-        #region "RelativeVector2"
+        #region "EnumClasses"
 
-        #region "RelativeVector2.Class"
+        #region "EnumClasses.RelativeVector2"
+
+        #region "EnumClasses.RelativeVector2.Class"
 
         public class Vector2 // Relative Vector2 class (0-1, 0-1)
         {
@@ -125,7 +127,7 @@ namespace christ_a_2
 
         #endregion
 
-        #region "RelativeVector2.Functions"
+        #region "EnumClasses.RelativeVector2.Functions"
 
         private static Vector2 ToRelativeV2(Point p, Size formSize) // Convert from a Windows Point to relative Vector2
         {
@@ -172,7 +174,7 @@ namespace christ_a_2
 
         #endregion
 
-        #region "Scenes"
+        #region "EnumClasses.Scenes"
 
         private enum Scenes : byte
         {
@@ -203,7 +205,7 @@ namespace christ_a_2
 
         #endregion
 
-        #region "Cutscenes"
+        #region "EnumClasses.Cutscenes"
 
         private enum Cutscenes : byte
         {
@@ -216,7 +218,7 @@ namespace christ_a_2
 
         #endregion
 
-        #region "Levels"
+        #region "EnumClasses.Levels"
 
         private struct LevelOb
         {
@@ -232,7 +234,7 @@ namespace christ_a_2
 
         #endregion
 
-        #region "Enemy"
+        #region "EnumClasses.Enemy"
 
         private class Enemy // Enemy class containg visual and code objects
         {
@@ -325,7 +327,7 @@ namespace christ_a_2
 
         #endregion
 
-        #region "Weapons"
+        #region "EnumClasses.Weapons"
 
         private enum Weapons : byte
         {
@@ -449,7 +451,7 @@ namespace christ_a_2
 
         #endregion
 
-        #region "Bullet"
+        #region "EnumClasses.Bullet"
 
         class Bullet
         {
@@ -509,7 +511,7 @@ namespace christ_a_2
 
         #endregion
 
-        #region "Explosion"
+        #region "EnumClasses.Explosion"
 
         private class Explosion
         {
@@ -554,9 +556,9 @@ namespace christ_a_2
 
         #endregion
 
-        #region "Drops"
+        #region "EnumClasses.Drops"
 
-        #region "Drops.Drop"
+        #region "EnumClasses.Drops.Drop"
 
         private enum Drops : byte 
         { 
@@ -600,7 +602,7 @@ namespace christ_a_2
 
         #endregion
 
-        #region "Drops.WeaponDrop"
+        #region "EnumClasses.Drops.WeaponDrop"
 
         private class WeaponDrop
         {
@@ -630,7 +632,7 @@ namespace christ_a_2
 
         #endregion
 
-        #region "Inventory"
+        #region "EnumClasses.Inventory"
 
         private struct InventoryOb
         {
@@ -648,7 +650,11 @@ namespace christ_a_2
 
         #endregion
 
-        #region "Global vars"
+        #endregion
+
+        #region "Main"
+
+        #region "Main.GlobalVars"
 
         private List<byte[]> meme = new List<byte[]>(); // Totally useful memory
         private bool memoryLeakOn = false;
@@ -681,13 +687,11 @@ namespace christ_a_2
 
         #endregion
 
-        #region "MainForm"
-
         public mainForm()
         {
             InitializeComponent();
 
-            #region "Data"
+            #region "Main.Data"
 
             scenesData = new Dictionary<Scenes, SceneOb> { 
                 {Scenes.Menu, new SceneOb(main_menu_panel, MenuOnLoad) }, 
@@ -802,6 +806,8 @@ namespace christ_a_2
             return ToRelativeV2(PointToClient(MousePosition), formSize);
         }
 
+        #region "Misc.Music"
+
         private void LoadBackgroundMusic(string file)
         {
             backgroundMusicPlayer.Stop();
@@ -809,6 +815,10 @@ namespace christ_a_2
             backgroundMusicPlayer.Load();
             backgroundMusicPlayer.PlayLooping();
         }
+
+        // sound effects functions
+
+        #endregion
 
         #region "Misc.Random"
 
