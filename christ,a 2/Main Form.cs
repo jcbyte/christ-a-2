@@ -659,7 +659,7 @@ namespace christ_a_2
         private enum SoundEffects : byte
         {
             Shoot,
-            PlayerDamage,
+            PlayerDamage, // Not implemented yet
             AmmoPickup,
             HealthPickup,
             WeaponPickup,
@@ -1205,6 +1205,7 @@ namespace christ_a_2
                         switch (drops[i].type)
                         {
                             case Drops.Ammo:
+                                PlaySoundEffect(SoundEffects.AmmoPickup);
                                 for (int j = 0; j < inventory.Length; j++)
                                 {
                                     int magCapacity = weaponsData[inventory[j].weapon].magCapacity;
@@ -1215,6 +1216,7 @@ namespace christ_a_2
                                 break;
 
                             case Drops.Health:
+                                PlaySoundEffect(SoundEffects.HealthPickup);
                                 playerHealth = Math.Min(playerHealth + Constants.healthPickupHealth, Constants.maxPlayerHealth);
                                 UpdatePlayerHealth();
                                 break;
@@ -1239,6 +1241,7 @@ namespace christ_a_2
                                 break;
 
                             case Drops.NextWave:
+                                PlaySoundEffect(SoundEffects.NextWave);
                                 cWave++;
                                 LoadWave();
                                 break;
@@ -1274,6 +1277,8 @@ namespace christ_a_2
                         int noneInventory = (inventory[0].weapon == Weapons.None) ? 1 : (inventory[1].weapon == Weapons.None) ? 1 : (inventory[2].weapon == Weapons.None) ? 2 : -1; 
                         if (noneInventory >= 0) // If there is currenty an empty space in inventory
                         {
+                            PlaySoundEffect(SoundEffects.WeaponPickup);
+
                             inventory[noneInventory] = new InventoryOb(
                                 weaponDrops[i].weapon,
                                 weaponDrops[i].magBullets,
@@ -1286,6 +1291,8 @@ namespace christ_a_2
                         }
                         else if (Keyboard.IsKeyDown(Key.E) && lastWeaponPickup < sw.ElapsedMilliseconds - Constants.weaponPickupDelay) // Should switch out weapon
                         {
+                            PlaySoundEffect(SoundEffects.WeaponPickup);
+
                             weaponDrops.Add(new WeaponDrop(
                                 inventory[0].weapon,
                                 inventory[0].magBullets,
@@ -1328,13 +1335,13 @@ namespace christ_a_2
                 {
                     if (lastShot < sw.ElapsedMilliseconds - (1000 / weaponsData[inventory[0].weapon].firerate)) // Only shoot at firerate (1 / (rps / 1000))
                     {
-                        if (inventory[0].magBullets > 0) // Make sure there are bullets in the mag
+                        if (weaponClassData[weaponsData[inventory[0].weapon].weaponClass].type == WeaponType.Auto || (weaponClassData[weaponsData[inventory[0].weapon].weaponClass].type == WeaponType.Semi && !lastClick)) // If weapon is semi make sure its a new click
                         {
-                            if (weaponClassData[weaponsData[inventory[0].weapon].weaponClass].type == WeaponType.Auto || (weaponClassData[weaponsData[inventory[0].weapon].weaponClass].type == WeaponType.Semi && !lastClick)) // If weapon is semi make sure its a new click
+                            if (lastRotate < sw.ElapsedMilliseconds - Constants.weaponSwitchCooldown) // Can only shoot after weapon switch cooldown after changing weapon
                             {
-                                if (lastRotate < sw.ElapsedMilliseconds - Constants.weaponSwitchCooldown) // Can only shoot after weapon switch cooldown after changing weapon
+                                if (!reloading) // Cant shoot while reloading
                                 {
-                                    if (!reloading) // Cant shoot while reloading
+                                    if (inventory[0].magBullets > 0) // Make sure there are bullets in the mag
                                     {
                                         inventory[0].magBullets--; // Remove bullet from mag
                                         UpdateInventoryAmmo();
@@ -1343,6 +1350,10 @@ namespace christ_a_2
                                         PlaySoundEffect(SoundEffects.Shoot);
 
                                         lastShot = sw.ElapsedMilliseconds;
+                                    }
+                                    else
+                                    {
+                                        PlaySoundEffect(SoundEffects.NoAmmo);
                                     }
                                 }
                             }
@@ -1359,7 +1370,15 @@ namespace christ_a_2
                 {
                     if (!reloading)
                     {
-                        ReloadWeapon();
+                        if (inventory[0].reserveBullets > 0) // If there are bullets in reserve
+                        {
+                            PlaySoundEffect(SoundEffects.Reload);
+                            ReloadWeapon();
+                        }
+                        else
+                        {
+                            PlaySoundEffect(SoundEffects.NoAmmo);
+                        }
                     }
                 }
 
@@ -1383,6 +1402,8 @@ namespace christ_a_2
                                 Vector2 enemyPos = ToRelativeV2(enemys[j].pb.Location, main_game_panel.Size);
                                 if (LineIntersectsStraightRect(before, after, enemyPos, enemyPos + ToRelativeV2(SystemSizeToSystemPoint(enemys[j].pb.Size), main_game_panel.Size)))
                                 {
+                                    PlaySoundEffect(SoundEffects.EnemyDamage);
+
                                     enemys[j].health -= bullets[i].damage;
                                     enemys[j].UpdateHealth();
 
@@ -1398,6 +1419,8 @@ namespace christ_a_2
                         switch (weaponsData[bullets[i].fromWeapon].weaponClass)
                         {
                             case WeaponClass.GrenadeLauncher: // Grenade should explode
+                                PlaySoundEffect(SoundEffects.Explosion);
+
                                 explosions.Add(new Explosion(
                                     bullets[i].pos,
                                     Properties.Resources.effect_explosion,
@@ -1422,6 +1445,8 @@ namespace christ_a_2
                         switch (weaponsData[bullets[i].fromWeapon].weaponClass)
                         {
                             case WeaponClass.RPG: // Rocket should explode
+                                PlaySoundEffect(SoundEffects.Explosion);
+
                                 explosions.Add(new Explosion(
                                     bullets[i].pos,
                                     Properties.Resources.effect_explosion,
@@ -1475,6 +1500,8 @@ namespace christ_a_2
                                 //if (StraightRectIntersectsStraightRect(explosionPos, explosionPos + ToRelativeV2(SystemSizeToSystemPoint(explosions[i].pb.Size), main_game_panel.Size), enemyPos, enemyPos + ToRelativeV2(SystemSizeToSystemPoint(enemys[j].pb.Size), main_game_panel.Size)))
                                 if (PointInStraightRect(enemys[j].pos, explosionRectA, explosionRectB)) // If explosion goes into enemy
                                 {
+                                    PlaySoundEffect(SoundEffects.EnemyDamage);
+
                                     float distance = (explosions[i].pos - enemys[j].pos).Magnitude();
                                     float maxExplosion = explosions[i].maxRadius;
                                     float experiencedDamage = (explosions[i].damage / maxExplosion) * (-distance + maxExplosion); // damage = ( k / maxr )( -r + maxr)
@@ -1656,29 +1683,28 @@ namespace christ_a_2
 
         private async void ReloadWeapon()
         {
-            if (inventory[0].reserveBullets > 0) // If there are bullets in reserve
+
+            reloading = true;
+            game_inventory_reloading_label.Visible = true;
+
+            await Task.Delay(weaponsData[inventory[0].weapon].reload); // Reload time
+
+            int bulletsToAdd = weaponsData[inventory[0].weapon].magCapacity - inventory[0].magBullets;
+            if (bulletsToAdd <= inventory[0].reserveBullets)
             {
-                reloading = true;
-                game_inventory_reloading_label.Visible = true;
-
-                await Task.Delay(weaponsData[inventory[0].weapon].reload); // Reload time
-
-                int bulletsToAdd = weaponsData[inventory[0].weapon].magCapacity - inventory[0].magBullets;
-                if (bulletsToAdd <= inventory[0].reserveBullets)
-                {
-                    inventory[0].magBullets += bulletsToAdd;
-                    inventory[0].reserveBullets -= bulletsToAdd;
-                }
-                else
-                {
-                    inventory[0].magBullets += inventory[0].reserveBullets;
-                    inventory[0].reserveBullets = 0;
-                }
-                UpdateInventoryAmmo();
-
-                game_inventory_reloading_label.Visible = false;
-                reloading = false;
+                inventory[0].magBullets += bulletsToAdd;
+                inventory[0].reserveBullets -= bulletsToAdd;
             }
+            else
+            {
+                inventory[0].magBullets += inventory[0].reserveBullets;
+                inventory[0].reserveBullets = 0;
+            }
+            UpdateInventoryAmmo();
+
+            game_inventory_reloading_label.Visible = false;
+            reloading = false;
+
         }
 
         private void UpdateInventoryAmmo() // Update only current weapon ammo graphics in inventory

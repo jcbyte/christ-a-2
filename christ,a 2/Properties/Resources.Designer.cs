@@ -213,6 +213,16 @@ namespace christ_a_2.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap level_3Boss {
+            get {
+                object obj = ResourceManager.GetObject("level_3Boss", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap menu_background {
             get {
                 object obj = ResourceManager.GetObject("menu_background", resourceCulture);
