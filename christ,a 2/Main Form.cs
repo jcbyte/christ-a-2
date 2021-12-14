@@ -1,4 +1,4 @@
-﻿#region "Include"
+﻿#region "Using"
 
 using System;
 using System.Collections.Generic;
@@ -671,27 +671,15 @@ namespace christ_a_2
             EnemyDead,
         }
 
-        private class SoundEffectOb
-        {
-            public string location;
-            public int duration;
-
-            public SoundEffectOb(string _location, int _duration = -1)
-            {
-                location = _location;
-                duration = _duration;
-            }
-        }
-
         private class SoundEffectPlayer
         {
             public bool playing;
-            public SoundPlayer player;
+            public System.Windows.Media.MediaPlayer player;
 
             public SoundEffectPlayer()
             {
                 playing = false;
-                player = new SoundPlayer();
+                player = new System.Windows.Media.MediaPlayer();
             }
         }
 
@@ -715,9 +703,9 @@ namespace christ_a_2
 
         private Vector2 playerPos = new Vector2(0.5f, 0.5f);
         private int playerHealth;
-        private InventoryOb[] inventory = new InventoryOb[3] { new InventoryOb(Weapons.MGL105, 1000, 0), new InventoryOb(), new InventoryOb() };
+        private InventoryOb[] inventory = new InventoryOb[3] { new InventoryOb(Weapons.MGL105, 1000, 0), new InventoryOb(Weapons.AK47, 1000, 0), new InventoryOb() };
 
-        private SoundPlayer backgroundMusicPlayer = new SoundPlayer();
+        private System.Windows.Media.MediaPlayer backgroundMusicPlayer = new System.Windows.Media.MediaPlayer();
         private SoundEffectPlayer[] soundEffects = new SoundEffectPlayer[Constants.concurrentSoundEffects];
 
         private Dictionary<Scenes, SceneOb> scenesData;
@@ -727,7 +715,7 @@ namespace christ_a_2
         private Dictionary<Weapons, WeaponOb> weaponsData;
         private Dictionary<Enemys, EnemyOb> enemysData;
         private Dictionary<Drops, DropOb> dropsData;
-        private Dictionary<SoundEffects, SoundEffectOb> soundEffectsData;
+        private Dictionary<SoundEffects, string> soundEffectsData;
 
         private Scenes cScene = Scenes.Menu;
         private int cLevel;
@@ -827,23 +815,19 @@ namespace christ_a_2
                 {Drops.NextLevel, new DropOb(Properties.Resources.pickup_nextLevel, 0.040f) },
             };
 
-            soundEffectsData = new Dictionary<SoundEffects, SoundEffectOb> {
-                { SoundEffects.Shoot,        new SoundEffectOb("FullResources\\SoundEffects\\shoot.wav") },
-                { SoundEffects.PlayerDamage, new SoundEffectOb("FullResources\\SoundEffects\\playerDamage.wav") },
-                { SoundEffects.AmmoPickup,   new SoundEffectOb("FullResources\\SoundEffects\\ammoPickup.wav") },
-                { SoundEffects.HealthPickup, new SoundEffectOb("FullResources\\SoundEffects\\healthPickup.wav") },
-                { SoundEffects.WeaponPickup, new SoundEffectOb("FullResources\\SoundEffects\\weaponPickup.wav") },
-                { SoundEffects.Explosion,    new SoundEffectOb("FullResources\\SoundEffects\\explosion.wav") },
-                { SoundEffects.Reload,       new SoundEffectOb("FullResources\\SoundEffects\\reload.wav") },
-                { SoundEffects.NoAmmo,       new SoundEffectOb("FullResources\\SoundEffects\\noAmmo.wav") },
-                { SoundEffects.NextWave,     new SoundEffectOb("FullResources\\SoundEffects\\nextWave.wav") },
-                { SoundEffects.EnemyDamage,  new SoundEffectOb("FullResources\\SoundEffects\\enemyDamage.wav") },
-                { SoundEffects.EnemyDead,    new SoundEffectOb("FullResources\\SoundEffects\\enemyDead.wav") },
+            soundEffectsData = new Dictionary<SoundEffects, string> {
+                { SoundEffects.Shoot,        "FullResources\\SoundEffects\\shoot.wav" },
+                { SoundEffects.PlayerDamage, "FullResources\\SoundEffects\\playerDamage.wav" },
+                { SoundEffects.AmmoPickup,   "FullResources\\SoundEffects\\ammoPickup.wav" },
+                { SoundEffects.HealthPickup, "FullResources\\SoundEffects\\healthPickup.wav" },
+                { SoundEffects.WeaponPickup, "FullResources\\SoundEffects\\weaponPickup.wav" },
+                { SoundEffects.Explosion,    "FullResources\\SoundEffects\\explosion.wav" },
+                { SoundEffects.Reload,       "FullResources\\SoundEffects\\reload.wav" },
+                { SoundEffects.NoAmmo,       "FullResources\\SoundEffects\\noAmmo.wav" },
+                { SoundEffects.NextWave,     "FullResources\\SoundEffects\\nextWave.wav" },
+                { SoundEffects.EnemyDamage,  "FullResources\\SoundEffects\\enemyDamage.wav" },
+                { SoundEffects.EnemyDead,    "FullResources\\SoundEffects\\enemyDead.wav" },
             };
-            foreach (KeyValuePair<SoundEffects, SoundEffectOb> se in soundEffectsData)
-            {
-                se.Value.duration = GetSoundLength(se.Value.location);
-            }
 
             #endregion
 
@@ -854,6 +838,9 @@ namespace christ_a_2
                 s.Value.panel.Visible = false;
             LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
             //LoadScene(Scenes.Menu);
+
+            for (int i = 0; i < soundEffects.Length; i++)
+                soundEffects[i] = new SoundEffectPlayer();
 
             main_game_panel.Cursor = System.Windows.Forms.Cursors.Cross;
 
@@ -872,32 +859,26 @@ namespace christ_a_2
 
         #region "Misc.Music"
 
+        private void BackgroundMusicEnded(object sender, EventArgs e)
+        {
+            backgroundMusicPlayer.Position = TimeSpan.Zero;
+            backgroundMusicPlayer.Play();
+        }
+
         private void LoadBackgroundMusic(string file)
         {
             backgroundMusicPlayer.Stop();
-            backgroundMusicPlayer.SoundLocation = file;
-            backgroundMusicPlayer.Load();
-            backgroundMusicPlayer.PlayLooping();
+            backgroundMusicPlayer.Open(new Uri(file, UriKind.Relative));
+            backgroundMusicPlayer.MediaEnded += new EventHandler(BackgroundMusicEnded);
+            backgroundMusicPlayer.Play();
         }
 
-        [DllImport("winmm.dll")]
-        private static extern uint mciSendString(string command, StringBuilder returnValue, int returnLength, IntPtr winHandle);
-
-        public static int GetSoundLength(string fileName)
+        private void SoundEffectEnded(object sender, EventArgs e, int i)
         {
-            StringBuilder lengthBuf = new StringBuilder(32);
-
-            mciSendString(string.Format("open \"{0}\" type waveaudio alias wave", fileName), null, 0, IntPtr.Zero);
-            mciSendString("status wave length", lengthBuf, lengthBuf.Capacity, IntPtr.Zero);
-            mciSendString("close wave", null, 0, IntPtr.Zero);
-
-            int length = 0;
-            int.TryParse(lengthBuf.ToString(), out length);
-
-            return length;
+            soundEffects[i].playing = false;
         }
 
-        private async void PlaySoundEffect(SoundEffects sound)
+        private void PlaySoundEffect(SoundEffects sound)
         {
             for (int i = 0; i < soundEffects.Length; i++)
             {
@@ -905,13 +886,10 @@ namespace christ_a_2
                 {
                     soundEffects[i].playing = true;
 
-                    soundEffects[i].player.SoundLocation = soundEffectsData[sound].location;
-                    soundEffects[i].player.Load();
+                    soundEffects[i].player.Open(new Uri(soundEffectsData[sound], UriKind.Relative));
+                    soundEffects[i].player.MediaEnded += new EventHandler((object sender, EventArgs e) => SoundEffectEnded(sender, e, i));
                     soundEffects[i].player.Play();
 
-                    await Task.Delay(soundEffectsData[sound].duration);
-
-                    soundEffects[i].playing = false;
                     return;
                 }
             }
@@ -1085,11 +1063,11 @@ namespace christ_a_2
                     break;
 
                 case Cutscenes.Win:
-                    // win thing
+                    // when win
                     break;
 
                 case Cutscenes.Loss:
-                    // loss thing
+                    // when loss
                     break;
             }
 
@@ -1364,6 +1342,7 @@ namespace christ_a_2
                                         UpdateInventoryAmmo();
 
                                         PlayerShoot(inventory[0].weapon);
+                                        PlaySoundEffect(SoundEffects.Shoot);
 
                                         lastShot = sw.ElapsedMilliseconds;
                                     }
