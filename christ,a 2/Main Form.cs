@@ -218,7 +218,7 @@ namespace christ_a_2
             OpeningCredits,
             BeforeLevel,
             AfterBoss,
-            Win,
+            Credits,
             Loss,
         }
 
@@ -740,8 +740,8 @@ namespace christ_a_2
                 {Cutscenes.OpeningCredits, "FullResources\\Cutscenes\\openingCredits.mp4" },
                 {Cutscenes.BeforeLevel,    "FullResources\\Cutscenes\\beforeLevel{level}.mp4" },
                 {Cutscenes.AfterBoss,      "FullResources\\Cutscenes\\afterBoss.mp4" },
-                {Cutscenes.Loss,           "FullResources\\Cutscenes\\loss.mp4" },
-                {Cutscenes.Win,            "FullResources\\Cutscenes\\win.mp4" }
+                {Cutscenes.Credits,        "FullResources\\Cutscenes\\credits.mp4" },
+                {Cutscenes.Loss,            "FullResources\\Cutscenes\\loss.mp4" }
             };
 
             levelsData = new LevelOb[] {
@@ -1043,7 +1043,7 @@ namespace christ_a_2
             backgroundMusicPlayer.Stop();
             if (cutscene == Cutscenes.OpeningCredits) LoadBackgroundMusic("FullResources\\Music\\menu.mp3");
 
-            double duration = (int)(new WMPLib.WindowsMediaPlayer()).newMedia(url).duration;
+            double duration = 4;// (int)(new WMPLib.WindowsMediaPlayer()).newMedia(url).duration;
             cutscene_media_windowsMediaPlayer.uiMode = "none";
             cutscene_media_windowsMediaPlayer.URL = url;
             await Task.Delay((int)(duration * 1000));
@@ -1059,15 +1059,15 @@ namespace christ_a_2
                     break;
 
                 case Cutscenes.AfterBoss:
-                    // after boss
+                    LoadScene(Scenes.Cutscene, Cutscenes.Credits); // Error with this
                     break;
 
-                case Cutscenes.Win:
-                    // when win
+                case Cutscenes.Credits:
+                    // after credits
                     break;
 
                 case Cutscenes.Loss:
-                    // when loss
+                    // after loss
                     break;
             }
 
@@ -1611,6 +1611,8 @@ namespace christ_a_2
 
                 #endregion
             }
+
+            //Console.WriteLine(((float)1 / delta).ToString()); // fps
 
             delta = (sw.ElapsedMilliseconds - startFrame) / 1000; // Calculate deltatime for frame
             startFrame = sw.ElapsedMilliseconds;
