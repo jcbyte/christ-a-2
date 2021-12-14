@@ -690,7 +690,7 @@ namespace christ_a_2
             #region "Data"
 
             scenesData = new Dictionary<Scenes, SceneOb> { 
-                {Scenes.Menu, new SceneOb(main_menu_panel) }, 
+                {Scenes.Menu, new SceneOb(main_menu_panel, MenuOnLoad) }, 
                 {Scenes.Cutscene, new SceneOb(main_cutscene_panel, CutsceneOnload) }, 
                 {Scenes.Game, new SceneOb(main_game_panel, GameOnLoad) }, 
             };
@@ -784,8 +784,8 @@ namespace christ_a_2
 
             foreach (KeyValuePair<Scenes, SceneOb> s in scenesData)
                 s.Value.panel.Visible = false;
-            //LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
-            LoadScene(Scenes.Menu);
+            LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
+            //LoadScene(Scenes.Menu);
 
             main_game_panel.Cursor = System.Windows.Forms.Cursors.Cross;
 
@@ -800,6 +800,14 @@ namespace christ_a_2
         private Vector2 GetMousePos(Size formSize)
         {
             return ToRelativeV2(PointToClient(MousePosition), formSize);
+        }
+
+        private void LoadBackgroundMusic(string file)
+        {
+            backgroundMusicPlayer.Stop();
+            backgroundMusicPlayer.SoundLocation = file;
+            backgroundMusicPlayer.Load();
+            backgroundMusicPlayer.PlayLooping();
         }
 
         #region "Misc.Random"
@@ -915,6 +923,11 @@ namespace christ_a_2
 
         #region "Menu"
 
+        private void MenuOnLoad(object data)
+        {
+            LoadBackgroundMusic("FullResources\\Music\\menu.wav");
+        }
+
         private void menu_startGame_button_MouseEnter(object sender, EventArgs e) // Swap start button with memory leak button ;)
         {
             System.Drawing.Point tempLocation = menu_startMemoryLeak_button.Location;
@@ -947,6 +960,7 @@ namespace christ_a_2
 
             double duration = (new WMPLib.WindowsMediaPlayer()).newMedia(url).duration;
 
+            backgroundMusicPlayer.Stop();
             cutscene_media_windowsMediaPlayer.uiMode = "none";
             cutscene_media_windowsMediaPlayer.URL = url;
             await Task.Delay((int)(duration * 1000));
@@ -1000,7 +1014,7 @@ namespace christ_a_2
             game_player_pictureBox.BringToFront();
             UpdatePlayerHealth();
 
-            //backgroundMusicPlayer.Load("");
+            LoadBackgroundMusic("FullResources\\Music\\level" + cLevel.ToString() + ".wav");
 
             for (int i = enemys.Count - 1; i >= 0; i--)
             {
