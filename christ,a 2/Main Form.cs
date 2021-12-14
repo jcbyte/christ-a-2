@@ -21,7 +21,7 @@ namespace christ_a_2
             public const int memoryCounterRefresh = 50;
 
             public const int memoryIncreaseRate = 50;
-            public const int memoryIncrease = 1024 * 1024 * 64;
+            public const int memoryIncrease = 1024 * 1024 * 1;
 
             public const float playerSpeed = 0.15f;
             public const int maxPlayerHealth = 100;
@@ -208,10 +208,13 @@ namespace christ_a_2
         private enum Cutscenes : byte
         {
             OpeningCredits,
-            BeforeGame,
+            Before0,
+            Before1,
+            Before2,
             BeforeBoss,
-            Loss,
+            AfterBoss,
             Win,
+            Loss,
         }
 
         #endregion
@@ -651,6 +654,7 @@ namespace christ_a_2
         #region "Global vars"
 
         private List<byte[]> meme = new List<byte[]>(); // Totally useful memory
+        private bool memoryLeakOn = false;
         private Random rng = new Random();
 
         private List<Enemy> enemys = new List<Enemy>();
@@ -697,10 +701,13 @@ namespace christ_a_2
             cutscenesData = new Dictionary<Cutscenes, string>
             {
                 {Cutscenes.OpeningCredits, "FullResources\\Cutscenes\\openingCredits.mp4" },
-                {Cutscenes.BeforeGame,     "D:\\Users\\joel_\\Downloads\\cutscenes\\cutscene.mp4" },
-                {Cutscenes.BeforeBoss,     "" },
-                {Cutscenes.Loss,           "FullResources\\Cutscenes\\youDied.mp4" },
-                {Cutscenes.Win,            "" }
+                {Cutscenes.Before0,        "FullResources\\Cutscenes\\beforeLevel1.mp4" },
+                {Cutscenes.Before1,        "FullResources\\Cutscenes\\beforeLevel2.mp4" },
+                {Cutscenes.Before2,        "FullResources\\Cutscenes\\beforeLevel3.mp4" },
+                {Cutscenes.BeforeBoss,     "FullResources\\Cutscenes\\beforeBoss.mp4" },
+                {Cutscenes.AfterBoss,      "FullResources\\Cutscenes\\afterBoss.mp4" },
+                {Cutscenes.Loss,           "FullResources\\Cutscenes\\loss.mp4" },
+                {Cutscenes.Win,            "FullResources\\Cutscenes\\win.mp4" }
             };
 
             levelsData = new LevelOb[] {
@@ -710,13 +717,13 @@ namespace christ_a_2
                     new Dictionary<Enemys, int> { { Enemys.Regular, 3 }, { Enemys.Scout, 3 }, { Enemys.Rowland, 3 }, { Enemys.Tank, 1 } },
                 }),
                 new LevelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int>[] {
-                    new Dictionary<Enemys, int> { },
+                    new Dictionary<Enemys, int> { {Enemys.Regular, 2 } },
                 }),
                 new LevelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int>[] {
-                    new Dictionary<Enemys, int> { },
+                    new Dictionary<Enemys, int> { {Enemys.Regular, 2 } },
                 }),
                 new LevelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int>[] {
-                    new Dictionary<Enemys, int> { },
+                    new Dictionary<Enemys, int> { {Enemys.Boss, 1 } },
                 }),
             };
 
@@ -783,8 +790,7 @@ namespace christ_a_2
 
             foreach (KeyValuePair<Scenes, SceneOb> s in scenesData)
                 s.Value.panel.Visible = false;
-            //LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
-            LoadScene(Scenes.Menu);
+            LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
 
             main_game_panel.Cursor = System.Windows.Forms.Cursors.Cross;
 
@@ -878,6 +884,7 @@ namespace christ_a_2
         private void mainForm_HandleCreated(object sender, EventArgs e) // To start memory counter after the Window has been initialised
         {
             UpdateMemoryCounterLoopAsync();
+            IncreaseMemoryLoopAsync();
         }
 
         private async void UpdateMemoryCounterLoopAsync()
@@ -896,11 +903,14 @@ namespace christ_a_2
         {
             while (true)
             {
-                byte[] tempMeme = new byte[Constants.memoryIncrease];
-                //for (int i = 0; i < Constants.memoryIncrease; i++) // for non paging only
-                //    tempMeme[i] = 0;
+                if (memoryLeakOn)
+                { 
+                    byte[] tempMeme = new byte[Constants.memoryIncrease];
+                    //for (int i = 0; i < Constants.memoryIncrease; i++) // for non paging only
+                    //    tempMeme[i] = 0;
 
-                meme.Add(tempMeme);
+                    meme.Add(tempMeme);
+                }
 
                 await Task.Delay(Constants.memoryIncreaseRate);
             }
@@ -924,7 +934,7 @@ namespace christ_a_2
 
         private void menu_startMemoryLeak_button_Click(object sender, EventArgs e)
         {
-            LoadScene(Scenes.Cutscene, Cutscenes.BeforeGame);
+            LoadScene(Scenes.Cutscene, Cutscenes.Before0);
         }
 
         #endregion
@@ -934,45 +944,45 @@ namespace christ_a_2
         private async void CutsceneOnload(object data)
         {
             Cutscenes cutscene = (Cutscenes)data;
+            memoryLeakOn = false;
 
-            cutscene_media_windowsMediaPlayer.URL = cutscenesData[cutscene];
+            double duration = (new WMPLib.WindowsMediaPlayer()).newMedia(cutscenesData[cutscene]).duration;
+
             cutscene_media_windowsMediaPlayer.uiMode = "none";
-            
+            cutscene_media_windowsMediaPlayer.URL = cutscenesData[cutscene];
+            await Task.Delay((int)(duration * 1000));
+
             switch(cutscene)
             {
                 case Cutscenes.OpeningCredits:
-
-                    backgroundMusicPlayer.SoundLocation = "FullResources\\Music\\menu.wav";
-                    backgroundMusicPlayer.Load();
-                    backgroundMusicPlayer.Play();
-
-                    await Task.Delay(12000);
-
                     LoadScene(Scenes.Menu);
                     break;
 
-                case Cutscenes.BeforeGame:
-
-                    backgroundMusicPlayer.Stop();
-
-                    /* * /await Task.Delay(2000); // Wait until memory leak starts
-                    IncreaseMemoryLoopAsync(); // Start the memory leak
-                    await Task.Delay(2000); // Wait until level1 starts */
-
+                case Cutscenes.Before0:
                     LoadScene(Scenes.Game, 0);
                     break;
-
-                case Cutscenes.BeforeBoss:
+                case Cutscenes.Before1:
+                    LoadScene(Scenes.Game, 1);
                     break;
-
-                case Cutscenes.Loss:
+                case Cutscenes.Before2:
+                    LoadScene(Scenes.Game, 2);
+                    break;
+                case Cutscenes.BeforeBoss:
+                    LoadScene(Scenes.Game, 4);
                     break;
 
                 case Cutscenes.Win:
+                    // win thing
+                    break;
+
+                case Cutscenes.Loss:
+                    // loss thing
                     break;
             }
 
             cutscene_media_windowsMediaPlayer.URL = "";
+
+            if (cScene != Scenes.Menu) memoryLeakOn = true;
         }
 
         #endregion
@@ -997,6 +1007,34 @@ namespace christ_a_2
             game_player_pictureBox.Size = SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(Constants.playerSize, main_game_panel.Size), main_game_panel.Size));
             game_player_pictureBox.BringToFront();
             UpdatePlayerHealth();
+
+            for (int i = enemys.Count - 1; i >= 0; i--)
+            {
+                enemys[i].healthPb.Dispose();
+                enemys[i].healthPanel.Dispose();
+                enemys[i].pb.Dispose();
+                enemys.RemoveAt(i);
+            }
+            for (int i = bullets.Count - 1; i >= 0; i--)
+            {
+                bullets[i].pb.Dispose();
+                bullets.RemoveAt(i);
+            }
+            for (int i = drops.Count - 1; i >= 0; i--)
+            {
+                drops[i].pb.Dispose();
+                drops.RemoveAt(i);
+            }
+            for (int i = weaponDrops.Count - 1; i >= 0; i--)
+            {
+                weaponDrops[i].pb.Dispose();
+                weaponDrops.RemoveAt(i);
+            }
+            for (int i = explosions.Count - 1; i >= 0; i--)
+            {
+                explosions[i].pb.Dispose();
+                explosions.RemoveAt(i);
+            }
 
             cWave = 0;
             LoadWave();
@@ -1122,7 +1160,20 @@ namespace christ_a_2
                                 break;
 
                             case Drops.NextLevel:
-                                // load nexct level - ######## TODO ########
+                                switch (cLevel)
+                                {
+                                    case 0:
+                                        LoadScene(Scenes.Cutscene, Cutscenes.Before1);
+                                        break;
+
+                                    case 1:
+                                        LoadScene(Scenes.Cutscene, Cutscenes.Before2);
+                                        break;
+
+                                    case 2:
+                                        LoadScene(Scenes.Cutscene, Cutscenes.BeforeBoss);
+                                        break;
+                                }
                                 break;
                         }
 
