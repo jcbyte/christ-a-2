@@ -1000,6 +1000,8 @@ namespace christ_a_2
             game_player_pictureBox.BringToFront();
             UpdatePlayerHealth();
 
+            //backgroundMusicPlayer.Load("");
+
             for (int i = enemys.Count - 1; i >= 0; i--)
             {
                 enemys[i].healthPb.Dispose();
@@ -1030,11 +1032,6 @@ namespace christ_a_2
 
             cWave = 0;
             LoadWave();
-
-            switch(cLevel) // Level specialitys - music here? - or music in level obbject?
-            {
-
-            }
         }
 
         private void LoadWave()
