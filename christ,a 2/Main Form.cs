@@ -668,7 +668,6 @@ namespace christ_a_2
             NoAmmo,
             NextWave,
             EnemyDamage,
-            EnemyDead,
         }
 
         private class SoundEffectPlayer
@@ -816,17 +815,16 @@ namespace christ_a_2
             };
 
             soundEffectsData = new Dictionary<SoundEffects, string> {
-                { SoundEffects.Shoot,        "FullResources\\SoundEffects\\shoot.wav" },
-                { SoundEffects.PlayerDamage, "FullResources\\SoundEffects\\playerDamage.wav" },
-                { SoundEffects.AmmoPickup,   "FullResources\\SoundEffects\\ammoPickup.wav" },
-                { SoundEffects.HealthPickup, "FullResources\\SoundEffects\\healthPickup.wav" },
-                { SoundEffects.WeaponPickup, "FullResources\\SoundEffects\\weaponPickup.wav" },
-                { SoundEffects.Explosion,    "FullResources\\SoundEffects\\explosion.wav" },
-                { SoundEffects.Reload,       "FullResources\\SoundEffects\\reload.wav" },
-                { SoundEffects.NoAmmo,       "FullResources\\SoundEffects\\noAmmo.wav" },
-                { SoundEffects.NextWave,     "FullResources\\SoundEffects\\nextWave.wav" },
-                { SoundEffects.EnemyDamage,  "FullResources\\SoundEffects\\enemyDamage.wav" },
-                { SoundEffects.EnemyDead,    "FullResources\\SoundEffects\\enemyDead.wav" },
+                { SoundEffects.Shoot,        "FullResources\\SoundEffects\\shoot.mp3" },
+                { SoundEffects.PlayerDamage, "FullResources\\SoundEffects\\playerDamage.mp3" },
+                { SoundEffects.AmmoPickup,   "FullResources\\SoundEffects\\ammoPickup.mp3" },
+                { SoundEffects.HealthPickup, "FullResources\\SoundEffects\\healthPickup.mp3" },
+                { SoundEffects.WeaponPickup, "FullResources\\SoundEffects\\weaponPickup.mp3" },
+                { SoundEffects.Explosion,    "FullResources\\SoundEffects\\explosion.mp3" },
+                { SoundEffects.Reload,       "FullResources\\SoundEffects\\reload.mp3" },
+                { SoundEffects.NoAmmo,       "FullResources\\SoundEffects\\noAmmo.mp3" },
+                { SoundEffects.NextWave,     "FullResources\\SoundEffects\\nextWave.mp3" },
+                { SoundEffects.EnemyDamage,  "FullResources\\SoundEffects\\enemyDamage.mp3" },
             };
 
             #endregion
@@ -1041,7 +1039,7 @@ namespace christ_a_2
             if (cutscene == Cutscenes.BeforeLevel) url = url.Replace("{level}", cLevel.ToString());
 
             backgroundMusicPlayer.Stop();
-            if (cutscene == Cutscenes.OpeningCredits) LoadBackgroundMusic("FullResources\\Music\\menu.wav");
+            if (cutscene == Cutscenes.OpeningCredits) LoadBackgroundMusic("FullResources\\Music\\menu.mp3");
 
             double duration = (int)(new WMPLib.WindowsMediaPlayer()).newMedia(url).duration;
             cutscene_media_windowsMediaPlayer.uiMode = "none";
@@ -1097,7 +1095,7 @@ namespace christ_a_2
             game_player_pictureBox.BringToFront();
             UpdatePlayerHealth();
 
-            LoadBackgroundMusic("FullResources\\Music\\level" + cLevel.ToString() + ".wav");
+            LoadBackgroundMusic("FullResources\\Music\\level" + cLevel.ToString() + ".mp3");
 
             for (int i = enemys.Count - 1; i >= 0; i--)
             {
