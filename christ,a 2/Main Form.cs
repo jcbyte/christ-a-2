@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Drawing;
+using System.Runtime.InteropServices;
+using System.Text;
 
 #endregion
 
@@ -38,6 +40,8 @@ namespace christ_a_2
             public const int weaponPickupDelay = 200; // (ms)
 
             public const float explosionSpeed = 0.6f;
+
+            public const int concurrentSoundEffects = 10;
         }
 
         #endregion
@@ -650,6 +654,49 @@ namespace christ_a_2
 
         #endregion
 
+        #region "EnumClasses.SoundEffects"
+
+        private enum SoundEffects : byte
+        {
+            Shoot,
+            PlayerDamage,
+            AmmoPickup,
+            HealthPickup,
+            WeaponPickup,
+            Explosion,
+            Reload,
+            NoAmmo,
+            NextWave,
+            EnemyDamage,
+            EnemyDead,
+        }
+
+        private class SoundEffectOb
+        {
+            public string location;
+            public int duration;
+
+            public SoundEffectOb(string _location, int _duration = -1)
+            {
+                location = _location;
+                duration = _duration;
+            }
+        }
+
+        private class SoundEffectPlayer
+        {
+            public bool playing;
+            public SoundPlayer player;
+
+            public SoundEffectPlayer()
+            {
+                playing = false;
+                player = new SoundPlayer();
+            }
+        }
+
+        #endregion
+
         #endregion
 
         #region "Main"
@@ -671,7 +718,7 @@ namespace christ_a_2
         private InventoryOb[] inventory = new InventoryOb[3] { new InventoryOb(Weapons.MGL105, 1000, 0), new InventoryOb(), new InventoryOb() };
 
         private SoundPlayer backgroundMusicPlayer = new SoundPlayer();
-        private SoundPlayer soundEffectsPlayer = new SoundPlayer();
+        private SoundEffectPlayer[] soundEffects = new SoundEffectPlayer[Constants.concurrentSoundEffects];
 
         private Dictionary<Scenes, SceneOb> scenesData;
         private Dictionary<Cutscenes, string> cutscenesData;
@@ -680,6 +727,7 @@ namespace christ_a_2
         private Dictionary<Weapons, WeaponOb> weaponsData;
         private Dictionary<Enemys, EnemyOb> enemysData;
         private Dictionary<Drops, DropOb> dropsData;
+        private Dictionary<SoundEffects, SoundEffectOb> soundEffectsData;
 
         private Scenes cScene = Scenes.Menu;
         private int cLevel;
@@ -694,13 +742,12 @@ namespace christ_a_2
             #region "Main.Data"
 
             scenesData = new Dictionary<Scenes, SceneOb> { 
-                {Scenes.Menu,     new SceneOb(main_menu_panel, MenuOnLoad) }, 
+                {Scenes.Menu,     new SceneOb(main_menu_panel) }, 
                 {Scenes.Cutscene, new SceneOb(main_cutscene_panel, CutsceneOnload) }, 
                 {Scenes.Game,     new SceneOb(main_game_panel, GameOnLoad) }, 
             };
 
-            cutscenesData = new Dictionary<Cutscenes, string>
-            {
+            cutscenesData = new Dictionary<Cutscenes, string> {
                 {Cutscenes.OpeningCredits, "FullResources\\Cutscenes\\openingCredits.mp4" },
                 {Cutscenes.BeforeLevel,    "FullResources\\Cutscenes\\beforeLevel{level}.mp4" },
                 {Cutscenes.AfterBoss,      "FullResources\\Cutscenes\\afterBoss.mp4" },
@@ -772,14 +819,31 @@ namespace christ_a_2
                 {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.15f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f ) },
             };
 
-            dropsData = new Dictionary<Drops, DropOb>
-            {
+            dropsData = new Dictionary<Drops, DropOb> {
                 {Drops.Ammo,      new DropOb(Properties.Resources.pickup_ammoBox,   0.015f) },
                 {Drops.Health,    new DropOb(Properties.Resources.pickup_healthBox, 0.015f) },
                 {Drops.WeaponBox, new DropOb(Properties.Resources.pickup_weaponBox, 0.030f) },
                 {Drops.NextWave,  new DropOb(Properties.Resources.pickup_nextWave,  0.040f) },
                 {Drops.NextLevel, new DropOb(Properties.Resources.pickup_nextLevel, 0.040f) },
             };
+
+            soundEffectsData = new Dictionary<SoundEffects, SoundEffectOb> {
+                { SoundEffects.Shoot,        new SoundEffectOb("FullResources\\SoundEffects\\shoot.wav") },
+                { SoundEffects.PlayerDamage, new SoundEffectOb("FullResources\\SoundEffects\\playerDamage.wav") },
+                { SoundEffects.AmmoPickup,   new SoundEffectOb("FullResources\\SoundEffects\\ammoPickup.wav") },
+                { SoundEffects.HealthPickup, new SoundEffectOb("FullResources\\SoundEffects\\healthPickup.wav") },
+                { SoundEffects.WeaponPickup, new SoundEffectOb("FullResources\\SoundEffects\\weaponPickup.wav") },
+                { SoundEffects.Explosion,    new SoundEffectOb("FullResources\\SoundEffects\\explosion.wav") },
+                { SoundEffects.Reload,       new SoundEffectOb("FullResources\\SoundEffects\\reload.wav") },
+                { SoundEffects.NoAmmo,       new SoundEffectOb("FullResources\\SoundEffects\\noAmmo.wav") },
+                { SoundEffects.NextWave,     new SoundEffectOb("FullResources\\SoundEffects\\nextWave.wav") },
+                { SoundEffects.EnemyDamage,  new SoundEffectOb("FullResources\\SoundEffects\\enemyDamage.wav") },
+                { SoundEffects.EnemyDead,    new SoundEffectOb("FullResources\\SoundEffects\\enemyDead.wav") },
+            };
+            foreach (KeyValuePair<SoundEffects, SoundEffectOb> se in soundEffectsData)
+            {
+                se.Value.duration = GetSoundLength(se.Value.location);
+            }
 
             #endregion
 
@@ -816,7 +880,42 @@ namespace christ_a_2
             backgroundMusicPlayer.PlayLooping();
         }
 
-        // sound effects functions
+        [DllImport("winmm.dll")]
+        private static extern uint mciSendString(string command, StringBuilder returnValue, int returnLength, IntPtr winHandle);
+
+        public static int GetSoundLength(string fileName)
+        {
+            StringBuilder lengthBuf = new StringBuilder(32);
+
+            mciSendString(string.Format("open \"{0}\" type waveaudio alias wave", fileName), null, 0, IntPtr.Zero);
+            mciSendString("status wave length", lengthBuf, lengthBuf.Capacity, IntPtr.Zero);
+            mciSendString("close wave", null, 0, IntPtr.Zero);
+
+            int length = 0;
+            int.TryParse(lengthBuf.ToString(), out length);
+
+            return length;
+        }
+
+        private async void PlaySoundEffect(SoundEffects sound)
+        {
+            for (int i = 0; i < soundEffects.Length; i++)
+            {
+                if (!soundEffects[i].playing)
+                {
+                    soundEffects[i].playing = true;
+
+                    soundEffects[i].player.SoundLocation = soundEffectsData[sound].location;
+                    soundEffects[i].player.Load();
+                    soundEffects[i].player.Play();
+
+                    await Task.Delay(soundEffectsData[sound].duration);
+
+                    soundEffects[i].playing = false;
+                    return;
+                }
+            }
+        }
 
         #endregion
 
@@ -933,11 +1032,6 @@ namespace christ_a_2
 
         #region "Menu"
 
-        private void MenuOnLoad(object data)
-        {
-            LoadBackgroundMusic("FullResources\\Music\\menu.wav");
-        }
-
         private void menu_startGame_button_MouseEnter(object sender, EventArgs e) // Swap start button with memory leak button ;)
         {
             Point tempLocation = menu_startMemoryLeak_button.Location;
@@ -968,9 +1062,10 @@ namespace christ_a_2
             string url = cutscenesData[cutscene];
             if (cutscene == Cutscenes.BeforeLevel) url = url.Replace("{level}", cLevel.ToString());
 
-            double duration = (new WMPLib.WindowsMediaPlayer()).newMedia(url).duration;
-
             backgroundMusicPlayer.Stop();
+            if (cutscene == Cutscenes.OpeningCredits) LoadBackgroundMusic("FullResources\\Music\\menu.wav");
+
+            double duration = (int)(new WMPLib.WindowsMediaPlayer()).newMedia(url).duration;
             cutscene_media_windowsMediaPlayer.uiMode = "none";
             cutscene_media_windowsMediaPlayer.URL = url;
             await Task.Delay((int)(duration * 1000));
