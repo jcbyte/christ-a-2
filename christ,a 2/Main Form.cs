@@ -754,7 +754,7 @@ namespace christ_a_2
                 new LevelOb(Properties.Resources.level_0Factory, new Dictionary<Enemys, int>[] {
                     new Dictionary<Enemys, int> { {Enemys.Regular, 2 } },
                 }),
-                new LevelOb(Properties.Resources.level_0Factory, new Dictionary<Enemys, int>[] {
+                new LevelOb(Properties.Resources.level_3Boss, new Dictionary<Enemys, int>[] {
                     new Dictionary<Enemys, int> { {Enemys.Boss, 1 } },
                 }),
             };
