@@ -208,10 +208,7 @@ namespace christ_a_2
         private enum Cutscenes : byte
         {
             OpeningCredits,
-            Before0,
-            Before1,
-            Before2,
-            BeforeBoss,
+            BeforeLevel,
             AfterBoss,
             Win,
             Loss,
@@ -701,10 +698,7 @@ namespace christ_a_2
             cutscenesData = new Dictionary<Cutscenes, string>
             {
                 {Cutscenes.OpeningCredits, "FullResources\\Cutscenes\\openingCredits.mp4" },
-                {Cutscenes.Before0,        "FullResources\\Cutscenes\\beforeLevel1.mp4" },
-                {Cutscenes.Before1,        "FullResources\\Cutscenes\\beforeLevel2.mp4" },
-                {Cutscenes.Before2,        "FullResources\\Cutscenes\\beforeLevel3.mp4" },
-                {Cutscenes.BeforeBoss,     "FullResources\\Cutscenes\\beforeBoss.mp4" },
+                {Cutscenes.BeforeLevel,    "FullResources\\Cutscenes\\beforeLevel{level}.mp4" },
                 {Cutscenes.AfterBoss,      "FullResources\\Cutscenes\\afterBoss.mp4" },
                 {Cutscenes.Loss,           "FullResources\\Cutscenes\\loss.mp4" },
                 {Cutscenes.Win,            "FullResources\\Cutscenes\\win.mp4" }
@@ -771,7 +765,7 @@ namespace christ_a_2
                 {Enemys.Scout,   new EnemyOb(Properties.Resources.enemy_scout,   new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f ) },
                 {Enemys.Sniper,  new EnemyOb(Properties.Resources.enemy_sniper,  new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f ) },
                 {Enemys.Rowland, new EnemyOb(Properties.Resources.enemy_rowland, new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f ) },
-                {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f ) },
+                {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.15f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f ) },
             };
 
             dropsData = new Dictionary<Drops, DropOb>
@@ -790,7 +784,8 @@ namespace christ_a_2
 
             foreach (KeyValuePair<Scenes, SceneOb> s in scenesData)
                 s.Value.panel.Visible = false;
-            LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
+            //LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
+            LoadScene(Scenes.Menu);
 
             main_game_panel.Cursor = System.Windows.Forms.Cursors.Cross;
 
@@ -934,7 +929,8 @@ namespace christ_a_2
 
         private void menu_startMemoryLeak_button_Click(object sender, EventArgs e)
         {
-            LoadScene(Scenes.Cutscene, Cutscenes.Before0);
+            cLevel = 0;
+            LoadScene(Scenes.Cutscene, Cutscenes.BeforeLevel);
         }
 
         #endregion
@@ -946,10 +942,13 @@ namespace christ_a_2
             Cutscenes cutscene = (Cutscenes)data;
             memoryLeakOn = false;
 
-            double duration = (new WMPLib.WindowsMediaPlayer()).newMedia(cutscenesData[cutscene]).duration;
+            string url = cutscenesData[cutscene];
+            if (cutscene == Cutscenes.BeforeLevel) url = url.Replace("{level}", cLevel.ToString());
+
+            double duration = (new WMPLib.WindowsMediaPlayer()).newMedia(url).duration;
 
             cutscene_media_windowsMediaPlayer.uiMode = "none";
-            cutscene_media_windowsMediaPlayer.URL = cutscenesData[cutscene];
+            cutscene_media_windowsMediaPlayer.URL = url;
             await Task.Delay((int)(duration * 1000));
 
             switch(cutscene)
@@ -958,17 +957,12 @@ namespace christ_a_2
                     LoadScene(Scenes.Menu);
                     break;
 
-                case Cutscenes.Before0:
-                    LoadScene(Scenes.Game, 0);
+                case Cutscenes.BeforeLevel:
+                    LoadScene(Scenes.Game);
                     break;
-                case Cutscenes.Before1:
-                    LoadScene(Scenes.Game, 1);
-                    break;
-                case Cutscenes.Before2:
-                    LoadScene(Scenes.Game, 2);
-                    break;
-                case Cutscenes.BeforeBoss:
-                    LoadScene(Scenes.Game, 4);
+
+                case Cutscenes.AfterBoss:
+                    // after boss
                     break;
 
                 case Cutscenes.Win:
@@ -993,8 +987,6 @@ namespace christ_a_2
 
         private void GameOnLoad(object data)
         {
-            cLevel = (int)data;
-
             game_floor_pictureBox.BackgroundImage = levelsData[cLevel].floorImg; // Set image of floor over drawing for lag purposes
             game_floor_pictureBox.Location = new Point(0, 0);
             game_floor_pictureBox.Size = this.Size;
@@ -1160,19 +1152,14 @@ namespace christ_a_2
                                 break;
 
                             case Drops.NextLevel:
-                                switch (cLevel)
+                                if (cLevel == levelsData.Length - 1)
                                 {
-                                    case 0:
-                                        LoadScene(Scenes.Cutscene, Cutscenes.Before1);
-                                        break;
-
-                                    case 1:
-                                        LoadScene(Scenes.Cutscene, Cutscenes.Before2);
-                                        break;
-
-                                    case 2:
-                                        LoadScene(Scenes.Cutscene, Cutscenes.BeforeBoss);
-                                        break;
+                                    LoadScene(Scenes.Cutscene, Cutscenes.AfterBoss);
+                                }
+                                else
+                                {
+                                    cLevel++;
+                                    LoadScene(Scenes.Cutscene, Cutscenes.BeforeLevel);
                                 }
                                 break;
                         }
