@@ -30,6 +30,8 @@ namespace christ_a_2
             public static readonly Vector2 playerSize = new Vector2(0.04f, 0.06f); // Scaled relative Vector2
 
             public const int weaponSwitchCooldown = 100;
+            public const int tryShootCooldown = 500;
+            public const int tryReloadCooldown = 500;
 
             public const int enemyHealthBarThickness = 6; // (px)
 
@@ -702,7 +704,7 @@ namespace christ_a_2
 
         private Vector2 playerPos = new Vector2(0.5f, 0.5f);
         private int playerHealth;
-        private InventoryOb[] inventory = new InventoryOb[3] { new InventoryOb(Weapons.MGL105, 1000, 0), new InventoryOb(Weapons.AK47, 1000, 0), new InventoryOb() };
+        private InventoryOb[] inventory = new InventoryOb[3] { new InventoryOb(Weapons.MGL105, 1000, 10), new InventoryOb(Weapons.AK47, 1000, 10), new InventoryOb() };
 
         private System.Windows.Media.MediaPlayer backgroundMusicPlayer = new System.Windows.Media.MediaPlayer();
         private SoundEffectPlayer[] soundEffects = new SoundEffectPlayer[Constants.concurrentSoundEffects];
@@ -1169,6 +1171,8 @@ namespace christ_a_2
 
         float lastShot = 0;
         bool lastClick = false;
+        float lastTryReload = 0;
+        float lastTryShoot = 0;
         bool reloading = false;
         float lastWeaponPickup = 0;
 
@@ -1353,7 +1357,11 @@ namespace christ_a_2
                                     }
                                     else
                                     {
-                                        PlaySoundEffect(SoundEffects.NoAmmo);
+                                        if (lastTryShoot < sw.ElapsedMilliseconds - Constants.tryShootCooldown)
+                                        {
+                                            PlaySoundEffect(SoundEffects.NoAmmo);
+                                            lastTryShoot = sw.ElapsedMilliseconds;
+                                        }
                                     }
                                 }
                             }
@@ -1377,7 +1385,11 @@ namespace christ_a_2
                         }
                         else
                         {
-                            PlaySoundEffect(SoundEffects.NoAmmo);
+                            if (lastTryReload < sw.ElapsedMilliseconds - Constants.tryReloadCooldown)
+                            {
+                                PlaySoundEffect(SoundEffects.NoAmmo);
+                                lastTryReload = sw.ElapsedMilliseconds;
+                            }
                         }
                     }
                 }
