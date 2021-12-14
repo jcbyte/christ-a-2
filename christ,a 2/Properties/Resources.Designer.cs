@@ -193,9 +193,9 @@ namespace christ_a_2.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap level_1Factory {
+        internal static System.Drawing.Bitmap level_0Factory {
             get {
-                object obj = ResourceManager.GetObject("level_1Factory", resourceCulture);
+                object obj = ResourceManager.GetObject("level_0Factory", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -203,9 +203,19 @@ namespace christ_a_2.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap menu {
+        internal static System.Drawing.Bitmap level_1FactoryOutside {
             get {
-                object obj = ResourceManager.GetObject("menu", resourceCulture);
+                object obj = ResourceManager.GetObject("level_1FactoryOutside", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap menu_background {
+            get {
+                object obj = ResourceManager.GetObject("menu_background", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

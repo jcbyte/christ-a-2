@@ -694,9 +694,9 @@ namespace christ_a_2
             #region "Main.Data"
 
             scenesData = new Dictionary<Scenes, SceneOb> { 
-                {Scenes.Menu, new SceneOb(main_menu_panel, MenuOnLoad) }, 
+                {Scenes.Menu,     new SceneOb(main_menu_panel, MenuOnLoad) }, 
                 {Scenes.Cutscene, new SceneOb(main_cutscene_panel, CutsceneOnload) }, 
-                {Scenes.Game, new SceneOb(main_game_panel, GameOnLoad) }, 
+                {Scenes.Game,     new SceneOb(main_game_panel, GameOnLoad) }, 
             };
 
             cutscenesData = new Dictionary<Cutscenes, string>
@@ -709,18 +709,18 @@ namespace christ_a_2
             };
 
             levelsData = new LevelOb[] {
-                new LevelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int>[] { 
+                new LevelOb(Properties.Resources.level_0Factory, new Dictionary<Enemys, int>[] { 
                     new Dictionary<Enemys, int> { { Enemys.Regular, 2 }, { Enemys.Scout, 2 }, { Enemys.Rowland, 4 } },
                     new Dictionary<Enemys, int> { { Enemys.Regular, 4 }, { Enemys.Scout, 2 }, { Enemys.Rowland, 4 } },
                     new Dictionary<Enemys, int> { { Enemys.Regular, 3 }, { Enemys.Scout, 3 }, { Enemys.Rowland, 3 }, { Enemys.Tank, 1 } },
                 }),
-                new LevelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int>[] {
+                new LevelOb(Properties.Resources.level_1FactoryOutside, new Dictionary<Enemys, int>[] {
                     new Dictionary<Enemys, int> { {Enemys.Regular, 2 } },
                 }),
-                new LevelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int>[] {
+                new LevelOb(Properties.Resources.level_0Factory, new Dictionary<Enemys, int>[] {
                     new Dictionary<Enemys, int> { {Enemys.Regular, 2 } },
                 }),
-                new LevelOb(Properties.Resources.level_1Factory, new Dictionary<Enemys, int>[] {
+                new LevelOb(Properties.Resources.level_0Factory, new Dictionary<Enemys, int>[] {
                     new Dictionary<Enemys, int> { {Enemys.Boss, 1 } },
                 }),
             };
@@ -940,7 +940,7 @@ namespace christ_a_2
 
         private void menu_startGame_button_MouseEnter(object sender, EventArgs e) // Swap start button with memory leak button ;)
         {
-            System.Drawing.Point tempLocation = menu_startMemoryLeak_button.Location;
+            Point tempLocation = menu_startMemoryLeak_button.Location;
             menu_startMemoryLeak_button.Location = menu_startGame_button.Location;
             menu_startGame_button.Location = tempLocation;
         }
