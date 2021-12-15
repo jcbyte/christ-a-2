@@ -1257,6 +1257,9 @@ namespace christ_a_2
         float startFrame = 0;
         float delta = 0;
 
+        float lastFPSUpdate = 0;
+        int frames = 0;
+
         float lastShot = 0;
         bool lastClick = false;
         float lastTryReload = 0;
@@ -1740,6 +1743,14 @@ namespace christ_a_2
                     LoadScene(Scenes.Cutscene, Cutscenes.Loss);
                 }
             }
+
+            if (lastFPSUpdate < sw.ElapsedMilliseconds - 1000)
+            {
+                main_FPSCounter_Label.Text = "FPS: " + frames.ToString();
+                frames = 0;
+                lastFPSUpdate = sw.ElapsedMilliseconds;
+            }
+            frames++;
 
             delta = (sw.ElapsedMilliseconds - startFrame) / 1000; // Calculate deltatime for frame
             startFrame = sw.ElapsedMilliseconds;
