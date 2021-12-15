@@ -50,13 +50,13 @@ namespace christ_a_2
 
         public static class EnemyConstants
         {
-            public const float CloseEnough = 0.01f;
+            public const float closeEnough = 0.01f;
 
-            public const float sniperRunRange = 0.2f;
-            public const float rowlandTooFarRange = 0.2f;
-            public const float scoutTooFarRange = 0.2f;
             public const float regularPlayerRange = 0.4f;
             public const float tankPlayerRange = 0.3f;
+            public const float scoutTooFarRange = 0.2f;
+            public const float sniperRunRange = 0.2f;
+            public const float rowlandTooFarRange = 0.2f;
         }
 
         #endregion
@@ -777,7 +777,6 @@ namespace christ_a_2
 
             levelsData = new LevelOb[] {
                 new LevelOb(Properties.Resources.level_0Factory, new Dictionary<Enemys, int>[] { 
-                    //new Dictionary<Enemys, int> { { Enemys.Scout, 1 } },
                     new Dictionary<Enemys, int> { { Enemys.Regular, 2 }, {Enemys.Tank, 2 }, { Enemys.Sniper, 3 }, { Enemys.Rowland, 1 }, { Enemys.Scout, 1 } },
                     //new Dictionary<Enemys, int> { { Enemys.Regular, 4 }, { Enemys.Scout, 2 }, { Enemys.Rowland, 4 } },
                     //new Dictionary<Enemys, int> { { Enemys.Regular, 3 }, { Enemys.Scout, 3 }, { Enemys.Rowland, 3 }, { Enemys.Tank, 1 } },
@@ -834,9 +833,9 @@ namespace christ_a_2
             //   Enemy                       Img,                                Size,                      Health, Speed, Weapon,              DropRate, MovementDeviation
                 {Enemys.Regular, new EnemyOb(Properties.Resources.enemy_regular, new Vector2(0.04f, 0.06f), 100,    0.10f, Weapons.Galil,       0.50f,    0.10f ) },
                 {Enemys.Tank,    new EnemyOb(Properties.Resources.enemy_tank,    new Vector2(0.04f, 0.06f), 200,    0.02f, Weapons.RPG7,        0.50f,    0.00f ) },
-                {Enemys.Scout,   new EnemyOb(Properties.Resources.enemy_scout,   new Vector2(0.04f, 0.06f), 25,     0.20f, Weapons.UMP,         0.50f,    0.00f ) },
-                {Enemys.Sniper,  new EnemyOb(Properties.Resources.enemy_sniper,  new Vector2(0.03f, 0.04f), 50,     0.30f, Weapons.M107,        0.50f,    0.02f ) },
-                {Enemys.Rowland, new EnemyOb(Properties.Resources.enemy_rowland, new Vector2(0.05f, 0.06f), 150,    0.150f, Weapons.None,        0.50f,    0.20f ) },
+                {Enemys.Scout,   new EnemyOb(Properties.Resources.enemy_scout,   new Vector2(0.04f, 0.06f), 25,     0.20f, Weapons.UMP,         0.50f,    0.02f ) },
+                {Enemys.Sniper,  new EnemyOb(Properties.Resources.enemy_sniper,  new Vector2(0.03f, 0.04f), 50,     0.30f, Weapons.M107,        0.50f,    0.08f ) },
+                {Enemys.Rowland, new EnemyOb(Properties.Resources.enemy_rowland, new Vector2(0.05f, 0.06f), 150,    0.150f, Weapons.None,       0.50f,    0.20f ) },
                 {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.15f, 0.06f), 600,    0.00f, Weapons.DesertEagle, 0.50f,    0.00f ) },
             };
 
@@ -1676,9 +1675,9 @@ namespace christ_a_2
 
         #region "Game.EnemyAI"
 
-        private void InitialiseAI(int i)
+        private void InitialiseAI(int i) // Initilse goto for enemys
         {
-            switch (enemys[i].type) // Enemy AI movement
+            switch (enemys[i].type)
             {
                 case Enemys.Regular:
                     FindNewGoto(i, false);
@@ -1704,26 +1703,28 @@ namespace christ_a_2
                     break;
             }
 
-            enemys[i].moving = true;
+            enemys[i].moving = (enemys[i].type != Enemys.Boss); // Boss does not move
         }
 
-        private void FindNewGoto(int i, bool forced)
+        private void FindNewGoto(int i, bool forced) // Find new goto if finished previous or escaping
         {
+            Vector2 tryGoto = new Vector2();
+
             switch (enemys[i].type) // Enemy AI movement
             {
                 case Enemys.Regular:
-                    enemys[i].gotoPos = playerPos;
+                    tryGoto = playerPos;
                     enemys[i].moving = true;
                     break;
 
                 case Enemys.Tank:
                     if ((playerPos - enemys[i].pos).ScaledMagnitude(main_game_panel.Size) <= EnemyConstants.tankPlayerRange)
                     {
-                        enemys[i].gotoPos = enemys[i].pos - (playerPos - enemys[i].pos) * 0.1f;
+                        tryGoto = enemys[i].pos - (playerPos - enemys[i].pos) * 0.1f;
                     }
                     else
                     {
-                        enemys[i].gotoPos = playerPos;
+                        tryGoto = playerPos;
                     }
                     break;
 
@@ -1735,11 +1736,11 @@ namespace christ_a_2
                             ((enemys[i].pos.x > 0.5) && (enemys[i].pos.y > 0.5) && (enemys[i].pos.x - playerPos.x < enemys[i].pos.y - playerPos.y)) ||
                             ((enemys[i].pos.x < 0.5) && (enemys[i].pos.y > 0.5) && (playerPos.x - enemys[i].pos.x < enemys[i].pos.y - playerPos.y)))
                         {
-                            enemys[i].gotoPos = new Vector2(1 - enemys[i].gotoPos.x, enemys[i].gotoPos.y);
+                            tryGoto = new Vector2(1 - enemys[i].pos.x, enemys[i].pos.y);
                         }
                         else
                         {
-                            enemys[i].gotoPos = new Vector2(enemys[i].gotoPos.x, 1 - enemys[i].gotoPos.y);
+                            tryGoto = new Vector2(enemys[i].pos.x, 1 - enemys[i].pos.y);
                         }
                         enemys[i].moving = true;
                     }
@@ -1752,16 +1753,16 @@ namespace christ_a_2
                 case Enemys.Scout:
                     if (forced)
                     {
-                        enemys[i].gotoPos = playerPos;
+                        tryGoto = playerPos;
                     }
                     else
                     {
-                        enemys[i].gotoPos = new Vector2(enemys[i].pos.x + GetFloatRng(-1.0f, 1.0f), enemys[i].pos.y + GetFloatRng(-1.0f, 1.0f));
+                        tryGoto = new Vector2(enemys[i].pos.x + GetFloatRng(-1.0f, 1.0f), enemys[i].pos.y + GetFloatRng(-1.0f, 1.0f));
                     }
                     break;
 
                 case Enemys.Rowland:
-                    enemys[i].gotoPos = playerPos;
+                    tryGoto = playerPos;
                     break;
 
                 case Enemys.Boss:
@@ -1769,7 +1770,7 @@ namespace christ_a_2
             }
 
             float deviation = enemysData[enemys[i].type].movementDeviation / 2;
-            enemys[i].gotoPos = AddV2WithBounds(enemys[i].gotoPos, new Vector2(GetFloatRng(-deviation, deviation), GetFloatRng(-deviation, deviation)), new Vector2(0.05f), new Vector2(0.95f));
+            enemys[i].gotoPos = AddV2WithBounds(tryGoto, new Vector2(GetFloatRng(-deviation, deviation), GetFloatRng(-deviation, deviation)), new Vector2(0.05f), new Vector2(0.95f)); // Movement accuraccy
             enemys[i].escaping = forced;
         }
 
@@ -1777,10 +1778,12 @@ namespace christ_a_2
         {
             if (!enemys[i].escaping)
             {
+                float playerDistance = (playerPos - enemys[i].pos).ScaledMagnitude(main_game_panel.Size);
+
                 switch (enemys[i].type) // Enemy forced movement if a condition occurs
                 {
-                    case Enemys.Regular:
-                        if ((playerPos - enemys[i].pos).ScaledMagnitude(main_game_panel.Size) <= EnemyConstants.regularPlayerRange)
+                    case Enemys.Regular: // Moves to play if within regularPlayerRange it will stop until out
+                        if (playerDistance <= EnemyConstants.regularPlayerRange)
                         {
                             enemys[i].moving = false;
                         }
@@ -1793,26 +1796,26 @@ namespace christ_a_2
                         }
                         break;
 
-                    case Enemys.Tank:
+                    case Enemys.Tank: // Moves close to play and trys to maintain a tankPlayerRange range
                         FindNewGoto(i, false);
                         break;
 
-                    case Enemys.Sniper:
-                        if ((playerPos - enemys[i].pos).ScaledMagnitude(main_game_panel.Size) <= EnemyConstants.sniperRunRange)
+                    case Enemys.Sniper: // Goes to an endge and will run if the play comes near
+                        if (playerDistance <= EnemyConstants.sniperRunRange)
                         {
                             FindNewGoto(i, true);
                         }
                         break;
 
-                    case Enemys.Scout:
-                        if ((playerPos - enemys[i].pos).ScaledMagnitude(main_game_panel.Size) >= EnemyConstants.scoutTooFarRange)
+                    case Enemys.Scout: // Goes between player and area close to player
+                        if (playerDistance >= EnemyConstants.scoutTooFarRange)
                         {
                             FindNewGoto(i, true);
                         }
                         break;
 
-                    case Enemys.Rowland:
-                        if ((playerPos - enemys[i].pos).ScaledMagnitude(main_game_panel.Size) >= EnemyConstants.rowlandTooFarRange)
+                    case Enemys.Rowland: // Runs everywhere around player
+                        if (playerDistance >= EnemyConstants.rowlandTooFarRange)
                         {
                             FindNewGoto(i, true);
                         }
@@ -1825,13 +1828,11 @@ namespace christ_a_2
 
             if (enemys[i].moving) // Move enemy
             {
-                Vector2 toPos = enemys[i].gotoPos - enemys[i].pos;
+                Vector2 toGoto = enemys[i].gotoPos - enemys[i].pos;
 
-                if (toPos.Magnitude() >= EnemyConstants.CloseEnough)
+                if (toGoto.ScaledMagnitude(main_game_panel.Size) >= EnemyConstants.closeEnough)
                 {
-                    Vector2 dir = toPos.Normalise();
-
-                    enemys[i].pos += dir * enemysData[enemys[i].type].speed * delta;
+                    enemys[i].pos += toGoto.Normalise() * enemysData[enemys[i].type].speed * delta;
                     enemys[i].UpdatePos(main_game_panel.Size);
                 }
                 else
@@ -1839,6 +1840,8 @@ namespace christ_a_2
                     FindNewGoto(i, false);
                 }
             }
+
+            // Enemy shooting
         }
 
         #endregion
