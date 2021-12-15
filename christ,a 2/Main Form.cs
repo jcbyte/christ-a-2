@@ -48,6 +48,12 @@ namespace christ_a_2
             public const int loadCutsceneCheck = 50;
         }
 
+        public static class EnemyConstants
+        {
+            public const float sniperRunRange = 0.2f;
+            public const float rowlandTooFarRange = 0.3f;
+        }
+
         #endregion
 
         #region "EnumClasses"
@@ -178,6 +184,18 @@ namespace christ_a_2
                 return new Vector2(c.x, c.y * ((float)formSize.Height / formSize.Width));
         }
 
+        private static Vector2 AddV2WithBounds(Vector2 original, Vector2 add, Vector2 boundsMin, Vector2 boundsMax)
+        {
+            float Clamp(float x, float min, float max)
+            {
+                if (x > max) return max;
+                if (x < min) return min;
+                return x;
+            }
+
+            return new Vector2(Clamp(original.x + add.x, boundsMin.x, boundsMax.x), Clamp(original.y + add.y, boundsMin.y, boundsMax.y));
+        }
+
         #endregion
 
         #endregion
@@ -252,6 +270,10 @@ namespace christ_a_2
             public int maxHealth;
             public float speed;
 
+            public Vector2 gotoPos;
+            public bool moving;
+            public bool escaping;
+
             public Enemy(string _id, Enemys _type, Vector2 _pos, Image img, Size size, Weapons _weapon, int _health, float _speed) 
             {
                 id = _id;
@@ -281,6 +303,10 @@ namespace christ_a_2
                 health = _health;
                 maxHealth = health;
                 speed = _speed;
+
+                gotoPos = new Vector2();
+                moving = false;
+                escaping = false;
             }
 
             public void UpdatePos(Size formSize)
@@ -313,8 +339,9 @@ namespace christ_a_2
             public float speed;
             public Weapons weapon;
             public float dropRate;
+            public float movementDeviation;
 
-            public EnemyOb(Image _img, Vector2 _size, int _health, float _speed, Weapons _weapon, float _dropRate)
+            public EnemyOb(Image _img, Vector2 _size, int _health, float _speed, Weapons _weapon, float _dropRate, float _movementDeviation)
             {
                 img = _img;
                 size = _size;
@@ -322,6 +349,7 @@ namespace christ_a_2
                 speed = _speed;
                 weapon = _weapon;
                 dropRate = _dropRate;
+                movementDeviation = _movementDeviation;
             }
         }
 
@@ -740,14 +768,15 @@ namespace christ_a_2
 
             levelsData = new LevelOb[] {
                 new LevelOb(Properties.Resources.level_0Factory, new Dictionary<Enemys, int>[] { 
-                    new Dictionary<Enemys, int> { { Enemys.Regular, 2 }, { Enemys.Scout, 2 }, { Enemys.Rowland, 4 } },
+                    new Dictionary<Enemys, int> { { Enemys.Rowland, 4 } },
+                    //new Dictionary<Enemys, int> { { Enemys.Regular, 2 }, { Enemys.Scout, 2 }, { Enemys.Rowland, 4 } },
                     //new Dictionary<Enemys, int> { { Enemys.Regular, 4 }, { Enemys.Scout, 2 }, { Enemys.Rowland, 4 } },
                     //new Dictionary<Enemys, int> { { Enemys.Regular, 3 }, { Enemys.Scout, 3 }, { Enemys.Rowland, 3 }, { Enemys.Tank, 1 } },
                 }),
                 new LevelOb(Properties.Resources.level_1FactoryOutside, new Dictionary<Enemys, int>[] {
                     new Dictionary<Enemys, int> { {Enemys.Regular, 2 } },
                 }),
-                new LevelOb(Properties.Resources.level_0Factory, new Dictionary<Enemys, int>[] {
+                new LevelOb(Properties.Resources.level_2Outside, new Dictionary<Enemys, int>[] {
                     new Dictionary<Enemys, int> { {Enemys.Regular, 2 } },
                 }),
                 new LevelOb(Properties.Resources.level_3Boss, new Dictionary<Enemys, int>[] {
@@ -793,13 +822,13 @@ namespace christ_a_2
             };
 
             enemysData = new Dictionary<Enemys, EnemyOb> {
-            //   Enemy                       Img,                                Size,                      Health, Speed, Weapon,          DropRate
-                {Enemys.Regular, new EnemyOb(Properties.Resources.enemy_regular, new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f ) },
-                {Enemys.Tank,    new EnemyOb(Properties.Resources.enemy_tank,    new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f ) },
-                {Enemys.Scout,   new EnemyOb(Properties.Resources.enemy_scout,   new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f ) },
-                {Enemys.Sniper,  new EnemyOb(Properties.Resources.enemy_sniper,  new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f ) },
-                {Enemys.Rowland, new EnemyOb(Properties.Resources.enemy_rowland, new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f ) },
-                {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.15f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f ) },
+            //   Enemy                       Img,                                Size,                      Health, Speed, Weapon,          DropRate, MovementDeviation
+                {Enemys.Regular, new EnemyOb(Properties.Resources.enemy_regular, new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f,    0.00f ) },
+                {Enemys.Tank,    new EnemyOb(Properties.Resources.enemy_tank,    new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f,    0.00f ) },
+                {Enemys.Scout,   new EnemyOb(Properties.Resources.enemy_scout,   new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f,    0.00f ) },
+                {Enemys.Sniper,  new EnemyOb(Properties.Resources.enemy_sniper,  new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f,    0.02f ) },
+                {Enemys.Rowland, new EnemyOb(Properties.Resources.enemy_rowland, new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f,    0.20f ) },
+                {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.15f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f,    0.00f ) },
             };
 
             dropsData = new Dictionary<Drops, DropOb> {
@@ -830,8 +859,10 @@ namespace christ_a_2
 
             foreach (KeyValuePair<Scenes, SceneOb> s in scenesData)
                 s.Value.panel.Visible = false;
-            LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
-            //LoadScene(Scenes.Menu);
+            //LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
+
+            cLevel = 0;
+            LoadScene(Scenes.Game);
 
             for (int i = 0; i < soundEffects.Length; i++)
                 soundEffects[i] = new SoundEffectPlayer();
@@ -1172,6 +1203,8 @@ namespace christ_a_2
                     main_game_panel.Controls.Add(enemys[j].healthPanel);
                     enemys[j].UpdateHealth();
                     enemys[j].healthPanel.BringToFront();
+
+                    InitialiseAI(enemyi);
 
                     enemyi++;
                 }
@@ -1571,7 +1604,7 @@ namespace christ_a_2
                         continue;
                     }
 
-                    // Enemy AI - ######## TODO ########
+                    EnemyAI(i, delta);
                 }
                 for (int i = deleteEnemys.Count - 1; i >= 0; i--)
                 {
@@ -1628,11 +1661,141 @@ namespace christ_a_2
                 #endregion
             }
 
-            //Console.WriteLine(((float)1 / delta).ToString()); // fps
-
             delta = (sw.ElapsedMilliseconds - startFrame) / 1000; // Calculate deltatime for frame
             startFrame = sw.ElapsedMilliseconds;
         }
+
+        #region "Game.EnemyAI"
+
+        private void InitialiseAI(int i)
+        {
+            switch (enemys[i].type) // Enemy AI movement
+            {
+                case Enemys.Regular:
+                    break;
+
+                case Enemys.Tank:
+                    break;
+
+                case Enemys.Sniper:
+                    enemys[i].gotoPos = new Vector2(enemys[i].pos.x > 0.5 ? GetFloatRng(0.75f, 0.95f) : GetFloatRng(0.05f, 0.25f), enemys[i].pos.y > 0.5 ? GetFloatRng(0.75f, 0.95f) : GetFloatRng(0.05f, 0.25f));
+                    break;
+
+                case Enemys.Scout:
+                    break;
+
+                case Enemys.Rowland:
+                    FindNewGoto(i, false);
+                    break;
+
+                case Enemys.Boss:
+                    break;
+            }
+
+            enemys[i].moving = true;
+        }
+
+        private void FindNewGoto(int i, bool forced)
+        {
+            switch (enemys[i].type) // Enemy AI movement
+            {
+                case Enemys.Regular:
+                    break;
+
+                case Enemys.Tank:
+                    break;
+
+                case Enemys.Sniper:
+                    if (forced)
+                    {
+                        if (((enemys[i].pos.x < 0.5) && (enemys[i].pos.y < 0.5) && (playerPos.x - enemys[i].pos.x < playerPos.y - enemys[i].pos.y)) || // Move the other way the player is approaching
+                            ((enemys[i].pos.x > 0.5) && (enemys[i].pos.y < 0.5) && (enemys[i].pos.x - playerPos.x < playerPos.y - enemys[i].pos.y)) ||
+                            ((enemys[i].pos.x > 0.5) && (enemys[i].pos.y > 0.5) && (enemys[i].pos.x - playerPos.x < enemys[i].pos.y - playerPos.y)) ||
+                            ((enemys[i].pos.x < 0.5) && (enemys[i].pos.y > 0.5) && (playerPos.x - enemys[i].pos.x < enemys[i].pos.y - playerPos.y)))
+                        {
+                            enemys[i].gotoPos = new Vector2(1 - enemys[i].gotoPos.x, enemys[i].gotoPos.y);
+                        }
+                        else
+                        {
+                            enemys[i].gotoPos = new Vector2(enemys[i].gotoPos.x, 1 - enemys[i].gotoPos.y);
+                        }
+                        enemys[i].moving = true;
+                    }
+                    else
+                    {
+                        enemys[i].moving = false;
+                    }
+                    break;
+
+                case Enemys.Scout:
+                    break;
+
+                case Enemys.Rowland:
+                    enemys[i].gotoPos = playerPos;
+                    break;
+
+                case Enemys.Boss:
+                    break;
+            }
+
+            float deviation = enemysData[enemys[i].type].movementDeviation / 2;
+            enemys[i].gotoPos = AddV2WithBounds(enemys[i].gotoPos, new Vector2(GetFloatRng(-deviation, deviation), GetFloatRng(-deviation, deviation)), new Vector2(0.1f), new Vector2(0.9f));
+            enemys[i].escaping = forced;
+        }
+
+        private void EnemyAI(int i, float delta)
+        {
+            if (!enemys[i].escaping)
+            {
+                switch (enemys[i].type) // Enemy forced movement if a condition occurs
+                {
+                    case Enemys.Regular:
+                        break;
+
+                    case Enemys.Tank:
+                        break;
+
+                    case Enemys.Sniper:
+                        if ((playerPos - enemys[i].pos).Magnitude() <= EnemyConstants.sniperRunRange)
+                        {
+                            FindNewGoto(i, true);
+                        }
+                        break;
+
+                    case Enemys.Scout:
+                        break;
+
+                    case Enemys.Rowland:
+                        if ((playerPos - enemys[i].pos).Magnitude() >= EnemyConstants.rowlandTooFarRange)
+                        {
+                            FindNewGoto(i, true);
+                        }
+                        break;
+
+                    case Enemys.Boss:
+                        break;
+                }
+            }
+
+            if (enemys[i].moving) // Move enemy
+            {
+                Vector2 toPos = enemys[i].gotoPos - enemys[i].pos;
+
+                if (toPos.Magnitude() >= 0.01f)
+                {
+                    Vector2 dir = toPos.Normalise();
+
+                    enemys[i].pos += dir * enemysData[enemys[i].type].speed * delta;
+                    enemys[i].UpdatePos(main_game_panel.Size);
+                }
+                else
+                {
+                    FindNewGoto(i, false);
+                }
+            }
+        }
+
+        #endregion
 
         #region "Game.Functions"
 

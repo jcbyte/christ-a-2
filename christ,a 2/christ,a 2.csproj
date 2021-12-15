@@ -240,5 +240,8 @@
   <ItemGroup>
     <None Include="Resources\Boss Fight Level 4.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\outside level.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
