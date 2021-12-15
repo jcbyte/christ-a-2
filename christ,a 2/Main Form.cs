@@ -284,7 +284,11 @@ namespace christ_a_2
             public bool moving;
             public bool escaping;
 
-            public Enemy(string _id, Enemys _type, Vector2 _pos, Image img, Size size, Weapons _weapon, int _health, float _speed) 
+            public float lastShot;
+            public int bulletsLeft;
+            public bool reloading;
+
+            public Enemy(string _id, Enemys _type, Vector2 _pos, Image img, Size size, Weapons _weapon, int _health, float _speed, int _bulletsLeft) 
             {
                 id = _id;
                 type = _type;
@@ -317,6 +321,10 @@ namespace christ_a_2
                 gotoPos = new Vector2();
                 moving = false;
                 escaping = false;
+
+                lastShot = 0;
+                bulletsLeft = _bulletsLeft;
+                reloading = false;
             }
 
             public void UpdatePos(Size formSize)
@@ -350,8 +358,9 @@ namespace christ_a_2
             public WeaponClass weaponClass;
             public float dropRate;
             public float movementDeviation;
+            public float shootChance;
 
-            public EnemyOb(Image _img, Vector2 _size, int _health, float _speed, WeaponClass _weaponClass, float _dropRate, float _movementDeviation)
+            public EnemyOb(Image _img, Vector2 _size, int _health, float _speed, WeaponClass _weaponClass, float _dropRate, float _movementDeviation, float _shootChance)
             {
                 img = _img;
                 size = _size;
@@ -360,6 +369,7 @@ namespace christ_a_2
                 weaponClass = _weaponClass;
                 dropRate = _dropRate;
                 movementDeviation = _movementDeviation;
+                shootChance = _shootChance;
             }
         }
 
@@ -834,13 +844,13 @@ namespace christ_a_2
             };
 
             enemysData = new Dictionary<Enemys, EnemyOb> {
-            //   Enemy                       Img,                                Size,                      Health, Speed, Weapon,              DropRate, MovementDeviation
-                {Enemys.Regular, new EnemyOb(Properties.Resources.enemy_regular, new Vector2(0.04f, 0.06f), 100,    0.10f, WeaponClass.AR,              0.50f,    0.10f ) },
-                {Enemys.Tank,    new EnemyOb(Properties.Resources.enemy_tank,    new Vector2(0.04f, 0.06f), 200,    0.02f, WeaponClass.GrenadeLauncher, 0.50f,    0.00f ) },
-                {Enemys.Scout,   new EnemyOb(Properties.Resources.enemy_scout,   new Vector2(0.04f, 0.06f), 25,     0.20f, WeaponClass.SMG,             0.50f,    0.02f ) },
-                {Enemys.Sniper,  new EnemyOb(Properties.Resources.enemy_sniper,  new Vector2(0.03f, 0.04f), 50,     0.30f, WeaponClass.Marksman,        0.50f,    0.08f ) },
-                {Enemys.Rowland, new EnemyOb(Properties.Resources.enemy_rowland, new Vector2(0.05f, 0.06f), 150,    0.15f, WeaponClass.None,            0.50f,    0.20f ) },
-                {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.15f, 0.06f), 600,    0.00f, WeaponClass.Pistol,          0.50f,    0.00f ) },
+            //   Enemy                       Img,                                Size,                      Health, Speed, Weapon,              DropRate, MovementDeviation, ShootChance
+                {Enemys.Regular, new EnemyOb(Properties.Resources.enemy_regular, new Vector2(0.04f, 0.06f), 100,    0.10f, WeaponClass.AR,              0.50f,    0.10f,     0.70f ) },
+                {Enemys.Tank,    new EnemyOb(Properties.Resources.enemy_tank,    new Vector2(0.04f, 0.06f), 200,    0.02f, WeaponClass.GrenadeLauncher, 0.50f,    0.00f,     0.50f ) },
+                {Enemys.Scout,   new EnemyOb(Properties.Resources.enemy_scout,   new Vector2(0.04f, 0.06f), 25,     0.20f, WeaponClass.SMG,             0.50f,    0.02f,     0.90f ) },
+                {Enemys.Sniper,  new EnemyOb(Properties.Resources.enemy_sniper,  new Vector2(0.03f, 0.04f), 50,     0.30f, WeaponClass.Marksman,        0.50f,    0.08f,     0.40f ) },
+                {Enemys.Rowland, new EnemyOb(Properties.Resources.enemy_rowland, new Vector2(0.05f, 0.06f), 150,    0.15f, WeaponClass.None,            0.50f,    0.20f,     0.00f ) },
+                {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.15f, 0.06f), 600,    0.00f, WeaponClass.Pistol,          0.50f,    0.00f,     0.00f ) },
             };
 
             dropsData = new Dictionary<Drops, DropOb> {
@@ -1210,6 +1220,7 @@ namespace christ_a_2
                             viableWeapons.Add(weaponData.Key);
                         }
                     }
+                    Weapons weapon = viableWeapons[GetIntRng(0, viableWeapons.Count)];
 
                     enemys.Add(new Enemy( // Instatiate enemys
                         cLevel.ToString() + "-" + 0 + enemyi.ToString(),
@@ -1217,9 +1228,10 @@ namespace christ_a_2
                         new Vector2(GetFloatRng(0.1f, 0.9f), GetFloatRng(0.1f, 0.9f)),
                         enemysData[enemyType.Key].img,
                         SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(enemysData[enemyType.Key].size, main_game_panel.Size), main_game_panel.Size)),
-                        viableWeapons[GetIntRng(0, viableWeapons.Count)],
+                        weapon,
                         enemysData[enemyType.Key].health,
-                        enemysData[enemyType.Key].speed
+                        enemysData[enemyType.Key].speed,
+                        weaponsData[weapon].magCapacity
                     ));
 
                     int j = enemys.Count - 1;
@@ -1456,7 +1468,7 @@ namespace christ_a_2
                         if (inventory[0].reserveBullets > 0) // If there are bullets in reserve
                         {
                             PlaySoundEffect(SoundEffects.Reload);
-                            ReloadWeapon();
+                            PlayerReload();
                         }
                         else
                         {
@@ -1859,7 +1871,96 @@ namespace christ_a_2
                 }
             }
 
-            // Enemy shooting
+            if (GetFloatRng() < enemysData[enemys[i].type].shootChance) // Enemy shooting
+            {
+                if (enemys[i].bulletsLeft > 0) // Make sure there are bullets in the mag
+                {
+                    if (!enemys[i].reloading) // Cant shoot while reloading
+                    {
+                        if (enemys[i].lastShot < sw.ElapsedMilliseconds - (1000 / weaponsData[enemys[i].weapon].firerate))  // Only shoot at firerate (1 / (rps / 1000))
+                        {
+                            enemys[i].bulletsLeft--; // Remove bullet from mag
+
+                            EnemyShoot(i);
+                            PlaySoundEffect(SoundEffects.Shoot);
+
+                            enemys[i].lastShot = sw.ElapsedMilliseconds;
+                        }
+                    }
+                }
+                else
+                {
+                    EnemyReload(i);
+                }
+            }
+        }
+
+        private void EnemyShoot(int i)
+        {
+            Weapons weapon = enemys[i].weapon;
+
+            float accuracyVal = weaponsData[weapon].accuracy / 2;
+            Vector2 aimPos = playerPos + FromScaledRelativeV2ToRealtiveV2(new Vector2(GetFloatRng(-accuracyVal, accuracyVal), GetFloatRng(-accuracyVal, accuracyVal)), main_game_panel.Size); // Affected by accuracy
+            Vector2 dir = (aimPos - enemys[i].pos).Normalise();
+
+            switch (weaponsData[weapon].weaponClass) // Test if its a special weapon
+            {
+                case WeaponClass.Shotgun: // Multiple bullets at defined spread
+
+                    float angle = dir.Angle(true);
+                    int shots = weaponsData[weapon].shotgunShots;
+                    int spread = weaponsData[weapon].shotgunSpread;
+
+                    float angleDiff = (float)spread / (shots - 1);
+                    float cAngle = angle - ((float)spread / 2);
+
+                    for (int j = 0; j < shots; j++)
+                    {
+                        CreateBullet(
+                            enemys[i].pos,
+                            weaponsData[weapon].maxDistance,
+                            new Vector2(cAngle, true),
+                            (float)weaponsData[weapon].velocity,
+                            weaponsData[weapon].damage,
+                            weaponsData[weapon].penetration,
+                            weaponsData[weapon].bulletImg,
+                            SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(new Vector2(weaponsData[weapon].bulletSize), main_game_panel.Size), main_game_panel.Size)),
+                            weapon,
+                            false
+                        );
+
+                        cAngle += angleDiff;
+                    }
+
+                    break;
+
+                default:
+                    CreateBullet(
+                        enemys[i].pos,
+                        weaponsData[weapon].maxDistance,
+                        dir,
+                        (float)weaponsData[weapon].velocity,
+                        weaponsData[weapon].damage,
+                        weaponsData[weapon].penetration,
+                        weaponsData[weapon].bulletImg,
+                        SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(new Vector2(weaponsData[weapon].bulletSize), main_game_panel.Size), main_game_panel.Size)),
+                        weapon,
+                        false
+                    );
+
+                    break;
+            }
+
+            //float recoilVal = weaponsData[weapon].recoil / 2;
+            //Vector2 recoil = FromScaledRelativeV2ToRealtiveV2(new Vector2(GetFloatRng(-recoilVal, recoilVal), GetFloatRng(-recoilVal, recoilVal)), this.Size);
+        }
+
+        private async void EnemyReload(int i)
+        {
+            enemys[i].reloading = true;
+            enemys[i].bulletsLeft = weaponsData[enemys[i].weapon].magCapacity; // Add bullets before delay so EnemyReload is not called multiple times
+            await Task.Delay(weaponsData[enemys[i].weapon].reload);
+            enemys[i].reloading = false;
         }
 
         #endregion
@@ -1936,12 +2037,12 @@ namespace christ_a_2
             }
 
             float recoilVal = weaponsData[weapon].recoil / 2;
-            Vector2 recoil = FromScaledRelativeV2ToRealtiveV2(new Vector2(GetFloatRng(-recoilVal, recoilVal), GetFloatRng(-recoilVal, recoilVal)), this.Size);
+            Vector2 recoil = FromScaledRelativeV2ToRealtiveV2(new Vector2(GetFloatRng(-recoilVal, recoilVal), GetFloatRng(-recoilVal, recoilVal)), main_game_panel.Size);
             Vector2 newMousePos = ToRelativeV2(System.Windows.Forms.Cursor.Position, main_game_panel.Size) + recoil; // Change mouse position depending on recoil
             System.Windows.Forms.Cursor.Position = FromRelativeV2(newMousePos, main_game_panel.Size);
         }
 
-        private async void ReloadWeapon()
+        private async void PlayerReload()
         {
 
             reloading = true;

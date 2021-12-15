@@ -75,7 +75,7 @@
             this.menu_startGame_button.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
             this.menu_startGame_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.menu_startGame_button.Font = new System.Drawing.Font("Metropolis Thin", 26F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.menu_startGame_button.Location = new System.Drawing.Point(30, 250);
+            this.menu_startGame_button.Location = new System.Drawing.Point(30, 571);
             this.menu_startGame_button.Name = "menu_startGame_button";
             this.menu_startGame_button.Size = new System.Drawing.Size(360, 125);
             this.menu_startGame_button.TabIndex = 0;
@@ -92,7 +92,7 @@
             this.menu_exit_button.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
             this.menu_exit_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.menu_exit_button.Font = new System.Drawing.Font("Metropolis Thin", 26F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.menu_exit_button.Location = new System.Drawing.Point(30, 520);
+            this.menu_exit_button.Location = new System.Drawing.Point(30, 841);
             this.menu_exit_button.Name = "menu_exit_button";
             this.menu_exit_button.Size = new System.Drawing.Size(360, 125);
             this.menu_exit_button.TabIndex = 0;
@@ -109,7 +109,7 @@
             this.menu_startMemoryLeak_button.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
             this.menu_startMemoryLeak_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.menu_startMemoryLeak_button.Font = new System.Drawing.Font("Metropolis Thin", 26F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.menu_startMemoryLeak_button.Location = new System.Drawing.Point(30, 385);
+            this.menu_startMemoryLeak_button.Location = new System.Drawing.Point(30, 706);
             this.menu_startMemoryLeak_button.Name = "menu_startMemoryLeak_button";
             this.menu_startMemoryLeak_button.Size = new System.Drawing.Size(360, 125);
             this.menu_startMemoryLeak_button.TabIndex = 0;
@@ -120,7 +120,7 @@
             // main_memoryCounter_label
             // 
             this.main_memoryCounter_label.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.main_memoryCounter_label.Location = new System.Drawing.Point(1040, 20);
+            this.main_memoryCounter_label.Location = new System.Drawing.Point(1664, 20);
             this.main_memoryCounter_label.Name = "main_memoryCounter_label";
             this.main_memoryCounter_label.Size = new System.Drawing.Size(220, 20);
             this.main_memoryCounter_label.TabIndex = 0;
@@ -138,7 +138,7 @@
             this.main_menu_panel.Controls.Add(this.menu_background_PictureBox);
             this.main_menu_panel.Location = new System.Drawing.Point(0, 0);
             this.main_menu_panel.Name = "main_menu_panel";
-            this.main_menu_panel.Size = new System.Drawing.Size(1280, 720);
+            this.main_menu_panel.Size = new System.Drawing.Size(1904, 1041);
             this.main_menu_panel.TabIndex = 1;
             // 
             // menu_background_PictureBox
@@ -150,7 +150,7 @@
             this.menu_background_PictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.menu_background_PictureBox.Location = new System.Drawing.Point(0, 0);
             this.menu_background_PictureBox.Name = "menu_background_PictureBox";
-            this.menu_background_PictureBox.Size = new System.Drawing.Size(1280, 720);
+            this.menu_background_PictureBox.Size = new System.Drawing.Size(1904, 1041);
             this.menu_background_PictureBox.TabIndex = 1;
             this.menu_background_PictureBox.TabStop = false;
             // 
@@ -165,7 +165,7 @@
             this.main_game_panel.Controls.Add(this.game_floor_pictureBox);
             this.main_game_panel.Location = new System.Drawing.Point(0, 0);
             this.main_game_panel.Name = "main_game_panel";
-            this.main_game_panel.Size = new System.Drawing.Size(1280, 720);
+            this.main_game_panel.Size = new System.Drawing.Size(1904, 1041);
             this.main_game_panel.TabIndex = 1;
             this.main_game_panel.Paint += new System.Windows.Forms.PaintEventHandler(this.main_game_panel_Paint);
             this.main_game_panel.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.main_game_panel_MouseWheel);
@@ -176,7 +176,7 @@
             this.game_playerHealth_panel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.game_playerHealth_panel.Controls.Add(this.game_playerHealth_health_label);
             this.game_playerHealth_panel.Controls.Add(this.game_playerHealth_healthBar_pictureBox);
-            this.game_playerHealth_panel.Location = new System.Drawing.Point(20, 660);
+            this.game_playerHealth_panel.Location = new System.Drawing.Point(20, 981);
             this.game_playerHealth_panel.Name = "game_playerHealth_panel";
             this.game_playerHealth_panel.Size = new System.Drawing.Size(880, 40);
             this.game_playerHealth_panel.TabIndex = 6;
@@ -224,7 +224,7 @@
             this.game_inventory_panel.Controls.Add(this.game_inventory_currentWeaponAmmo_Label);
             this.game_inventory_panel.Controls.Add(this.game_inventory_currentWeaponName_label);
             this.game_inventory_panel.Controls.Add(this.game_inventory_currentWeapon_PictureBox);
-            this.game_inventory_panel.Location = new System.Drawing.Point(920, 550);
+            this.game_inventory_panel.Location = new System.Drawing.Point(1544, 871);
             this.game_inventory_panel.Name = "game_inventory_panel";
             this.game_inventory_panel.Size = new System.Drawing.Size(340, 150);
             this.game_inventory_panel.TabIndex = 2;
@@ -310,7 +310,7 @@
             this.game_floor_pictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.game_floor_pictureBox.Location = new System.Drawing.Point(0, 0);
             this.game_floor_pictureBox.Name = "game_floor_pictureBox";
-            this.game_floor_pictureBox.Size = new System.Drawing.Size(1280, 720);
+            this.game_floor_pictureBox.Size = new System.Drawing.Size(1904, 1041);
             this.game_floor_pictureBox.TabIndex = 0;
             this.game_floor_pictureBox.TabStop = false;
             // 
@@ -322,7 +322,7 @@
             this.main_cutscene_panel.Controls.Add(this.cutscene_media_windowsMediaPlayer);
             this.main_cutscene_panel.Location = new System.Drawing.Point(0, 0);
             this.main_cutscene_panel.Name = "main_cutscene_panel";
-            this.main_cutscene_panel.Size = new System.Drawing.Size(1280, 720);
+            this.main_cutscene_panel.Size = new System.Drawing.Size(1904, 1041);
             this.main_cutscene_panel.TabIndex = 3;
             // 
             // cutscene_media_windowsMediaPlayer
@@ -334,7 +334,7 @@
             this.cutscene_media_windowsMediaPlayer.Location = new System.Drawing.Point(0, 0);
             this.cutscene_media_windowsMediaPlayer.Name = "cutscene_media_windowsMediaPlayer";
             this.cutscene_media_windowsMediaPlayer.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("cutscene_media_windowsMediaPlayer.OcxState")));
-            this.cutscene_media_windowsMediaPlayer.Size = new System.Drawing.Size(1280, 720);
+            this.cutscene_media_windowsMediaPlayer.Size = new System.Drawing.Size(1904, 1041);
             this.cutscene_media_windowsMediaPlayer.TabIndex = 0;
             // 
             // mainForm
@@ -342,7 +342,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(21)))), ((int)(((byte)(21)))));
-            this.ClientSize = new System.Drawing.Size(1280, 720);
+            this.ClientSize = new System.Drawing.Size(1904, 1041);
             this.Controls.Add(this.main_memoryCounter_label);
             this.Controls.Add(this.main_game_panel);
             this.Controls.Add(this.main_menu_panel);
@@ -353,6 +353,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(6, 4, 6, 4);
             this.MaximumSize = new System.Drawing.Size(1920, 1080);
+            this.MinimumSize = new System.Drawing.Size(1920, 1080);
             this.Name = "mainForm";
             this.Text = "Christ,a 2";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
