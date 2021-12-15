@@ -50,8 +50,11 @@ namespace christ_a_2
 
         public static class EnemyConstants
         {
+            public const float CloseEnough = 0.01f;
+
             public const float sniperRunRange = 0.2f;
-            public const float rowlandTooFarRange = 0.3f;
+            public const float rowlandTooFarRange = 0.2f;
+            public const float regularPlayerRange = 0.4f;
         }
 
         #endregion
@@ -768,8 +771,8 @@ namespace christ_a_2
 
             levelsData = new LevelOb[] {
                 new LevelOb(Properties.Resources.level_0Factory, new Dictionary<Enemys, int>[] { 
-                    new Dictionary<Enemys, int> { { Enemys.Rowland, 4 } },
-                    //new Dictionary<Enemys, int> { { Enemys.Regular, 2 }, { Enemys.Scout, 2 }, { Enemys.Rowland, 4 } },
+                    //new Dictionary<Enemys, int> { { Enemys.Regular, 5 } },
+                    new Dictionary<Enemys, int> { { Enemys.Regular, 5 }, { Enemys.Sniper, 5 }, { Enemys.Rowland, 5 } },
                     //new Dictionary<Enemys, int> { { Enemys.Regular, 4 }, { Enemys.Scout, 2 }, { Enemys.Rowland, 4 } },
                     //new Dictionary<Enemys, int> { { Enemys.Regular, 3 }, { Enemys.Scout, 3 }, { Enemys.Rowland, 3 }, { Enemys.Tank, 1 } },
                 }),
@@ -822,13 +825,13 @@ namespace christ_a_2
             };
 
             enemysData = new Dictionary<Enemys, EnemyOb> {
-            //   Enemy                       Img,                                Size,                      Health, Speed, Weapon,          DropRate, MovementDeviation
-                {Enemys.Regular, new EnemyOb(Properties.Resources.enemy_regular, new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f,    0.00f ) },
-                {Enemys.Tank,    new EnemyOb(Properties.Resources.enemy_tank,    new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f,    0.00f ) },
-                {Enemys.Scout,   new EnemyOb(Properties.Resources.enemy_scout,   new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f,    0.00f ) },
-                {Enemys.Sniper,  new EnemyOb(Properties.Resources.enemy_sniper,  new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f,    0.02f ) },
-                {Enemys.Rowland, new EnemyOb(Properties.Resources.enemy_rowland, new Vector2(0.04f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f,    0.20f ) },
-                {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.15f, 0.06f), 100,    0.15f, Weapons.Glock19, 0.50f,    0.00f ) },
+            //   Enemy                       Img,                                Size,                      Health, Speed, Weapon,              DropRate, MovementDeviation
+                {Enemys.Regular, new EnemyOb(Properties.Resources.enemy_regular, new Vector2(0.04f, 0.06f), 100,    0.10f, Weapons.Galil,       0.50f,    0.10f ) },
+                {Enemys.Tank,    new EnemyOb(Properties.Resources.enemy_tank,    new Vector2(0.04f, 0.06f), 200,    0.02f, Weapons.RPG7,        0.50f,    0.00f ) },
+                {Enemys.Scout,   new EnemyOb(Properties.Resources.enemy_scout,   new Vector2(0.04f, 0.06f), 25,     0.20f, Weapons.UMP,         0.50f,    0.00f ) },
+                {Enemys.Sniper,  new EnemyOb(Properties.Resources.enemy_sniper,  new Vector2(0.03f, 0.04f), 50,     0.30f, Weapons.M107,        0.50f,    0.02f ) },
+                {Enemys.Rowland, new EnemyOb(Properties.Resources.enemy_rowland, new Vector2(0.05f, 0.06f), 150,    0.150f, Weapons.None,        0.50f,    0.20f ) },
+                {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.15f, 0.06f), 600,    0.00f, Weapons.DesertEagle, 0.50f,    0.00f ) },
             };
 
             dropsData = new Dictionary<Drops, DropOb> {
@@ -1672,6 +1675,7 @@ namespace christ_a_2
             switch (enemys[i].type) // Enemy AI movement
             {
                 case Enemys.Regular:
+                    FindNewGoto(i, false);
                     break;
 
                 case Enemys.Tank:
@@ -1700,6 +1704,8 @@ namespace christ_a_2
             switch (enemys[i].type) // Enemy AI movement
             {
                 case Enemys.Regular:
+                    enemys[i].gotoPos = playerPos;
+                    enemys[i].moving = true;
                     break;
 
                 case Enemys.Tank:
@@ -1750,6 +1756,17 @@ namespace christ_a_2
                 switch (enemys[i].type) // Enemy forced movement if a condition occurs
                 {
                     case Enemys.Regular:
+                        if ((playerPos - enemys[i].pos).Magnitude() <= EnemyConstants.regularPlayerRange)
+                        {
+                            enemys[i].moving = false;
+                        }
+                        else
+                        {
+                            if (!enemys[i].moving)
+                            {
+                                FindNewGoto(i, true);
+                            }
+                        }
                         break;
 
                     case Enemys.Tank:
@@ -1781,7 +1798,7 @@ namespace christ_a_2
             {
                 Vector2 toPos = enemys[i].gotoPos - enemys[i].pos;
 
-                if (toPos.Magnitude() >= 0.01f)
+                if (toPos.Magnitude() >= EnemyConstants.CloseEnough)
                 {
                     Vector2 dir = toPos.Normalise();
 
