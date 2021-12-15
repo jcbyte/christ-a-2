@@ -347,17 +347,17 @@ namespace christ_a_2
             public Vector2 size; // Relative scaled vector2
             public int health;
             public float speed;
-            public Weapons weapon;
+            public WeaponClass weaponClass;
             public float dropRate;
             public float movementDeviation;
 
-            public EnemyOb(Image _img, Vector2 _size, int _health, float _speed, Weapons _weapon, float _dropRate, float _movementDeviation)
+            public EnemyOb(Image _img, Vector2 _size, int _health, float _speed, WeaponClass _weaponClass, float _dropRate, float _movementDeviation)
             {
                 img = _img;
                 size = _size;
                 health = _health;
                 speed = _speed;
-                weapon = _weapon;
+                weaponClass = _weaponClass;
                 dropRate = _dropRate;
                 movementDeviation = _movementDeviation;
             }
@@ -408,6 +408,7 @@ namespace christ_a_2
 
         private enum WeaponClass : byte
         {
+            None,
             Pistol,
             AR,
             Marksman,
@@ -795,6 +796,7 @@ namespace christ_a_2
             };
 
             weaponClassData = new Dictionary<WeaponClass, WeaponClassOb> {
+                {WeaponClass.None,            new WeaponClassOb("None",              WeaponType.Semi) },
                 {WeaponClass.Pistol,          new WeaponClassOb("Pistol",            WeaponType.Semi) },
                 {WeaponClass.AR,              new WeaponClassOb("Assult Rifle",      WeaponType.Auto) },
                 {WeaponClass.Marksman,        new WeaponClassOb("Marksman Rifle",    WeaponType.Semi) },
@@ -808,7 +810,7 @@ namespace christ_a_2
 
             // http://www.military-today.com/firearms.htm
             weaponsData = new Dictionary<Weapons, WeaponOb> {
-                {Weapons.None, new WeaponOb("None", WeaponClass.Pistol, Properties.Resources.weapon_none, Properties.Resources.bullet_other, 0, "None", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) },
+                {Weapons.None, new WeaponOb("None", WeaponClass.None, Properties.Resources.weapon_none, Properties.Resources.bullet_other, 0, "None", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) },
             //  Weapon,                            Name,           Class,                       Img,                                   BulletImg,                           BulletSize, Country,          Damage, Weight, Velocity, Firerate, Penetration Reload, MagCapacity, MaxAmmoMultiplier, Accuracy, Recoil, MaxDistance, PushBack, ShotgunShots, ShotgunSpread, ExplosionRadius, ExplosionDamage
                 {Weapons.Glock19,     new WeaponOb("Glock-19",     WeaponClass.Pistol,          Properties.Resources.weapon_glock19,   Properties.Resources.bullet_pistol,  0.02f,      "Austria",        10,     1.00f,  0.20f,    0.50f,    1,          800,    15,          3,                 0.00f,    0.00f,  0.50f) },
                 {Weapons.FiveSeven,   new WeaponOb("Five SeveN",   WeaponClass.Pistol,          Properties.Resources.weapon_fiveseven, Properties.Resources.bullet_pistol,  0.01f,      "Belgium",        10,     1.00f,  0.50f,    1.00f,    1,          500,    20,          3,                 0.00f,    0.00f,  1.00f) },
@@ -827,18 +829,18 @@ namespace christ_a_2
                 {Weapons.M2,          new WeaponOb("M2",           WeaponClass.HMG,             Properties.Resources.weapon_m2,        Properties.Resources.bullet_other,   0.01f,      "USA",            10,     1.00f,  0.50f,    1.00f,    1,          500,    100,         4,                 0.00f,    0.00f,  1.00f) },
                 {Weapons.FP6,         new WeaponOb("FP6",          WeaponClass.Shotgun,         Properties.Resources.weapon_fp6,       Properties.Resources.bullet_shotgun, 0.01f,      "Germany",        10,     1.00f,  0.50f,    1.00f,    1,          500,    6,           2,                 0.00f,    0.00f,  1.00f,       0.00f,    3,            10) },
                 {Weapons.M1014,       new WeaponOb("M1014",        WeaponClass.Shotgun,         Properties.Resources.weapon_m1014,     Properties.Resources.bullet_shotgun, 0.04f,      "Italy",          10,     1.00f,  0.40f,    1.00f,    1,          500,    8,           3,                 0.00f,    0.00f,  0.30f,       0.00f,    5,            20) },
-                {Weapons.MGL105,      new WeaponOb("MGL-105",      WeaponClass.GrenadeLauncher, Properties.Resources.weapon_mgl105,    Properties.Resources.bullet_grenade, 0.01f,      "South Africa",   0,      3.00f,  0.50f,    1.00f,    1000,       500,    6,           1,                 0.00f,    0.00f,  0.50f,       0.00f,    0,            0,             2f,              200) },
+                {Weapons.MGL105,      new WeaponOb("MGL-105",      WeaponClass.GrenadeLauncher, Properties.Resources.weapon_mgl105,    Properties.Resources.bullet_grenade, 0.01f,      "South Africa",   0,      3.00f,  0.50f,    1.00f,    1000,       500,    6,           1,                 0.00f,    0.00f,  0.50f,       0.00f,    0,            0,             0.40f,           80) },
                 {Weapons.RPG7,        new WeaponOb("RPG-7",        WeaponClass.RPG,             Properties.Resources.weapon_rpg7,      Properties.Resources.bullet_rpg,     0.01f,      "Russia",         0,      2.00f,  0.50f,    1.00f,    1,          500,    1,           4,                 0.00f,    0.00f,  1.00f,       0.00f,    0,            0,             0.40f,           40) },
             };
 
             enemysData = new Dictionary<Enemys, EnemyOb> {
             //   Enemy                       Img,                                Size,                      Health, Speed, Weapon,              DropRate, MovementDeviation
-                {Enemys.Regular, new EnemyOb(Properties.Resources.enemy_regular, new Vector2(0.04f, 0.06f), 100,    0.10f, Weapons.Galil,       0.50f,    0.10f ) },
-                {Enemys.Tank,    new EnemyOb(Properties.Resources.enemy_tank,    new Vector2(0.04f, 0.06f), 200,    0.02f, Weapons.RPG7,        0.50f,    0.00f ) },
-                {Enemys.Scout,   new EnemyOb(Properties.Resources.enemy_scout,   new Vector2(0.04f, 0.06f), 25,     0.20f, Weapons.UMP,         0.50f,    0.02f ) },
-                {Enemys.Sniper,  new EnemyOb(Properties.Resources.enemy_sniper,  new Vector2(0.03f, 0.04f), 50,     0.30f, Weapons.M107,        0.50f,    0.08f ) },
-                {Enemys.Rowland, new EnemyOb(Properties.Resources.enemy_rowland, new Vector2(0.05f, 0.06f), 150,    0.150f, Weapons.None,       0.50f,    0.20f ) },
-                {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.15f, 0.06f), 600,    0.00f, Weapons.DesertEagle, 0.50f,    0.00f ) },
+                {Enemys.Regular, new EnemyOb(Properties.Resources.enemy_regular, new Vector2(0.04f, 0.06f), 100,    0.10f, WeaponClass.AR,              0.50f,    0.10f ) },
+                {Enemys.Tank,    new EnemyOb(Properties.Resources.enemy_tank,    new Vector2(0.04f, 0.06f), 200,    0.02f, WeaponClass.GrenadeLauncher, 0.50f,    0.00f ) },
+                {Enemys.Scout,   new EnemyOb(Properties.Resources.enemy_scout,   new Vector2(0.04f, 0.06f), 25,     0.20f, WeaponClass.SMG,             0.50f,    0.02f ) },
+                {Enemys.Sniper,  new EnemyOb(Properties.Resources.enemy_sniper,  new Vector2(0.03f, 0.04f), 50,     0.30f, WeaponClass.Marksman,        0.50f,    0.08f ) },
+                {Enemys.Rowland, new EnemyOb(Properties.Resources.enemy_rowland, new Vector2(0.05f, 0.06f), 150,    0.15f, WeaponClass.None,            0.50f,    0.20f ) },
+                {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.15f, 0.06f), 600,    0.00f, WeaponClass.Pistol,          0.50f,    0.00f ) },
             };
 
             dropsData = new Dictionary<Drops, DropOb> {
@@ -1199,13 +1201,23 @@ namespace christ_a_2
             {
                 for (int i = 0; i < enemyType.Value; i++)
                 {
+                    WeaponClass enemyWeaponClass = enemysData[enemyType.Key].weaponClass;
+                    List<Weapons> viableWeapons = new List<Weapons>();
+                    foreach (KeyValuePair<Weapons, WeaponOb> weaponData in weaponsData)
+                    {
+                        if (weaponData.Value.weaponClass == enemyWeaponClass)
+                        {
+                            viableWeapons.Add(weaponData.Key);
+                        }
+                    }
+
                     enemys.Add(new Enemy( // Instatiate enemys
                         cLevel.ToString() + "-" + 0 + enemyi.ToString(),
                         enemyType.Key,
                         new Vector2(GetFloatRng(0.1f, 0.9f), GetFloatRng(0.1f, 0.9f)),
                         enemysData[enemyType.Key].img,
                         SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(enemysData[enemyType.Key].size, main_game_panel.Size), main_game_panel.Size)),
-                        enemysData[enemyType.Key].weapon,
+                        viableWeapons[GetIntRng(0, viableWeapons.Count)],
                         enemysData[enemyType.Key].health,
                         enemysData[enemyType.Key].speed
                     ));
