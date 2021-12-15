@@ -247,7 +247,10 @@
   <data name="menu_background" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Main Menu Background 2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="enemy_deadBoss" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\enemy_deadBoss.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="level_2Outside" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\outside level.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>..\Resources\level_2Outside.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

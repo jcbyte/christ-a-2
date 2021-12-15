@@ -54,7 +54,9 @@ namespace christ_a_2
 
             public const float sniperRunRange = 0.2f;
             public const float rowlandTooFarRange = 0.2f;
+            public const float scoutTooFarRange = 0.2f;
             public const float regularPlayerRange = 0.4f;
+            public const float tankPlayerRange = 0.3f;
         }
 
         #endregion
@@ -136,6 +138,10 @@ namespace christ_a_2
                 return new Vector2(lhs.x - rhs.x, lhs.y - rhs.y);
             }
 
+            static public Vector2 operator -(Vector2 rhs)
+            {
+                return new Vector2(-rhs.x, -rhs.y);
+            }
             static public Vector2 operator *(Vector2 lhs, float rhs)
             {
                 return new Vector2(lhs.x * rhs, lhs.y * rhs);
@@ -771,8 +777,8 @@ namespace christ_a_2
 
             levelsData = new LevelOb[] {
                 new LevelOb(Properties.Resources.level_0Factory, new Dictionary<Enemys, int>[] { 
-                    //new Dictionary<Enemys, int> { { Enemys.Regular, 5 } },
-                    new Dictionary<Enemys, int> { { Enemys.Regular, 5 }, { Enemys.Sniper, 5 }, { Enemys.Rowland, 5 } },
+                    //new Dictionary<Enemys, int> { { Enemys.Scout, 1 } },
+                    new Dictionary<Enemys, int> { { Enemys.Regular, 2 }, {Enemys.Tank, 2 }, { Enemys.Sniper, 3 }, { Enemys.Rowland, 1 }, { Enemys.Scout, 1 } },
                     //new Dictionary<Enemys, int> { { Enemys.Regular, 4 }, { Enemys.Scout, 2 }, { Enemys.Rowland, 4 } },
                     //new Dictionary<Enemys, int> { { Enemys.Regular, 3 }, { Enemys.Scout, 3 }, { Enemys.Rowland, 3 }, { Enemys.Tank, 1 } },
                 }),
@@ -1679,6 +1685,7 @@ namespace christ_a_2
                     break;
 
                 case Enemys.Tank:
+                    FindNewGoto(i, false);
                     break;
 
                 case Enemys.Sniper:
@@ -1686,6 +1693,7 @@ namespace christ_a_2
                     break;
 
                 case Enemys.Scout:
+                    FindNewGoto(i, false);
                     break;
 
                 case Enemys.Rowland:
@@ -1709,6 +1717,14 @@ namespace christ_a_2
                     break;
 
                 case Enemys.Tank:
+                    if ((playerPos - enemys[i].pos).ScaledMagnitude(main_game_panel.Size) <= EnemyConstants.tankPlayerRange)
+                    {
+                        enemys[i].gotoPos = enemys[i].pos - (playerPos - enemys[i].pos) * 0.1f;
+                    }
+                    else
+                    {
+                        enemys[i].gotoPos = playerPos;
+                    }
                     break;
 
                 case Enemys.Sniper:
@@ -1734,6 +1750,14 @@ namespace christ_a_2
                     break;
 
                 case Enemys.Scout:
+                    if (forced)
+                    {
+                        enemys[i].gotoPos = playerPos;
+                    }
+                    else
+                    {
+                        enemys[i].gotoPos = new Vector2(enemys[i].pos.x + GetFloatRng(-1.0f, 1.0f), enemys[i].pos.y + GetFloatRng(-1.0f, 1.0f));
+                    }
                     break;
 
                 case Enemys.Rowland:
@@ -1745,7 +1769,7 @@ namespace christ_a_2
             }
 
             float deviation = enemysData[enemys[i].type].movementDeviation / 2;
-            enemys[i].gotoPos = AddV2WithBounds(enemys[i].gotoPos, new Vector2(GetFloatRng(-deviation, deviation), GetFloatRng(-deviation, deviation)), new Vector2(0.1f), new Vector2(0.9f));
+            enemys[i].gotoPos = AddV2WithBounds(enemys[i].gotoPos, new Vector2(GetFloatRng(-deviation, deviation), GetFloatRng(-deviation, deviation)), new Vector2(0.05f), new Vector2(0.95f));
             enemys[i].escaping = forced;
         }
 
@@ -1756,7 +1780,7 @@ namespace christ_a_2
                 switch (enemys[i].type) // Enemy forced movement if a condition occurs
                 {
                     case Enemys.Regular:
-                        if ((playerPos - enemys[i].pos).Magnitude() <= EnemyConstants.regularPlayerRange)
+                        if ((playerPos - enemys[i].pos).ScaledMagnitude(main_game_panel.Size) <= EnemyConstants.regularPlayerRange)
                         {
                             enemys[i].moving = false;
                         }
@@ -1770,20 +1794,25 @@ namespace christ_a_2
                         break;
 
                     case Enemys.Tank:
+                        FindNewGoto(i, false);
                         break;
 
                     case Enemys.Sniper:
-                        if ((playerPos - enemys[i].pos).Magnitude() <= EnemyConstants.sniperRunRange)
+                        if ((playerPos - enemys[i].pos).ScaledMagnitude(main_game_panel.Size) <= EnemyConstants.sniperRunRange)
                         {
                             FindNewGoto(i, true);
                         }
                         break;
 
                     case Enemys.Scout:
+                        if ((playerPos - enemys[i].pos).ScaledMagnitude(main_game_panel.Size) >= EnemyConstants.scoutTooFarRange)
+                        {
+                            FindNewGoto(i, true);
+                        }
                         break;
 
                     case Enemys.Rowland:
-                        if ((playerPos - enemys[i].pos).Magnitude() >= EnemyConstants.rowlandTooFarRange)
+                        if ((playerPos - enemys[i].pos).ScaledMagnitude(main_game_panel.Size) >= EnemyConstants.rowlandTooFarRange)
                         {
                             FindNewGoto(i, true);
                         }

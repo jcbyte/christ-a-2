@@ -243,5 +243,11 @@
   <ItemGroup>
     <None Include="Resources\outside level.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\level_2Outside.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\enemy_deadBoss.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
