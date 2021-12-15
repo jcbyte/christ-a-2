@@ -57,6 +57,10 @@ namespace christ_a_2
             public const float scoutTooFarRange = 0.2f;
             public const float sniperRunRange = 0.2f;
             public const float rowlandTooFarRange = 0.2f;
+
+            public const float bossRegen = 10; 
+            public const int bossMaxSpawnRate = 4000; // (ms)
+            public const int bossMinSpawnRate = 500; // (ms)
         }
 
         #endregion
@@ -276,8 +280,8 @@ namespace christ_a_2
 
             public Vector2 pos;
             public Weapons weapon;
-            public int health;
-            public int maxHealth;
+            public float health;
+            public float maxHealth;
             public float speed;
 
             public Vector2 gotoPos;
@@ -288,7 +292,7 @@ namespace christ_a_2
             public int bulletsLeft;
             public bool reloading;
 
-            public Enemy(string _id, Enemys _type, Vector2 _pos, Image img, Size size, Weapons _weapon, int _health, float _speed, int _bulletsLeft) 
+            public Enemy(string _id, Enemys _type, Vector2 _pos, Image img, Size size, Weapons _weapon, float _health, float _speed, int _bulletsLeft) 
             {
                 id = _id;
                 type = _type;
@@ -353,14 +357,14 @@ namespace christ_a_2
         {
             public Image img;
             public Vector2 size; // Relative scaled vector2
-            public int health;
+            public float health;
             public float speed;
             public WeaponClass weaponClass;
             public float dropRate;
             public float movementDeviation;
             public float shootChance;
 
-            public EnemyOb(Image _img, Vector2 _size, int _health, float _speed, WeaponClass _weaponClass, float _dropRate, float _movementDeviation, float _shootChance)
+            public EnemyOb(Image _img, Vector2 _size, float _health, float _speed, WeaponClass _weaponClass, float _dropRate, float _movementDeviation, float _shootChance)
             {
                 img = _img;
                 size = _size;
@@ -746,7 +750,7 @@ namespace christ_a_2
         private List<Explosion> explosions = new List<Explosion>();
 
         private Vector2 playerPos = new Vector2(0.5f, 0.5f);
-        private int playerHealth;
+        private float playerHealth;
         private InventoryOb[] inventory = new InventoryOb[3] { new InventoryOb(Weapons.MGL105, 1000, 10), new InventoryOb(Weapons.AK47, 1000, 10), new InventoryOb() };
 
         private System.Windows.Media.MediaPlayer backgroundMusicPlayer = new System.Windows.Media.MediaPlayer();
@@ -790,7 +794,7 @@ namespace christ_a_2
 
             levelsData = new LevelOb[] {
                 new LevelOb(Properties.Resources.level_0Factory, new Dictionary<Enemys, int>[] { 
-                    new Dictionary<Enemys, int> { { Enemys.Regular, 2 }, {Enemys.Tank, 2 }, { Enemys.Sniper, 3 }, { Enemys.Rowland, 1 }, { Enemys.Scout, 1 } },
+                    new Dictionary<Enemys, int> { { Enemys.Regular, 2 }, {Enemys.Scout, 1 }, { Enemys.Rowland, 3 } },
                     //new Dictionary<Enemys, int> { { Enemys.Regular, 4 }, { Enemys.Scout, 2 }, { Enemys.Rowland, 4 } },
                     //new Dictionary<Enemys, int> { { Enemys.Regular, 3 }, { Enemys.Scout, 3 }, { Enemys.Rowland, 3 }, { Enemys.Tank, 1 } },
                 }),
@@ -845,12 +849,12 @@ namespace christ_a_2
 
             enemysData = new Dictionary<Enemys, EnemyOb> {
             //   Enemy                       Img,                                Size,                      Health, Speed, Weapon,              DropRate, MovementDeviation, ShootChance
-                {Enemys.Regular, new EnemyOb(Properties.Resources.enemy_regular, new Vector2(0.04f, 0.06f), 100,    0.10f, WeaponClass.AR,              0.50f,    0.10f,     0.70f ) },
-                {Enemys.Tank,    new EnemyOb(Properties.Resources.enemy_tank,    new Vector2(0.04f, 0.06f), 200,    0.02f, WeaponClass.GrenadeLauncher, 0.50f,    0.00f,     0.50f ) },
-                {Enemys.Scout,   new EnemyOb(Properties.Resources.enemy_scout,   new Vector2(0.04f, 0.06f), 25,     0.20f, WeaponClass.SMG,             0.50f,    0.02f,     0.90f ) },
-                {Enemys.Sniper,  new EnemyOb(Properties.Resources.enemy_sniper,  new Vector2(0.03f, 0.04f), 50,     0.30f, WeaponClass.Marksman,        0.50f,    0.08f,     0.40f ) },
-                {Enemys.Rowland, new EnemyOb(Properties.Resources.enemy_rowland, new Vector2(0.05f, 0.06f), 150,    0.15f, WeaponClass.None,            0.50f,    0.20f,     0.00f ) },
-                {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.15f, 0.06f), 600,    0.00f, WeaponClass.Pistol,          0.50f,    0.00f,     0.00f ) },
+                {Enemys.Regular, new EnemyOb(Properties.Resources.enemy_regular, new Vector2(0.04f, 0.06f), 100.0f, 0.10f, WeaponClass.AR,              0.50f,    0.10f,     0.70f ) },
+                {Enemys.Tank,    new EnemyOb(Properties.Resources.enemy_tank,    new Vector2(0.04f, 0.06f), 200.0f, 0.02f, WeaponClass.GrenadeLauncher, 0.50f,    0.00f,     0.50f ) },
+                {Enemys.Scout,   new EnemyOb(Properties.Resources.enemy_scout,   new Vector2(0.04f, 0.06f), 25.0f,  0.20f, WeaponClass.SMG,             0.50f,    0.02f,     0.90f ) },
+                {Enemys.Sniper,  new EnemyOb(Properties.Resources.enemy_sniper,  new Vector2(0.03f, 0.04f), 50.0f,  0.30f, WeaponClass.Marksman,        0.50f,    0.08f,     0.40f ) },
+                {Enemys.Rowland, new EnemyOb(Properties.Resources.enemy_rowland, new Vector2(0.05f, 0.06f), 150.0f, 0.15f, WeaponClass.None,            0.50f,    0.20f,     0.00f ) },
+                {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.34f, 0.12f), 800.0f, 0.00f, WeaponClass.Pistol,          0.50f,    0.00f,     1.00f ) },
             };
 
             dropsData = new Dictionary<Drops, DropOb> {
@@ -883,7 +887,7 @@ namespace christ_a_2
                 s.Value.panel.Visible = false;
             //LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
 
-            cLevel = 0;
+            cLevel = 3;
             LoadScene(Scenes.Game);
 
             for (int i = 0; i < soundEffects.Length; i++)
@@ -1224,7 +1228,7 @@ namespace christ_a_2
                     Weapons weapon = viableWeapons[GetIntRng(0, viableWeapons.Count)];
 
                     enemys.Add(new Enemy( // Instatiate enemys
-                        cLevel.ToString() + "-" + 0 + enemyi.ToString(),
+                        cLevel.ToString() + "-" + enemyi.ToString(),
                         enemyType.Key,
                         new Vector2(GetFloatRng(0.1f, 0.9f), GetFloatRng(0.1f, 0.9f)),
                         enemysData[enemyType.Key].img,
@@ -1857,6 +1861,9 @@ namespace christ_a_2
             enemys[i].escaping = forced;
         }
 
+        float bossLastSpawn = 0;
+        int enemyi = 0;
+
         private void EnemyAI(int i, float delta)
         {
             if (!enemys[i].escaping)
@@ -1904,7 +1911,7 @@ namespace christ_a_2
                         }
                         break;
 
-                    case Enemys.Boss:
+                    case Enemys.Boss: // Fat
                         break;
                 }
             }
@@ -1944,6 +1951,58 @@ namespace christ_a_2
                 else
                 {
                     EnemyReload(i);
+                }
+            }
+
+            if (enemys[i].type == Enemys.Boss)
+            {
+                if (enemys[i].health < enemys[i].maxHealth)
+                {
+                    enemys[i].health += EnemyConstants.bossRegen * delta;
+                    enemys[i].UpdateHealth();
+                 }
+
+                int spawnRate = (int)(EnemyConstants.bossMinSpawnRate + (float)(EnemyConstants.bossMaxSpawnRate - EnemyConstants.bossMinSpawnRate) * ((float)enemys[i].health / (float)enemys[i].maxHealth));
+
+                if (bossLastSpawn < sw.ElapsedMilliseconds - spawnRate)
+                {
+                    Enemys enemyType = (Enemys)Enum.GetValues(typeof(Enemys)).GetValue(GetIntRng(0, enemysData.Count - 1)); // So cant be another boss
+
+                    WeaponClass enemyWeaponClass = enemysData[enemyType].weaponClass;
+                    List<Weapons> viableWeapons = new List<Weapons>();
+                    foreach (KeyValuePair<Weapons, WeaponOb> weaponData in weaponsData)
+                    {
+                        if (weaponData.Value.weaponClass == enemyWeaponClass)
+                        {
+                            viableWeapons.Add(weaponData.Key);
+                        }
+                    }
+                    Weapons weapon = viableWeapons[GetIntRng(0, viableWeapons.Count)];
+
+                    enemys.Add(new Enemy( // Instatiate enemys
+                        cLevel.ToString() + "-boss-" + enemyi.ToString(),
+                        enemyType,
+                        enemys[i].pos,
+                        enemysData[enemyType].img,
+                        SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(enemysData[enemyType].size, main_game_panel.Size), main_game_panel.Size)),
+                        weapon,
+                        enemysData[enemyType].health,
+                        enemysData[enemyType].speed,
+                        weaponsData[weapon].magCapacity
+                    ));
+
+                    int j = enemys.Count - 1;
+                    main_game_panel.Controls.Add(enemys[j].pb);
+                    enemys[j].UpdatePos(main_game_panel.Size);
+                    enemys[j].pb.BringToFront();
+                    main_game_panel.Controls.Add(enemys[j].healthPanel);
+                    enemys[j].UpdateHealth();
+                    enemys[j].healthPanel.BringToFront();
+
+                    InitialiseAI(j);
+                    enemyi++;
+
+                    bossLastSpawn = sw.ElapsedMilliseconds;
                 }
             }
         }
@@ -2023,7 +2082,7 @@ namespace christ_a_2
         private void UpdatePlayerHealth()
         {
             game_playerHealth_healthBar_pictureBox.Size = SystemPointToSystemSize(FromRelativeV2(new Vector2((float)playerHealth / Constants.maxPlayerHealth, 1), game_playerHealth_panel.Size));
-            game_playerHealth_health_label.Text = playerHealth.ToString() + "/" + Constants.maxPlayerHealth.ToString();
+            game_playerHealth_health_label.Text = ((int)playerHealth).ToString() + "/" + Constants.maxPlayerHealth.ToString();
         }
 
         private void CreateBullet(Vector2 pos, float posLimit, Vector2 dir, float speed, int damage, int penetration, Image img, Size size, Weapons fromWeapon, bool playerBullet)

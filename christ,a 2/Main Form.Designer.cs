@@ -343,7 +343,7 @@
             this.main_FPSCounter_Label.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.main_FPSCounter_Label.Location = new System.Drawing.Point(20, 20);
             this.main_FPSCounter_Label.Name = "main_FPSCounter_Label";
-            this.main_FPSCounter_Label.Size = new System.Drawing.Size(80, 20);
+            this.main_FPSCounter_Label.Size = new System.Drawing.Size(100, 20);
             this.main_FPSCounter_Label.TabIndex = 4;
             this.main_FPSCounter_Label.Text = "FPS: 0";
             // 
