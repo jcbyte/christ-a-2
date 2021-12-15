@@ -1251,7 +1251,7 @@ namespace christ_a_2
                     movement.x += 1;
 
                 float speedWeightModifier = (float)1 / weaponsData[inventory[0].weapon].weight;
-                playerPos += movement * Constants.playerSpeed * speedWeightModifier * delta; // Player Movement
+                playerPos += FromScaledRelativeV2ToRealtiveV2(movement * Constants.playerSpeed * speedWeightModifier * delta, main_game_panel.Size); // Player Movement
                 game_player_pictureBox.Location = FromRelativeV2Center(playerPos, game_player_pictureBox.Size, main_game_panel.Size);
 
                 #endregion
@@ -1832,7 +1832,7 @@ namespace christ_a_2
 
                 if (toGoto.ScaledMagnitude(main_game_panel.Size) >= EnemyConstants.closeEnough)
                 {
-                    enemys[i].pos += toGoto.Normalise() * enemysData[enemys[i].type].speed * delta;
+                    enemys[i].pos += FromScaledRelativeV2ToRealtiveV2(toGoto.Normalise() * enemysData[enemys[i].type].speed * delta, main_game_panel.Size);
                     enemys[i].UpdatePos(main_game_panel.Size);
                 }
                 else
