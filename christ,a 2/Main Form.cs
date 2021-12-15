@@ -44,6 +44,8 @@ namespace christ_a_2
             public const float explosionSpeed = 0.6f;
 
             public const int concurrentSoundEffects = 10;
+
+            public const int loadCutsceneCheck = 50;
         }
 
         #endregion
@@ -199,14 +201,6 @@ namespace christ_a_2
                 panel = _panel;
                 onLoad = _onLoad;
             }
-        }
-
-        private void LoadScene(Scenes s, object data = null) // Close current scene and initialise new scene with optional data
-        {
-            scenesData[cScene].panel.Visible = false;
-            cScene = s;
-            scenesData[cScene].panel.Visible = true;
-            if (scenesData[cScene].onLoad != null) scenesData[cScene].onLoad(data);
         }
 
         #endregion
@@ -747,8 +741,8 @@ namespace christ_a_2
             levelsData = new LevelOb[] {
                 new LevelOb(Properties.Resources.level_0Factory, new Dictionary<Enemys, int>[] { 
                     new Dictionary<Enemys, int> { { Enemys.Regular, 2 }, { Enemys.Scout, 2 }, { Enemys.Rowland, 4 } },
-                    new Dictionary<Enemys, int> { { Enemys.Regular, 4 }, { Enemys.Scout, 2 }, { Enemys.Rowland, 4 } },
-                    new Dictionary<Enemys, int> { { Enemys.Regular, 3 }, { Enemys.Scout, 3 }, { Enemys.Rowland, 3 }, { Enemys.Tank, 1 } },
+                    //new Dictionary<Enemys, int> { { Enemys.Regular, 4 }, { Enemys.Scout, 2 }, { Enemys.Rowland, 4 } },
+                    //new Dictionary<Enemys, int> { { Enemys.Regular, 3 }, { Enemys.Scout, 3 }, { Enemys.Rowland, 3 }, { Enemys.Tank, 1 } },
                 }),
                 new LevelOb(Properties.Resources.level_1FactoryOutside, new Dictionary<Enemys, int>[] {
                     new Dictionary<Enemys, int> { {Enemys.Regular, 2 } },
@@ -851,6 +845,14 @@ namespace christ_a_2
         #endregion
 
         #region "Misc"
+
+        private void LoadScene(Scenes s, object data = null) // Close current scene and initialise new scene with optional data
+        {
+            scenesData[cScene].panel.Visible = false;
+            cScene = s;
+            scenesData[cScene].panel.Visible = true;
+            if (scenesData[cScene].onLoad != null) scenesData[cScene].onLoad(data);
+        }
 
         private Vector2 GetMousePos(Size formSize)
         {
@@ -1032,9 +1034,21 @@ namespace christ_a_2
 
         #region "Cutscene"
 
+        private bool playingCutscene = false;
+        private async void LoadCutsceneAfterCutscene(Cutscenes cutscene)
+        {
+            while(playingCutscene)
+            {
+                await Task.Delay(Constants.loadCutsceneCheck);
+            }
+
+            LoadScene(Scenes.Cutscene, cutscene);
+        }
+
         private async void CutsceneOnload(object data)
         {
             Cutscenes cutscene = (Cutscenes)data;
+            playingCutscene = true;
             memoryLeakOn = false;
 
             string url = cutscenesData[cutscene];
@@ -1043,7 +1057,7 @@ namespace christ_a_2
             backgroundMusicPlayer.Stop();
             if (cutscene == Cutscenes.OpeningCredits) LoadBackgroundMusic("FullResources\\Music\\menu.mp3");
 
-            double duration = 4;// (int)(new WMPLib.WindowsMediaPlayer()).newMedia(url).duration;
+            double duration = (int)(new WMPLib.WindowsMediaPlayer()).newMedia(url).duration;
             cutscene_media_windowsMediaPlayer.uiMode = "none";
             cutscene_media_windowsMediaPlayer.URL = url;
             await Task.Delay((int)(duration * 1000));
@@ -1059,7 +1073,7 @@ namespace christ_a_2
                     break;
 
                 case Cutscenes.AfterBoss:
-                    LoadScene(Scenes.Cutscene, Cutscenes.Credits); // Error with this
+                    LoadCutsceneAfterCutscene(Cutscenes.Credits);
                     break;
 
                 case Cutscenes.Credits:
@@ -1074,6 +1088,8 @@ namespace christ_a_2
             cutscene_media_windowsMediaPlayer.URL = "";
 
             if (cScene != Scenes.Menu) memoryLeakOn = true;
+
+            playingCutscene = false;
         }
 
         #endregion
