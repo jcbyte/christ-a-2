@@ -239,6 +239,7 @@ namespace christ_a_2
             OpeningCredits,
             BeforeLevel,
             AfterBoss,
+            BeforeCredits,
             Credits,
             Loss,
         }
@@ -772,7 +773,8 @@ namespace christ_a_2
                 {Cutscenes.BeforeLevel,    "FullResources\\Cutscenes\\beforeLevel{level}.mp4" },
                 {Cutscenes.AfterBoss,      "FullResources\\Cutscenes\\afterBoss.mp4" },
                 {Cutscenes.Credits,        "FullResources\\Cutscenes\\credits.mp4" },
-                {Cutscenes.Loss,            "FullResources\\Cutscenes\\loss.mp4" }
+                {Cutscenes.BeforeCredits,  "FullResources\\Cutscenes\\beforeCredits.mp4" },
+                {Cutscenes.Loss,           "FullResources\\Cutscenes\\loss.mp4" }
             };
 
             levelsData = new LevelOb[] {
@@ -1096,7 +1098,7 @@ namespace christ_a_2
             backgroundMusicPlayer.Stop();
             if (cutscene == Cutscenes.OpeningCredits) LoadBackgroundMusic("FullResources\\Music\\menu.mp3");
 
-            double duration = (int)(new WMPLib.WindowsMediaPlayer()).newMedia(url).duration;
+            double duration = 4;// (int)(new WMPLib.WindowsMediaPlayer()).newMedia(url).duration;
             cutscene_media_windowsMediaPlayer.uiMode = "none";
             cutscene_media_windowsMediaPlayer.URL = url;
             await Task.Delay((int)(duration * 1000));
@@ -1112,6 +1114,10 @@ namespace christ_a_2
                     break;
 
                 case Cutscenes.AfterBoss:
+                    LoadCutsceneAfterCutscene(Cutscenes.BeforeCredits);
+                    break;
+
+                case Cutscenes.BeforeCredits:
                     LoadCutsceneAfterCutscene(Cutscenes.Credits);
                     break;
 
