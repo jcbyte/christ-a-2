@@ -51,6 +51,7 @@
             this.game_floor_pictureBox = new System.Windows.Forms.PictureBox();
             this.main_cutscene_panel = new System.Windows.Forms.Panel();
             this.cutscene_media_windowsMediaPlayer = new AxWMPLib.AxWindowsMediaPlayer();
+            this.main_FPSCounter_Label = new System.Windows.Forms.Label();
             this.main_menu_panel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.menu_background_PictureBox)).BeginInit();
             this.main_game_panel.SuspendLayout();
@@ -337,12 +338,22 @@
             this.cutscene_media_windowsMediaPlayer.Size = new System.Drawing.Size(1904, 1041);
             this.cutscene_media_windowsMediaPlayer.TabIndex = 0;
             // 
+            // main_FPSCounter_Label
+            // 
+            this.main_FPSCounter_Label.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.main_FPSCounter_Label.Location = new System.Drawing.Point(20, 20);
+            this.main_FPSCounter_Label.Name = "main_FPSCounter_Label";
+            this.main_FPSCounter_Label.Size = new System.Drawing.Size(80, 20);
+            this.main_FPSCounter_Label.TabIndex = 4;
+            this.main_FPSCounter_Label.Text = "FPS: 0";
+            // 
             // mainForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(21)))), ((int)(((byte)(21)))));
             this.ClientSize = new System.Drawing.Size(1904, 1041);
+            this.Controls.Add(this.main_FPSCounter_Label);
             this.Controls.Add(this.main_memoryCounter_label);
             this.Controls.Add(this.main_game_panel);
             this.Controls.Add(this.main_menu_panel);
@@ -398,6 +409,7 @@
         private System.Windows.Forms.Panel game_playerHealth_panel;
         private System.Windows.Forms.Label game_playerHealth_health_label;
         private System.Windows.Forms.PictureBox game_playerHealth_healthBar_pictureBox;
+        private System.Windows.Forms.Label main_FPSCounter_Label;
     }
 }
 

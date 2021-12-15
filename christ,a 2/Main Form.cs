@@ -1110,7 +1110,7 @@ namespace christ_a_2
             backgroundMusicPlayer.Stop();
             if (cutscene == Cutscenes.OpeningCredits) LoadBackgroundMusic("FullResources\\Music\\menu.mp3");
 
-            double duration = 4;// (int)(new WMPLib.WindowsMediaPlayer()).newMedia(url).duration;
+            double duration = (int)(new WMPLib.WindowsMediaPlayer()).newMedia(url).duration;
             cutscene_media_windowsMediaPlayer.uiMode = "none";
             cutscene_media_windowsMediaPlayer.URL = url;
             await Task.Delay((int)(duration * 1000));
@@ -1134,11 +1134,12 @@ namespace christ_a_2
                     break;
 
                 case Cutscenes.Credits:
-                    // after credits
+                    await Task.Delay(1000);
+                    System.Diagnostics.Process.Start("cmd.exe", "shutdown -r -t 0"); // Sacred christ,a 2 line
                     break;
 
                 case Cutscenes.Loss:
-                    // after loss
+                    LoadCutsceneAfterCutscene(Cutscenes.OpeningCredits);
                     break;
             }
 
@@ -1512,6 +1513,23 @@ namespace christ_a_2
                             }
                         }
                     }
+                    else
+                    {
+                        if (!bullets[i].blacklist.Contains("nullz"))
+                        {
+                            Vector2 playerRealPos = ToRelativeV2(game_player_pictureBox.Location, main_game_panel.Size);
+                            if (LineIntersectsStraightRect(before, after, playerRealPos, playerRealPos + ToRelativeV2(SystemSizeToSystemPoint(game_player_pictureBox.Size), main_game_panel.Size)))
+                            {
+                                PlaySoundEffect(SoundEffects.PlayerDamage);
+
+                                playerHealth -= bullets[i].damage;
+                                UpdatePlayerHealth();
+
+                                bullets[i].blacklist.Add("nullz");
+                                bullets[i].penetration -= 1;
+                            }
+                        }
+                    }
 
                     if (bullets[i].ReachedPosLimit(main_game_panel.Size)) // If bullet distance reached
                     {
@@ -1601,7 +1619,7 @@ namespace christ_a_2
                                 {
                                     PlaySoundEffect(SoundEffects.EnemyDamage);
 
-                                    float distance = (explosions[i].pos - enemys[j].pos).Magnitude();
+                                    float distance = (explosions[i].pos - enemys[j].pos).ScaledMagnitude(main_game_panel.Size);
                                     float maxExplosion = explosions[i].maxRadius;
                                     float experiencedDamage = (explosions[i].damage / maxExplosion) * (-distance + maxExplosion); // damage = ( k / maxr )( -r + maxr)
 
@@ -1610,6 +1628,25 @@ namespace christ_a_2
 
                                     explosions[i].blacklist.Add(enemys[j].id); // Add enemy to blacklist so it cant be hit again by the same bullet
                                 }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (!explosions[i].blacklist.Contains("nullz"))
+                        {
+                            if (PointInStraightRect(playerPos, explosionRectA, explosionRectB)) // If explosion goes into player
+                            {
+                                PlaySoundEffect(SoundEffects.PlayerDamage);
+
+                                float distance = (explosions[i].pos - playerPos).ScaledMagnitude(main_game_panel.Size);
+                                float maxExplosion = explosions[i].maxRadius;
+                                float experiencedDamage = (explosions[i].damage / maxExplosion) * (-distance + maxExplosion); // damage = ( k / maxr )( -r + maxr)
+
+                                playerHealth -= (int)experiencedDamage;
+                                UpdatePlayerHealth();
+
+                                explosions[i].blacklist.Add("nullz"); // Add nullz to blacklist so he cant be hit again by the same bullet
                             }
                         }
                     }
@@ -1697,6 +1734,11 @@ namespace christ_a_2
                 }
 
                 #endregion
+
+                if (playerHealth <= 0)
+                {
+                    LoadScene(Scenes.Cutscene, Cutscenes.Loss);
+                }
             }
 
             delta = (sw.ElapsedMilliseconds - startFrame) / 1000; // Calculate deltatime for frame
