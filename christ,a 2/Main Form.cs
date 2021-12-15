@@ -885,10 +885,10 @@ namespace christ_a_2
 
             foreach (KeyValuePair<Scenes, SceneOb> s in scenesData)
                 s.Value.panel.Visible = false;
-            //LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
+            LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
 
-            cLevel = 3;
-            LoadScene(Scenes.Game);
+            //cLevel = 3;
+            //LoadScene(Scenes.Game);
 
             for (int i = 0; i < soundEffects.Length; i++)
                 soundEffects[i] = new SoundEffectPlayer();
