@@ -26,7 +26,7 @@ namespace christ_a_2
             public const int memoryIncrease = 1024 * 1024 * 1;
 
             public const float playerSpeed = 0.20f;
-            public const int maxPlayerHealth = 500;
+            public const int maxPlayerHealth = 250;
             public static readonly Vector2 playerSize = new Vector2(0.04f, 0.06f); // Scaled relative Vector2
 
             public const float playerRespawnHealthPercent = 0.80f;
@@ -41,7 +41,7 @@ namespace christ_a_2
 
             public const float ammoDropChance = 0.35f; // Ammo chance + health chance = 1 
             public const float pickupBoxRange = 0.02f; // Relative
-            public const int healthPickupHealth = 80;
+            public const int healthPickupHealth = 50;
             public static readonly Vector2 weaponDropSize = new Vector2(0.08f, 0.06f);
             public const int weaponPickupDelay = 200; // (ms)
 
@@ -855,11 +855,11 @@ namespace christ_a_2
                     new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(2, 0.6f, 0.8f, 1.0f, 1.0f, 1.0f) }, { Enemys.Tank,    new WaveOb(1, 0.5f, 0.8f, 1.0f, 1.0f, 1.0f) }, { Enemys.Sniper, new WaveOb(1, 0.2f, 1.0f, 1.0f, 0.8f, 1.0f) }, { Enemys.Rowland, new WaveOb(1, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f) }, },
                 }),
                 new LevelOb(Properties.Resources.level_2Outside, new Dictionary<Enemys, WaveOb>[] {
-                    new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(1) }, { Enemys.Rowland, new WaveOb(1)} },
-                    new Dictionary<Enemys, WaveOb> { { Enemys.Scout, new WaveOb(3) }, { Enemys.Rowland, new WaveOb(1) } },
-                    new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(2) }, { Enemys.Scout, new WaveOb(2) }, { Enemys.Sniper, new WaveOb(1) } },
-                    new Dictionary<Enemys, WaveOb> { { Enemys.Tank, new WaveOb(2) } },
-                    new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(1) }, { Enemys.Scout, new WaveOb(1) }, { Enemys.Tank, new WaveOb(1) },  { Enemys.Sniper, new WaveOb(1) }, { Enemys.Rowland, new WaveOb(1) }, },
+                    new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(2, 1.0f, 0.8f, 1.0f, 1.0f, 0.8f) }, { Enemys.Rowland, new WaveOb(2, 1.0f, 1.0f, 0.5f, 1.0f, 1.0f) } },
+                    new Dictionary<Enemys, WaveOb> { { Enemys.Scout,   new WaveOb(4, 1.0f, 1.0f, 1.0f, 1.0f, 1.1f) } },
+                    new Dictionary<Enemys, WaveOb> { { Enemys.Sniper,  new WaveOb(3, 0.5f, 0.8f, 0.1f, 1.0f, 0.5f) }, { Enemys.Rowland, new WaveOb(2, 1.0f, 1.0f, 2.0f, 1.0f, 1.0f) } },
+                    new Dictionary<Enemys, WaveOb> { { Enemys.Tank,    new WaveOb(3, 0.2f, 1.0f, 1.0f, 1.0f, 0.6f) }, { Enemys.Rowland, new WaveOb(1, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f) } },
+                    new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(2, 1.0f, 0.8f, 1.0f, 1.0f, 0.8f) }, { Enemys.Tank,    new WaveOb(1, 0.5f, 0.8f, 1.0f, 1.0f, 1.0f) }, { Enemys.Sniper, new WaveOb(1, 0.2f, 1.0f, 1.0f, 0.9f, 1.0f) } },
                 }),
                 new LevelOb(Properties.Resources.level_3Boss, new Dictionary<Enemys, WaveOb>[] {
                     new Dictionary<Enemys, WaveOb> { {Enemys.Boss, new WaveOb(1, 1.0f) } },
