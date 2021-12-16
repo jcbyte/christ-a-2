@@ -953,8 +953,8 @@ namespace christ_a_2
                 s.Value.panel.Visible = false;
             LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
 
-            //cLevel = 0;
-            //LoadScene(Scenes.Game);
+            //cLevel = 3;
+            //LoadScene(Scenes.Cutscene, Cutscenes.BeforeLevel);
 
             for (int i = 0; i < soundEffects.Length; i++)
                 soundEffects[i] = new SoundEffectPlayer();
@@ -1164,6 +1164,7 @@ namespace christ_a_2
         #region "Cutscene"
 
         private bool playingCutscene = false;
+
         private async void LoadCutsceneAfterCutscene(Cutscenes cutscene)
         {
             while (playingCutscene)
@@ -1174,7 +1175,18 @@ namespace christ_a_2
             LoadScene(Scenes.Cutscene, cutscene);
         }
 
-        bool escapeNewClick = true;
+        private bool shouldBePlayingCutscene = false;
+        private int cutscenesPlaying = 0;
+
+        private async void WaitForCutscene(int delay)
+        {
+            await Task.Delay(delay);
+            cutscenesPlaying--;
+
+            if (cutscenesPlaying == 0) shouldBePlayingCutscene = false;
+        }
+
+        private bool escapeNewClick = true;
 
         private async void CutsceneOnload(object data)
         {
@@ -1192,16 +1204,17 @@ namespace christ_a_2
             cutscene_media_windowsMediaPlayer.uiMode = "none";
             cutscene_media_windowsMediaPlayer.URL = url;
 
+            shouldBePlayingCutscene = true;
+            cutscenesPlaying++;
 
-            int delayAmount = (int)((float)(duration * 1000) / Constants.skipCutsceneCheck);
-            for (int i = 0; i < delayAmount; i++)
+            WaitForCutscene((int)(duration * 1000));
+            while (shouldBePlayingCutscene)
             {
                 if (Keyboard.IsKeyDown(Key.Escape))
                 {
                     if (escapeNewClick)
                     {
-                        escapeNewClick = false;
-                        break;
+                        shouldBePlayingCutscene = false;
                     }
                 }
                 else
@@ -1249,6 +1262,11 @@ namespace christ_a_2
 
         private void cutscene_media_windowsMediaPlayer_PlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e)
         {
+            if (e.newState == 1)
+            {
+
+            }
+
             if (e.newState == 3) // If playing
             {
                 cutscene_media_windowsMediaPlayer.fullScreen = true;
