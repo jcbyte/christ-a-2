@@ -25,8 +25,8 @@ namespace christ_a_2
             public const int memoryIncreaseRate = 50;
             public const int memoryIncrease = 1024 * 1024 * 1;
 
-            public const float playerSpeed = 0.15f;
-            public const int maxPlayerHealth = 250;
+            public const float playerSpeed = 0.20f;
+            public const int maxPlayerHealth = 500;
             public static readonly Vector2 playerSize = new Vector2(0.04f, 0.06f); // Scaled relative Vector2
 
             public const float playerRespawnHealthPercent = 0.80f;
@@ -39,9 +39,9 @@ namespace christ_a_2
 
             public const int enemyHealthBarThickness = 6; // (px)
 
-            public const float ammoDropChance = 0.50f; // Ammo chance + health chance = 1 
+            public const float ammoDropChance = 0.35f; // Ammo chance + health chance = 1 
             public const float pickupBoxRange = 0.02f; // Relative
-            public const int healthPickupHealth = 20;
+            public const int healthPickupHealth = 80;
             public static readonly Vector2 weaponDropSize = new Vector2(0.08f, 0.06f);
             public const int weaponPickupDelay = 200; // (ms)
 
@@ -62,9 +62,9 @@ namespace christ_a_2
             public const float sniperRunRange = 0.2f;
             public const float rowlandTooFarRange = 0.2f;
 
-            public const float bossRegen = 1; 
-            public const int bossMaxSpawnRate = 512000; // (ms)
-            public const int bossMinSpawnRate = 1500; // (ms)
+            public const float bossRegen = 0.5f; 
+            public const int bossMaxSpawnRate = 5000; // (ms)
+            public const int bossMinSpawnRate = 1000; // (ms)
         }
 
         #endregion
@@ -755,7 +755,7 @@ namespace christ_a_2
 
         private Vector2 playerPos = new Vector2(0.5f, 0.5f);
         private float playerHealth;
-        private InventoryOb[] inventory = new InventoryOb[3] { new InventoryOb(Weapons.MGL105, 1000, 10), new InventoryOb(Weapons.AK47, 1000, 10), new InventoryOb() };
+        private InventoryOb[] inventory = new InventoryOb[3] { new InventoryOb(Weapons.Glock19, 15, 45), new InventoryOb(), new InventoryOb() };
 
         private System.Windows.Media.MediaPlayer backgroundMusicPlayer = new System.Windows.Media.MediaPlayer();
         private SoundEffectPlayer[] soundEffects = new SoundEffectPlayer[Constants.concurrentSoundEffects];
@@ -798,16 +798,25 @@ namespace christ_a_2
 
             levelsData = new LevelOb[] {
                 new LevelOb(Properties.Resources.level_0Factory, new Dictionary<Enemys, int>[] { 
-                    new Dictionary<Enemys, int> { { Enemys.Sniper, 1 } }
-                    //new Dictionary<Enemys, int> { { Enemys.Regular, 2 }, {Enemys.Scout, 1 }, { Enemys.Rowland, 3 } },
-                    //new Dictionary<Enemys, int> { { Enemys.Regular, 4 }, { Enemys.Scout, 2 }, { Enemys.Rowland, 4 } },
-                    //new Dictionary<Enemys, int> { { Enemys.Regular, 3 }, { Enemys.Scout, 3 }, { Enemys.Rowland, 3 }, { Enemys.Tank, 1 } },
+                    new Dictionary<Enemys, int> { { Enemys.Regular, 1 }, { Enemys.Rowland, 1 } },
+                    new Dictionary<Enemys, int> { {Enemys.Scout, 4 }, { Enemys.Rowland, 1 } },
+                    new Dictionary<Enemys, int> { { Enemys.Regular, 2 }, { Enemys.Scout, 2 }, { Enemys.Sniper, 1 } },
+                    new Dictionary<Enemys, int> { { Enemys.Tank, 2 } },
+                    new Dictionary<Enemys, int> { { Enemys.Regular, 1 }, { Enemys.Scout, 1 }, { Enemys.Tank, 1 },  { Enemys.Sniper, 2 }, { Enemys.Rowland, 1 }, },
                 }),
                 new LevelOb(Properties.Resources.level_1FactoryOutside, new Dictionary<Enemys, int>[] {
-                    new Dictionary<Enemys, int> { {Enemys.Regular, 2 } },
+                    new Dictionary<Enemys, int> { { Enemys.Regular, 1 }, { Enemys.Rowland, 1 } },
+                    new Dictionary<Enemys, int> { {Enemys.Scout, 4 }, { Enemys.Rowland, 1 } },
+                    new Dictionary<Enemys, int> { { Enemys.Regular, 2 }, { Enemys.Scout, 2 }, { Enemys.Sniper, 1 } },
+                    new Dictionary<Enemys, int> { { Enemys.Tank, 2 } },
+                    new Dictionary<Enemys, int> { { Enemys.Regular, 1 }, { Enemys.Scout, 1 }, { Enemys.Tank, 1 },  { Enemys.Sniper, 2 }, { Enemys.Rowland, 1 }, },
                 }),
                 new LevelOb(Properties.Resources.level_2Outside, new Dictionary<Enemys, int>[] {
-                    new Dictionary<Enemys, int> { {Enemys.Regular, 2 } },
+                    new Dictionary<Enemys, int> { { Enemys.Regular, 1 }, { Enemys.Rowland, 1 } },
+                    new Dictionary<Enemys, int> { {Enemys.Scout, 4 }, { Enemys.Rowland, 1 } },
+                    new Dictionary<Enemys, int> { { Enemys.Regular, 2 }, { Enemys.Scout, 2 }, { Enemys.Sniper, 1 } },
+                    new Dictionary<Enemys, int> { { Enemys.Tank, 2 } },
+                    new Dictionary<Enemys, int> { { Enemys.Regular, 1 }, { Enemys.Scout, 1 }, { Enemys.Tank, 1 },  { Enemys.Sniper, 2 }, { Enemys.Rowland, 1 }, },
                 }),
                 new LevelOb(Properties.Resources.level_3Boss, new Dictionary<Enemys, int>[] {
                     new Dictionary<Enemys, int> { {Enemys.Boss, 1 } },
@@ -831,35 +840,35 @@ namespace christ_a_2
             weaponsData = new Dictionary<Weapons, WeaponOb> {
                 {Weapons.None, new WeaponOb("None", WeaponClass.None, Properties.Resources.weapon_none, Properties.Resources.bullet_other, 0, "None", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) },
             //  Weapon,                            Name,           Class,                       Img,                                   BulletImg,                           BulletSize, Country,          Damage, Weight, Velocity, Firerate, Penetration Reload, MagCapacity, MaxAmmoMultiplier, Accuracy, Recoil, MaxDistance, PushBack, ShotgunShots, ShotgunSpread, ExplosionRadius, ExplosionDamage
-                {Weapons.Glock19,     new WeaponOb("Glock-19",     WeaponClass.Pistol,          Properties.Resources.weapon_glock19,   Properties.Resources.bullet_pistol,  0.02f,      "Austria",        10,     1.00f,  0.20f,    0.50f,    1,          800,    15,          3,                 0.00f,    0.00f,  0.50f) },
-                {Weapons.FiveSeven,   new WeaponOb("Five SeveN",   WeaponClass.Pistol,          Properties.Resources.weapon_fiveseven, Properties.Resources.bullet_pistol,  0.01f,      "Belgium",        10,     1.00f,  0.50f,    1.00f,    1,          500,    20,          3,                 0.00f,    0.00f,  1.00f) },
-                {Weapons.DesertEagle, new WeaponOb("Desert Eagle", WeaponClass.Pistol,          Properties.Resources.weapon_deagle,    Properties.Resources.bullet_pistol,  0.01f,      "USA",            10,     1.00f,  0.50f,    1.00f,    1,          500,    7,           2,                 0.00f,    0.00f,  1.00f) },
-                {Weapons.Galil,       new WeaponOb("Galil",        WeaponClass.AR,              Properties.Resources.weapon_galil,     Properties.Resources.bullet_other,   0.01f,      "Israel",         10,     1.00f,  0.50f,    1.00f,    1,          500,    35,          6,                 0.00f,    0.00f,  1.00f) },
-                {Weapons.AMD65,       new WeaponOb("AMD-65",       WeaponClass.AR,              Properties.Resources.weapon_amd65,     Properties.Resources.bullet_other,   0.01f,      "Hungary",        10,     1.00f,  0.50f,    1.00f,    1,          500,    30,          6,                 0.00f,    0.00f,  1.00f) },
-                {Weapons.AEK971,      new WeaponOb("AEK-971",      WeaponClass.AR,              Properties.Resources.weapon_aek971,    Properties.Resources.bullet_other,   0.01f,      "Russia",         10,     1.00f,  0.50f,    1.00f,    1,          500,    30,          6,                 0.00f,    0.00f,  1.00f) },
-                {Weapons.AK47,        new WeaponOb("AK-47",        WeaponClass.AR,              Properties.Resources.weapon_ak47,      Properties.Resources.bullet_other,   0.02f,      "Russia",         10,     1.00f,  0.50f,    4.00f,    2,          500,    30,          6,                 0.05f,    0.02f,  0.75f) },
-                {Weapons.M107,        new WeaponOb("M107",         WeaponClass.Marksman,        Properties.Resources.weapon_m107,      Properties.Resources.bullet_other,   0.01f,      "USA",            10,     1.00f,  0.50f,    1.00f,    1,          500,    1,           10,                0.00f,    0.00f,  1.00f) },
-                {Weapons.L115A3,      new WeaponOb("L115A3",       WeaponClass.Marksman,        Properties.Resources.weapon_l115a3,    Properties.Resources.bullet_other,   0.01f,      "United Kingdom", 10,     1.00f,  0.50f,    1.00f,    1,          500,    2,           5,                 0.00f,    0.00f,  1.00f) },
-                {Weapons.SCAR,        new WeaponOb("SCAR SSR",     WeaponClass.Marksman,        Properties.Resources.weapon_scar,      Properties.Resources.bullet_other,   0.01f,      "Belgium",        10,     1.00f,  0.50f,    1.00f,    1,          500,    10,          2,                 0.00f,    0.00f,  1.00f) },
-                {Weapons.UMP,         new WeaponOb("UMP",          WeaponClass.SMG,             Properties.Resources.weapon_ump,       Properties.Resources.bullet_other,   0.01f,      "Germany",        10,     1.00f,  0.50f,    1.00f,    1,          500,    25,          10,                0.00f,    0.00f,  1.00f) },
-                {Weapons.MAC10,       new WeaponOb("MAC-10",       WeaponClass.SMG,             Properties.Resources.weapon_mac10,     Properties.Resources.bullet_other,   0.01f,      "USA",            10,     1.00f,  0.50f,    1.00f,    1,          500,    30,          10,                0.00f,    0.00f,  1.00f) },
-                {Weapons.Uzi,         new WeaponOb("Uzi",          WeaponClass.SMG,             Properties.Resources.weapon_uzi,       Properties.Resources.bullet_other,   0.01f,      "Israel",         10,     1.00f,  0.50f,    1.00f,    1,          500,    20,          10,                0.00f,    0.00f,  1.00f) },
-                {Weapons.M249,        new WeaponOb("M249",         WeaponClass.LMG,             Properties.Resources.weapon_m249,      Properties.Resources.bullet_other,   0.01f,      "USA",            10,     1.00f,  0.50f,    1.00f,    1,          500,    30,          15,                0.00f,    0.00f,  1.00f) },
-                {Weapons.M2,          new WeaponOb("M2",           WeaponClass.HMG,             Properties.Resources.weapon_m2,        Properties.Resources.bullet_other,   0.01f,      "USA",            10,     1.00f,  0.50f,    1.00f,    1,          500,    100,         4,                 0.00f,    0.00f,  1.00f) },
-                {Weapons.FP6,         new WeaponOb("FP6",          WeaponClass.Shotgun,         Properties.Resources.weapon_fp6,       Properties.Resources.bullet_shotgun, 0.01f,      "Germany",        10,     1.00f,  0.50f,    1.00f,    1,          500,    6,           2,                 0.00f,    0.00f,  1.00f,       0.00f,    3,            10) },
-                {Weapons.M1014,       new WeaponOb("M1014",        WeaponClass.Shotgun,         Properties.Resources.weapon_m1014,     Properties.Resources.bullet_shotgun, 0.04f,      "Italy",          10,     1.00f,  0.40f,    1.00f,    1,          500,    8,           3,                 0.00f,    0.00f,  0.30f,       0.00f,    5,            20) },
-                {Weapons.MGL105,      new WeaponOb("MGL-105",      WeaponClass.GrenadeLauncher, Properties.Resources.weapon_mgl105,    Properties.Resources.bullet_grenade, 0.01f,      "South Africa",   0,      3.00f,  0.50f,    1.00f,    1000,       500,    6,           1,                 0.00f,    0.00f,  0.50f,       0.00f,    0,            0,             0.40f,           80) },
-                {Weapons.RPG7,        new WeaponOb("RPG-7",        WeaponClass.RPG,             Properties.Resources.weapon_rpg7,      Properties.Resources.bullet_rpg,     0.01f,      "Russia",         0,      2.00f,  0.50f,    1.00f,    1,          500,    1,           4,                 0.00f,    0.00f,  1.00f,       0.00f,    0,            0,             0.40f,           40) },
+	            {Weapons.Glock19,     new WeaponOb("Glock-19",     WeaponClass.Pistol,          Properties.Resources.weapon_glock19,   Properties.Resources.bullet_pistol,  0.02f,      "Austria",        10,     2.00f,  0.20f,    1.00f,    1,          500,    15,          3,                 0.02f,    0.00f,  0.50f) },
+                {Weapons.FiveSeven,   new WeaponOb("Five SeveN",   WeaponClass.Pistol,          Properties.Resources.weapon_fiveseven, Properties.Resources.bullet_pistol,  0.02f,      "Belgium",        10,     2.00f,  0.20f,    1.00f,    1,          500,    20,          3,                 0.02f,    0.00f,  0.50f) },
+                {Weapons.DesertEagle, new WeaponOb("Desert Eagle", WeaponClass.Pistol,          Properties.Resources.weapon_deagle,    Properties.Resources.bullet_pistol,  0.03f,      "USA",            60,     2.00f,  0.20f,    1.00f,    1,          500,    7,           2,                 0.01f,    0.00f,  1.00f) },
+                {Weapons.Galil,       new WeaponOb("Galil",        WeaponClass.AR,              Properties.Resources.weapon_galil,     Properties.Resources.bullet_other,   0.02f,      "Israel",         30,     2.00f,  0.50f,    3.00f,    1,          700,    35,          6,                 0.10f,    0.02f,  0.75f) },
+                {Weapons.AMD65,       new WeaponOb("AMD-65",       WeaponClass.AR,              Properties.Resources.weapon_amd65,     Properties.Resources.bullet_other,   0.02f,      "Hungary",        30,     2.00f,  0.50f,    3.00f,    1,          700,    30,          6,                 0.10f,    0.02f,  0.75f) },
+                {Weapons.AEK971,      new WeaponOb("AEK-971",      WeaponClass.AR,              Properties.Resources.weapon_aek971,    Properties.Resources.bullet_other,   0.02f,      "Russia",         30,     2.00f,  0.50f,    3.00f,    1,          700,    30,          6,                 0.10f,    0.02f,  0.75f) },
+                {Weapons.AK47,        new WeaponOb("AK-47",        WeaponClass.AR,              Properties.Resources.weapon_ak47,      Properties.Resources.bullet_other,   0.02f,      "Russia",         40,     2.00f,  0.50f,    3.00f,    1,          700,    30,          6,                 0.10f,    0.02f,  0.75f) },
+                {Weapons.M107,        new WeaponOb("M107",         WeaponClass.Marksman,        Properties.Resources.weapon_m107,      Properties.Resources.bullet_other,   0.04f,      "USA",            60,    3.00f,  0.50f,    1.00f,    3,          1800,   1,           10,                0.01f,    0.09f,  1.00f) },
+                {Weapons.L115A3,      new WeaponOb("L115A3",       WeaponClass.Marksman,        Properties.Resources.weapon_l115a3,    Properties.Resources.bullet_other,   0.04f,      "United Kingdom", 60,    3.00f,  0.50f,    1.00f,    3,          1800,   2,           5,                 0.01f,    0.09f,  1.00f) },
+                {Weapons.SCAR,        new WeaponOb("SCAR SSR",     WeaponClass.Marksman,        Properties.Resources.weapon_scar,      Properties.Resources.bullet_other,   0.04f,      "Belgium",        60,    3.00f,  0.50f,    1.00f,    3,          1800,   5,           2,                 0.01f,    0.09f,  1.00f) },
+                {Weapons.UMP,         new WeaponOb("UMP",          WeaponClass.SMG,             Properties.Resources.weapon_ump,       Properties.Resources.bullet_other,   0.01f,      "Germany",        5,      1.00f,  1.00f,    8.00f,    2,          500,    25,          10,                0.20f,    0.01f,  0.50f) },
+                {Weapons.MAC10,       new WeaponOb("MAC-10",       WeaponClass.SMG,             Properties.Resources.weapon_mac10,     Properties.Resources.bullet_other,   0.01f,      "USA",            5,      1.00f,  1.00f,    8.00f,    1,          500,    30,          10,                0.20f,    0.01f,  0.50f) },
+                {Weapons.Uzi,         new WeaponOb("Uzi",          WeaponClass.SMG,             Properties.Resources.weapon_uzi,       Properties.Resources.bullet_other,   0.01f,      "Israel",         5,      1.00f,  1.00f,    8.00f,    1,          500,    20,          10,                0.20f,    0.01f,  0.50f) },
+                {Weapons.M249,        new WeaponOb("M249",         WeaponClass.LMG,             Properties.Resources.weapon_m249,      Properties.Resources.bullet_other,   0.03f,      "USA",            10,     1.00f,  0.50f,    4.00f,    2,          1000,   30,          15,                0.20f,    0.02f,  1.00f) },
+                {Weapons.M2,          new WeaponOb("M2",           WeaponClass.HMG,             Properties.Resources.weapon_m2,        Properties.Resources.bullet_other,   0.04f,      "USA",            15,     1.00f,  0.50f,    4.00f,    2,          1000,   100,         4,                 0.20f,    0.02f,  1.00f) },
+                {Weapons.FP6,         new WeaponOb("FP6",          WeaponClass.Shotgun,         Properties.Resources.weapon_fp6,       Properties.Resources.bullet_shotgun, 0.01f,      "Germany",        20,     2.00f,  0.50f,    1.00f,    1,          500,    6,           2,                 0.05f,    0.00f,  1.00f,       0.00f,    3,            10) },
+                {Weapons.M1014,       new WeaponOb("M1014",        WeaponClass.Shotgun,         Properties.Resources.weapon_m1014,     Properties.Resources.bullet_shotgun, 0.04f,      "Italy",          20,     2.00f,  0.40f,    1.00f,    1,          500,    8,           3,                 0.05f,    0.00f,  0.30f,       0.00f,    5,            20) },
+                {Weapons.MGL105,      new WeaponOb("MGL-105",      WeaponClass.GrenadeLauncher, Properties.Resources.weapon_mgl105,    Properties.Resources.bullet_grenade, 0.01f,      "South Africa",   0,      5.00f,  0.50f,    1.00f,    1000,       500,    6,           1,                 0.01f,    0.00f,  0.50f,       0.00f,    0,            0,             0.40f,           80) },
+                {Weapons.RPG7,        new WeaponOb("RPG-7",        WeaponClass.RPG,             Properties.Resources.weapon_rpg7,      Properties.Resources.bullet_rpg,     0.01f,      "Russia",         0,      5.00f,  0.50f,    1.00f,    1,          500,    1,           4,                 0.01f,    0.00f,  1.00f,       0.00f,    0,            0,             0.40f,           40) },
             };
 
             enemysData = new Dictionary<Enemys, EnemyOb> {
             //   Enemy                       Img,                                Size,                       Health, Speed, Weapon,              DropRate, MovementDeviation, ShootChance
-                {Enemys.Regular, new EnemyOb(Properties.Resources.enemy_regular, new Vector2(0.04f, 0.06f),  100.0f, 0.10f, WeaponClass.AR,              0.50f,    0.10f,     0.70f ) },
-                {Enemys.Tank,    new EnemyOb(Properties.Resources.enemy_tank,    new Vector2(0.08f, 0.12f),  200.0f, 0.02f, WeaponClass.GrenadeLauncher, 0.50f,    0.00f,     0.50f ) },
-                {Enemys.Scout,   new EnemyOb(Properties.Resources.enemy_scout,   new Vector2(0.03f, 0.045f), 25.0f,  0.20f, WeaponClass.SMG,             0.50f,    0.02f,     0.90f ) },
-                {Enemys.Sniper,  new EnemyOb(Properties.Resources.enemy_sniper,  new Vector2(0.02f, 0.06f),  50.0f,  0.30f, WeaponClass.Marksman,        0.50f,    0.08f,     0.40f ) },
-                {Enemys.Rowland, new EnemyOb(Properties.Resources.enemy_rowland, new Vector2(0.04f, 0.06f),  150.0f, 0.15f, WeaponClass.None,            0.50f,    0.20f,     0.00f ) },
-                {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.5f, 0.2f),  800.0f, 0.00f, WeaponClass.Pistol,          0.50f,    0.00f,     1.00f ) },
+                {Enemys.Regular, new EnemyOb(Properties.Resources.enemy_regular, new Vector2(0.04f, 0.06f),  100.0f, 0.10f, WeaponClass.AR,              1f,    0.10f,     0.70f ) },
+                {Enemys.Tank,    new EnemyOb(Properties.Resources.enemy_tank,    new Vector2(0.08f, 0.12f),  200.0f, 0.02f, WeaponClass.GrenadeLauncher, 1f,    0.00f,     0.50f ) },
+                {Enemys.Scout,   new EnemyOb(Properties.Resources.enemy_scout,   new Vector2(0.03f, 0.045f), 25.0f,  0.20f, WeaponClass.SMG,             1f,    0.02f,     0.90f ) },
+                {Enemys.Sniper,  new EnemyOb(Properties.Resources.enemy_sniper,  new Vector2(0.02f, 0.06f),  50.0f,  0.30f, WeaponClass.Marksman,        1f,    0.08f,     0.40f ) },
+                {Enemys.Rowland, new EnemyOb(Properties.Resources.enemy_rowland, new Vector2(0.04f, 0.06f),  150.0f, 0.15f, WeaponClass.None,            1f,    0.20f,     0.00f ) },
+                {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.5f, 0.2f),    1600.0f, 0.00f, WeaponClass.Pistol,         1f,    0.00f,     1.00f ) },
             };
 
             dropsData = new Dictionary<Drops, DropOb> {
@@ -890,10 +899,10 @@ namespace christ_a_2
 
             foreach (KeyValuePair<Scenes, SceneOb> s in scenesData)
                 s.Value.panel.Visible = false;
-            //LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
+            LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
 
-            cLevel = 3;
-            LoadScene(Scenes.Game);
+            //cLevel = 3;
+            //LoadScene(Scenes.Game);
 
             for (int i = 0; i < soundEffects.Length; i++)
                 soundEffects[i] = new SoundEffectPlayer();
@@ -1119,9 +1128,10 @@ namespace christ_a_2
             backgroundMusicPlayer.Stop();
             if (cutscene == Cutscenes.OpeningCredits) LoadBackgroundMusic("FullResources\\Music\\menu.mp3");
 
-            double duration = (int)(new WMPLib.WindowsMediaPlayer()).newMedia(url).duration;
+            double duration = 3;// (int)(new WMPLib.WindowsMediaPlayer()).newMedia(url).duration;
             cutscene_media_windowsMediaPlayer.uiMode = "none";
             cutscene_media_windowsMediaPlayer.URL = url;
+            //cutscene_media_windowsMediaPlayer.fullScreen = true;
             await Task.Delay((int)(duration * 1000));
 
             switch(cutscene)
@@ -1213,10 +1223,8 @@ namespace christ_a_2
                 explosions.RemoveAt(i);
             }
 
-            enemyAIOn = false;
             cWave = 0;
             LoadWave();
-            TurnEnemyAIOn();
         }
 
         private async void TurnEnemyAIOn()
@@ -1227,6 +1235,8 @@ namespace christ_a_2
 
         private void LoadWave()
         {
+            enemyAIOn = false;
+
             int enemyi = 0;
             foreach (KeyValuePair<Enemys, int> enemyType in levelsData[cLevel].waves[cWave]) // Create the enemys for the level and wave
             {
@@ -1268,6 +1278,8 @@ namespace christ_a_2
                     enemyi++;
                 }
             }
+
+            TurnEnemyAIOn();
         }
 
         #endregion
@@ -2030,7 +2042,7 @@ namespace christ_a_2
         {
             Weapons weapon = enemys[i].weapon;
 
-            float accuracyVal = weaponsData[weapon].accuracy / 2;
+            float accuracyVal = (weaponsData[weapon].accuracy + weaponsData[weapon].recoil) / 2;
             Vector2 aimPos = playerPos + FromScaledRelativeV2ToRealtiveV2(new Vector2(GetFloatRng(-accuracyVal, accuracyVal), GetFloatRng(-accuracyVal, accuracyVal)), main_game_panel.Size); // Affected by accuracy
             Vector2 dir = (aimPos - enemys[i].pos).Normalise();
 
@@ -2091,7 +2103,7 @@ namespace christ_a_2
             enemys[i].reloading = true;
             enemys[i].bulletsLeft = weaponsData[enemys[i].weapon].magCapacity; // Add bullets before delay so EnemyReload is not called multiple times
             await Task.Delay(weaponsData[enemys[i].weapon].reload);
-            enemys[i].reloading = false;
+            if (i < enemys.Count) enemys[i].reloading = false;
         }
 
         #endregion

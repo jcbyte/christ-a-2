@@ -121,9 +121,9 @@
             // main_memoryCounter_label
             // 
             this.main_memoryCounter_label.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.main_memoryCounter_label.Location = new System.Drawing.Point(1664, 20);
+            this.main_memoryCounter_label.Location = new System.Drawing.Point(1644, 20);
             this.main_memoryCounter_label.Name = "main_memoryCounter_label";
-            this.main_memoryCounter_label.Size = new System.Drawing.Size(220, 20);
+            this.main_memoryCounter_label.Size = new System.Drawing.Size(240, 30);
             this.main_memoryCounter_label.TabIndex = 0;
             this.main_memoryCounter_label.Text = "Memory used: 68.42 GB";
             // 
@@ -340,10 +340,10 @@
             // 
             // main_FPSCounter_Label
             // 
-            this.main_FPSCounter_Label.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.main_FPSCounter_Label.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.main_FPSCounter_Label.Location = new System.Drawing.Point(20, 20);
             this.main_FPSCounter_Label.Name = "main_FPSCounter_Label";
-            this.main_FPSCounter_Label.Size = new System.Drawing.Size(100, 20);
+            this.main_FPSCounter_Label.Size = new System.Drawing.Size(120, 30);
             this.main_FPSCounter_Label.TabIndex = 4;
             this.main_FPSCounter_Label.Text = "FPS: 0";
             // 
@@ -363,7 +363,7 @@
             this.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(129)))), ((int)(((byte)(204)))));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(6, 4, 6, 4);
-            this.MaximumSize = new System.Drawing.Size(1920, 1080);
+            this.MaximumSize = new System.Drawing.Size(3840, 2160);
             this.MinimumSize = new System.Drawing.Size(1920, 1080);
             this.Name = "mainForm";
             this.Text = "Christ,a 2";
