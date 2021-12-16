@@ -63,7 +63,7 @@ namespace christ_a_2
             public const float sniperRunRange = 0.2f;
             public const float rowlandTooFarRange = 0.2f;
 
-            public const float bossRegen = 0.5f; 
+            public const float bossRegen = 0.5f;
             public const int bossMaxSpawnRate = 5000; // (ms)
             public const int bossMinSpawnRate = 1000; // (ms)
         }
@@ -117,7 +117,7 @@ namespace christ_a_2
 
             public float Magnitude()
             {
-                return (float)Math.Sqrt(Math.Pow(x,2) + Math.Pow(y, 2));
+                return (float)Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2));
             }
 
             public float ScaledMagnitude(Size formSize)
@@ -266,7 +266,7 @@ namespace christ_a_2
             public float healthModifier;
             public float accuracyModifier;
             public float speedModifier;
-            
+
             public WaveOb(int _amount, float _firerateModifier = 1f, float _damageModifier = 1f, float _healthModifier = 1f, float _accuracyModifier = 1f, float _speedModifier = 1f)
             {
                 amount = _amount;
@@ -335,7 +335,7 @@ namespace christ_a_2
             public int bulletsLeft;
             public bool reloading;
 
-            public Enemy(string _id, Enemys _type, Vector2 _pos, Image img, Size size, Weapons _weapon, float _health, float _speed, float _firerateModifier, float _damageModifier, float _accuracyModifier, float _speedModifier, int _bulletsLeft) 
+            public Enemy(string _id, Enemys _type, Vector2 _pos, Image img, Size size, Weapons _weapon, float _health, float _speed, float _firerateModifier, float _damageModifier, float _accuracyModifier, float _speedModifier, int _bulletsLeft)
             {
                 id = _id;
                 type = _type;
@@ -659,8 +659,8 @@ namespace christ_a_2
 
         #region "EnumClasses.Drops.Drop"
 
-        private enum Drops : byte 
-        { 
+        private enum Drops : byte
+        {
             Ammo,
             Health,
             WeaponBox,
@@ -824,10 +824,10 @@ namespace christ_a_2
 
             #region "Main.Data"
 
-            scenesData = new Dictionary<Scenes, SceneOb> { 
-                {Scenes.Menu,     new SceneOb(main_menu_panel) }, 
-                {Scenes.Cutscene, new SceneOb(main_cutscene_panel, CutsceneOnload) }, 
-                {Scenes.Game,     new SceneOb(main_game_panel, GameOnLoad) }, 
+            scenesData = new Dictionary<Scenes, SceneOb> {
+                {Scenes.Menu,     new SceneOb(main_menu_panel) },
+                {Scenes.Cutscene, new SceneOb(main_cutscene_panel, CutsceneOnload) },
+                {Scenes.Game,     new SceneOb(main_game_panel, GameOnLoad) },
             };
 
             cutscenesData = new Dictionary<Cutscenes, string> {
@@ -840,7 +840,7 @@ namespace christ_a_2
             };
 
             levelsData = new LevelOb[] {
-                new LevelOb(Properties.Resources.level_0Factory, new Dictionary<Enemys, WaveOb>[] { 
+                new LevelOb(Properties.Resources.level_0Factory, new Dictionary<Enemys, WaveOb>[] {
                     new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(1, 1f, 0.1f, 1f, 1f, 0.1f) } },
                     //new Dictionary<Enemys, int> { {Enemys.Scout, 3 }, { Enemys.Rowland, 1 } },
                     //new Dictionary<Enemys, int> { { Enemys.Regular, 2 }, { Enemys.Scout, 2 }, { Enemys.Sniper, 1 } },
@@ -1116,7 +1116,7 @@ namespace christ_a_2
             while (true)
             {
                 if (memoryLeakOn)
-                { 
+                {
                     byte[] tempMeme = new byte[Constants.memoryIncrease];
                     //for (int i = 0; i < Constants.memoryIncrease; i++) // for non paging only
                     //    tempMeme[i] = 0;
@@ -1157,7 +1157,7 @@ namespace christ_a_2
         private bool playingCutscene = false;
         private async void LoadCutsceneAfterCutscene(Cutscenes cutscene)
         {
-            while(playingCutscene)
+            while (playingCutscene)
             {
                 await Task.Delay(Constants.loadCutsceneCheck);
             }
@@ -1182,7 +1182,7 @@ namespace christ_a_2
             double duration = (int)(new WMPLib.WindowsMediaPlayer()).newMedia(url).duration;
             cutscene_media_windowsMediaPlayer.uiMode = "none";
             cutscene_media_windowsMediaPlayer.URL = url;
-            //cutscene_media_windowsMediaPlayer.fullScreen = true;
+
 
             int delayAmount = (int)((float)(duration * 1000) / Constants.skipCutsceneCheck);
             for (int i = 0; i < delayAmount; i++)
@@ -1203,7 +1203,7 @@ namespace christ_a_2
                 await Task.Delay(Constants.skipCutsceneCheck);
             }
 
-            switch(cutscene)
+            switch (cutscene)
             {
                 case Cutscenes.OpeningCredits:
                     LoadScene(Scenes.Menu);
@@ -1236,6 +1236,14 @@ namespace christ_a_2
             //if (cScene != Scenes.Menu) memoryLeakOn = true;
 
             playingCutscene = false;
+        }
+
+        private void cutscene_media_windowsMediaPlayer_PlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e)
+        {
+            if (e.newState == 3) // If playing
+            {
+                cutscene_media_windowsMediaPlayer.fullScreen = true;
+            }
         }
 
         #endregion
@@ -1819,7 +1827,7 @@ namespace christ_a_2
                     }
 
                     if (enemyAIOn)
-                    { 
+                    {
                         EnemyAI(i, delta);
                     }
                 }
@@ -2093,7 +2101,7 @@ namespace christ_a_2
                 {
                     enemys[i].health += EnemyConstants.bossRegen * delta;
                     enemys[i].UpdateHealth();
-                 }
+                }
 
                 int spawnRate = (int)(EnemyConstants.bossMinSpawnRate + (float)(EnemyConstants.bossMaxSpawnRate - EnemyConstants.bossMinSpawnRate) * ((float)enemys[i].health / (float)enemys[i].maxHealth));
 
@@ -2224,7 +2232,7 @@ namespace christ_a_2
 
         private void CreateBullet(Vector2 pos, float posLimit, Vector2 dir, float speed, int damage, int penetration, Image img, Size size, Weapons fromWeapon, bool playerBullet)
         {
-            bullets.Add(new Bullet(pos, posLimit, dir, speed, damage, penetration, img, size, fromWeapon, playerBullet )); // Instatiate bullet
+            bullets.Add(new Bullet(pos, posLimit, dir, speed, damage, penetration, img, size, fromWeapon, playerBullet)); // Instatiate bullet
 
             int bulleti = bullets.Count - 1;
             main_game_panel.Controls.Add(bullets[bulleti].pb);
@@ -2248,7 +2256,7 @@ namespace christ_a_2
                     float angleDiff = (float)spread / (shots - 1);
                     float cAngle = angle - ((float)spread / 2);
 
-                    for (int i = 0; i < shots; i++) 
+                    for (int i = 0; i < shots; i++)
                     {
                         CreateBullet(
                             playerPos,
@@ -2327,7 +2335,7 @@ namespace christ_a_2
         {
             game_inventory_currentWeapon_PictureBox.BackgroundImage = weaponsData[inventory[cInventory].weapon].img;
             game_inventory_currentWeaponName_label.Text = weaponsData[inventory[cInventory].weapon].name;
-            
+
             game_inventory_nextWeapon_PictureBox.BackgroundImage = weaponsData[inventory[(cInventory + 1) % 3].weapon].img;
             game_inventory_prevWeapon_PictureBox.BackgroundImage = weaponsData[inventory[(cInventory + 2) % 3].weapon].img;
 

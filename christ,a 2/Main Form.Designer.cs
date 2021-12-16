@@ -341,6 +341,7 @@
             this.cutscene_media_windowsMediaPlayer.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("cutscene_media_windowsMediaPlayer.OcxState")));
             this.cutscene_media_windowsMediaPlayer.Size = new System.Drawing.Size(1920, 1080);
             this.cutscene_media_windowsMediaPlayer.TabIndex = 0;
+            this.cutscene_media_windowsMediaPlayer.PlayStateChange += new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(this.cutscene_media_windowsMediaPlayer_PlayStateChange);
             // 
             // main_FPSCounter_Label
             // 
@@ -360,8 +361,8 @@
             this.Controls.Add(this.main_FPSCounter_Label);
             this.Controls.Add(this.main_memoryCounter_label);
             this.Controls.Add(this.main_game_panel);
-            this.Controls.Add(this.main_menu_panel);
             this.Controls.Add(this.main_cutscene_panel);
+            this.Controls.Add(this.main_menu_panel);
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Metropolis Thin", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(129)))), ((int)(((byte)(204)))));
