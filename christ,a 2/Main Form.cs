@@ -841,29 +841,29 @@ namespace christ_a_2
 
             levelsData = new LevelOb[] {
                 new LevelOb(Properties.Resources.level_0Factory, new Dictionary<Enemys, WaveOb>[] {
-                    new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(1, 1f, 0.1f, 1f, 1f, 0.1f) } },
-                    //new Dictionary<Enemys, int> { {Enemys.Scout, 3 }, { Enemys.Rowland, 1 } },
-                    //new Dictionary<Enemys, int> { { Enemys.Regular, 2 }, { Enemys.Scout, 2 }, { Enemys.Sniper, 1 } },
-                    //new Dictionary<Enemys, int> { { Enemys.Tank, 2 } },
-                    //new Dictionary<Enemys, int> { { Enemys.Regular, 1 }, { Enemys.Scout, 1 }, { Enemys.Tank, 1 },  { Enemys.Sniper, 1 }, { Enemys.Rowland, 1 }, },
+                    new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(1) }, { Enemys.Rowland, new WaveOb(1)} },
+                    new Dictionary<Enemys, WaveOb> { {Enemys.Scout, new WaveOb(3) }, { Enemys.Rowland, new WaveOb(1) } },
+                    new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(2) }, { Enemys.Scout, new WaveOb(2) }, { Enemys.Sniper, new WaveOb(1) } },
+                    new Dictionary<Enemys, WaveOb> { { Enemys.Tank, new WaveOb(2) } },
+                    new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(1) }, { Enemys.Scout, new WaveOb(1) }, { Enemys.Tank, new WaveOb(1) },  { Enemys.Sniper, new WaveOb(1) }, { Enemys.Rowland, new WaveOb(1) }, },
                 }),
-                /*new LevelOb(Properties.Resources.level_1FactoryOutside, new Dictionary<Enemys, int>[] {
-                    new Dictionary<Enemys, int> { { Enemys.Regular, 1 }, { Enemys.Rowland, 1 } },
-                    new Dictionary<Enemys, int> { {Enemys.Scout, 3 }, { Enemys.Rowland, 1 } },
-                    new Dictionary<Enemys, int> { { Enemys.Regular, 2 }, { Enemys.Scout, 2 }, { Enemys.Sniper, 1 } },
-                    new Dictionary<Enemys, int> { { Enemys.Tank, 2 } },
-                    new Dictionary<Enemys, int> { { Enemys.Regular, 1 }, { Enemys.Scout, 1 }, { Enemys.Tank, 1 },  { Enemys.Sniper, 1 }, { Enemys.Rowland, 1 }, },
+                new LevelOb(Properties.Resources.level_1FactoryOutside, new Dictionary<Enemys, WaveOb>[] {
+                    new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(1) }, { Enemys.Rowland, new WaveOb(1)} },
+                    new Dictionary<Enemys, WaveOb> { {Enemys.Scout, new WaveOb(3) }, { Enemys.Rowland, new WaveOb(1) } },
+                    new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(2) }, { Enemys.Scout, new WaveOb(2) }, { Enemys.Sniper, new WaveOb(1) } },
+                    new Dictionary<Enemys, WaveOb> { { Enemys.Tank, new WaveOb(2) } },
+                    new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(1) }, { Enemys.Scout, new WaveOb(1) }, { Enemys.Tank, new WaveOb(1) },  { Enemys.Sniper, new WaveOb(1) }, { Enemys.Rowland, new WaveOb(1) }, },
                 }),
-                new LevelOb(Properties.Resources.level_2Outside, new Dictionary<Enemys, int>[] {
-                    new Dictionary<Enemys, int> { { Enemys.Regular, 1 }, { Enemys.Rowland, 1 } },
-                    new Dictionary<Enemys, int> { {Enemys.Scout, 4 }, { Enemys.Rowland, 1 } },
-                    new Dictionary<Enemys, int> { { Enemys.Regular, 2 }, { Enemys.Scout, 2 }, { Enemys.Sniper, 1 } },
-                    new Dictionary<Enemys, int> { { Enemys.Tank, 2 } },
-                    new Dictionary<Enemys, int> { { Enemys.Regular, 1 }, { Enemys.Scout, 1 }, { Enemys.Tank, 1 },  { Enemys.Sniper, 2 }, { Enemys.Rowland, 1 }, },
+                new LevelOb(Properties.Resources.level_2Outside, new Dictionary<Enemys, WaveOb>[] {
+                    new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(1) }, { Enemys.Rowland, new WaveOb(1)} },
+                    new Dictionary<Enemys, WaveOb> { {Enemys.Scout, new WaveOb(3) }, { Enemys.Rowland, new WaveOb(1) } },
+                    new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(2) }, { Enemys.Scout, new WaveOb(2) }, { Enemys.Sniper, new WaveOb(1) } },
+                    new Dictionary<Enemys, WaveOb> { { Enemys.Tank, new WaveOb(2) } },
+                    new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(1) }, { Enemys.Scout, new WaveOb(1) }, { Enemys.Tank, new WaveOb(1) },  { Enemys.Sniper, new WaveOb(1) }, { Enemys.Rowland, new WaveOb(1) }, },
                 }),
-                new LevelOb(Properties.Resources.level_3Boss, new Dictionary<Enemys, int>[] {
-                    new Dictionary<Enemys, int> { {Enemys.Boss, 1 } },
-                }),*/
+                new LevelOb(Properties.Resources.level_3Boss, new Dictionary<Enemys, WaveOb>[] {
+                    new Dictionary<Enemys, WaveOb> { {Enemys.Boss, new WaveOb(1) } },
+                }),
             };
 
             weaponClassData = new Dictionary<WeaponClass, WeaponClassOb> {
