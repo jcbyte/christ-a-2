@@ -799,17 +799,17 @@ namespace christ_a_2
             levelsData = new LevelOb[] {
                 new LevelOb(Properties.Resources.level_0Factory, new Dictionary<Enemys, int>[] { 
                     new Dictionary<Enemys, int> { { Enemys.Regular, 1 }, { Enemys.Rowland, 1 } },
-                    new Dictionary<Enemys, int> { {Enemys.Scout, 4 }, { Enemys.Rowland, 1 } },
+                    new Dictionary<Enemys, int> { {Enemys.Scout, 3 }, { Enemys.Rowland, 1 } },
                     new Dictionary<Enemys, int> { { Enemys.Regular, 2 }, { Enemys.Scout, 2 }, { Enemys.Sniper, 1 } },
                     new Dictionary<Enemys, int> { { Enemys.Tank, 2 } },
-                    new Dictionary<Enemys, int> { { Enemys.Regular, 1 }, { Enemys.Scout, 1 }, { Enemys.Tank, 1 },  { Enemys.Sniper, 2 }, { Enemys.Rowland, 1 }, },
+                    new Dictionary<Enemys, int> { { Enemys.Regular, 1 }, { Enemys.Scout, 1 }, { Enemys.Tank, 1 },  { Enemys.Sniper, 1 }, { Enemys.Rowland, 1 }, },
                 }),
                 new LevelOb(Properties.Resources.level_1FactoryOutside, new Dictionary<Enemys, int>[] {
                     new Dictionary<Enemys, int> { { Enemys.Regular, 1 }, { Enemys.Rowland, 1 } },
-                    new Dictionary<Enemys, int> { {Enemys.Scout, 4 }, { Enemys.Rowland, 1 } },
+                    new Dictionary<Enemys, int> { {Enemys.Scout, 3 }, { Enemys.Rowland, 1 } },
                     new Dictionary<Enemys, int> { { Enemys.Regular, 2 }, { Enemys.Scout, 2 }, { Enemys.Sniper, 1 } },
                     new Dictionary<Enemys, int> { { Enemys.Tank, 2 } },
-                    new Dictionary<Enemys, int> { { Enemys.Regular, 1 }, { Enemys.Scout, 1 }, { Enemys.Tank, 1 },  { Enemys.Sniper, 2 }, { Enemys.Rowland, 1 }, },
+                    new Dictionary<Enemys, int> { { Enemys.Regular, 1 }, { Enemys.Scout, 1 }, { Enemys.Tank, 1 },  { Enemys.Sniper, 1 }, { Enemys.Rowland, 1 }, },
                 }),
                 new LevelOb(Properties.Resources.level_2Outside, new Dictionary<Enemys, int>[] {
                     new Dictionary<Enemys, int> { { Enemys.Regular, 1 }, { Enemys.Rowland, 1 } },
@@ -840,9 +840,9 @@ namespace christ_a_2
             weaponsData = new Dictionary<Weapons, WeaponOb> {
                 {Weapons.None, new WeaponOb("None", WeaponClass.None, Properties.Resources.weapon_none, Properties.Resources.bullet_other, 0, "None", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) },
             //  Weapon,                            Name,           Class,                       Img,                                   BulletImg,                           BulletSize, Country,          Damage, Weight, Velocity, Firerate, Penetration Reload, MagCapacity, MaxAmmoMultiplier, Accuracy, Recoil, MaxDistance, PushBack, ShotgunShots, ShotgunSpread, ExplosionRadius, ExplosionDamage
-	            {Weapons.Glock19,     new WeaponOb("Glock-19",     WeaponClass.Pistol,          Properties.Resources.weapon_glock19,   Properties.Resources.bullet_pistol,  0.02f,      "Austria",        10,     2.00f,  0.20f,    1.00f,    1,          500,    15,          3,                 0.02f,    0.00f,  0.50f) },
-                {Weapons.FiveSeven,   new WeaponOb("Five SeveN",   WeaponClass.Pistol,          Properties.Resources.weapon_fiveseven, Properties.Resources.bullet_pistol,  0.02f,      "Belgium",        10,     2.00f,  0.20f,    1.00f,    1,          500,    20,          3,                 0.02f,    0.00f,  0.50f) },
-                {Weapons.DesertEagle, new WeaponOb("Desert Eagle", WeaponClass.Pistol,          Properties.Resources.weapon_deagle,    Properties.Resources.bullet_pistol,  0.03f,      "USA",            60,     2.00f,  0.20f,    1.00f,    1,          500,    7,           2,                 0.01f,    0.00f,  1.00f) },
+	            {Weapons.Glock19,     new WeaponOb("Glock-19",     WeaponClass.Pistol,          Properties.Resources.weapon_glock19,   Properties.Resources.bullet_pistol,  0.02f,      "Austria",        10,     1.00f,  0.20f,    1.00f,    1,          500,    15,          3,                 0.02f,    0.00f,  0.50f) },
+                {Weapons.FiveSeven,   new WeaponOb("Five SeveN",   WeaponClass.Pistol,          Properties.Resources.weapon_fiveseven, Properties.Resources.bullet_pistol,  0.02f,      "Belgium",        10,     1.00f,  0.20f,    1.00f,    1,          500,    20,          3,                 0.02f,    0.00f,  0.50f) },
+                {Weapons.DesertEagle, new WeaponOb("Desert Eagle", WeaponClass.Pistol,          Properties.Resources.weapon_deagle,    Properties.Resources.bullet_pistol,  0.03f,      "USA",            60,     1.00f,  0.20f,    1.00f,    1,          500,    7,           2,                 0.01f,    0.00f,  1.00f) },
                 {Weapons.Galil,       new WeaponOb("Galil",        WeaponClass.AR,              Properties.Resources.weapon_galil,     Properties.Resources.bullet_other,   0.02f,      "Israel",         30,     2.00f,  0.50f,    3.00f,    1,          700,    35,          6,                 0.10f,    0.02f,  0.75f) },
                 {Weapons.AMD65,       new WeaponOb("AMD-65",       WeaponClass.AR,              Properties.Resources.weapon_amd65,     Properties.Resources.bullet_other,   0.02f,      "Hungary",        30,     2.00f,  0.50f,    3.00f,    1,          700,    30,          6,                 0.10f,    0.02f,  0.75f) },
                 {Weapons.AEK971,      new WeaponOb("AEK-971",      WeaponClass.AR,              Properties.Resources.weapon_aek971,    Properties.Resources.bullet_other,   0.02f,      "Russia",         30,     2.00f,  0.50f,    3.00f,    1,          700,    30,          6,                 0.10f,    0.02f,  0.75f) },
@@ -863,11 +863,11 @@ namespace christ_a_2
 
             enemysData = new Dictionary<Enemys, EnemyOb> {
             //   Enemy                       Img,                                Size,                       Health, Speed, Weapon,              DropRate, MovementDeviation, ShootChance
-                {Enemys.Regular, new EnemyOb(Properties.Resources.enemy_regular, new Vector2(0.04f, 0.06f),  100.0f, 0.10f, WeaponClass.AR,              1f,    0.10f,     0.70f ) },
+                {Enemys.Regular, new EnemyOb(Properties.Resources.enemy_regular, new Vector2(0.04f, 0.06f),  60.0f, 0.10f, WeaponClass.AR,              1f,    0.10f,     0.70f ) },
                 {Enemys.Tank,    new EnemyOb(Properties.Resources.enemy_tank,    new Vector2(0.08f, 0.12f),  200.0f, 0.02f, WeaponClass.GrenadeLauncher, 1f,    0.00f,     0.50f ) },
                 {Enemys.Scout,   new EnemyOb(Properties.Resources.enemy_scout,   new Vector2(0.03f, 0.045f), 25.0f,  0.20f, WeaponClass.SMG,             1f,    0.02f,     0.90f ) },
-                {Enemys.Sniper,  new EnemyOb(Properties.Resources.enemy_sniper,  new Vector2(0.02f, 0.06f),  50.0f,  0.30f, WeaponClass.Marksman,        1f,    0.08f,     0.40f ) },
-                {Enemys.Rowland, new EnemyOb(Properties.Resources.enemy_rowland, new Vector2(0.04f, 0.06f),  150.0f, 0.15f, WeaponClass.None,            1f,    0.20f,     0.00f ) },
+                {Enemys.Sniper,  new EnemyOb(Properties.Resources.enemy_sniper,  new Vector2(0.02f, 0.06f),  40.0f,  0.30f, WeaponClass.Marksman,        1f,    0.08f,     0.40f ) },
+                {Enemys.Rowland, new EnemyOb(Properties.Resources.enemy_rowland, new Vector2(0.04f, 0.06f),  120.0f, 0.15f, WeaponClass.None,            1f,    0.20f,     0.00f ) },
                 {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.5f, 0.2f),    1600.0f, 0.00f, WeaponClass.Pistol,         1f,    0.00f,     1.00f ) },
             };
 
@@ -1165,7 +1165,7 @@ namespace christ_a_2
 
             cutscene_media_windowsMediaPlayer.URL = "";
 
-            if (cScene != Scenes.Menu) memoryLeakOn = true;
+            //if (cScene != Scenes.Menu) memoryLeakOn = true;
 
             playingCutscene = false;
         }
