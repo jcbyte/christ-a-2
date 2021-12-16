@@ -1128,7 +1128,7 @@ namespace christ_a_2
             backgroundMusicPlayer.Stop();
             if (cutscene == Cutscenes.OpeningCredits) LoadBackgroundMusic("FullResources\\Music\\menu.mp3");
 
-            double duration = 3;// (int)(new WMPLib.WindowsMediaPlayer()).newMedia(url).duration;
+            double duration = (int)(new WMPLib.WindowsMediaPlayer()).newMedia(url).duration;
             cutscene_media_windowsMediaPlayer.uiMode = "none";
             cutscene_media_windowsMediaPlayer.URL = url;
             //cutscene_media_windowsMediaPlayer.fullScreen = true;
