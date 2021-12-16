@@ -26,8 +26,12 @@ namespace christ_a_2
             public const int memoryIncrease = 1024 * 1024 * 1;
 
             public const float playerSpeed = 0.15f;
-            public const int maxPlayerHealth = 100;
+            public const int maxPlayerHealth = 250;
             public static readonly Vector2 playerSize = new Vector2(0.04f, 0.06f); // Scaled relative Vector2
+
+            public const float playerRespawnHealthPercent = 0.80f;
+
+            public const int enemyAIDelay = 2000;
 
             public const int weaponSwitchCooldown = 100;
             public const int tryShootCooldown = 500;
@@ -58,9 +62,9 @@ namespace christ_a_2
             public const float sniperRunRange = 0.2f;
             public const float rowlandTooFarRange = 0.2f;
 
-            public const float bossRegen = 10; 
-            public const int bossMaxSpawnRate = 4000; // (ms)
-            public const int bossMinSpawnRate = 500; // (ms)
+            public const float bossRegen = 1; 
+            public const int bossMaxSpawnRate = 512000; // (ms)
+            public const int bossMinSpawnRate = 1500; // (ms)
         }
 
         #endregion
@@ -794,7 +798,8 @@ namespace christ_a_2
 
             levelsData = new LevelOb[] {
                 new LevelOb(Properties.Resources.level_0Factory, new Dictionary<Enemys, int>[] { 
-                    new Dictionary<Enemys, int> { { Enemys.Regular, 2 }, {Enemys.Scout, 1 }, { Enemys.Rowland, 3 } },
+                    new Dictionary<Enemys, int> { { Enemys.Sniper, 1 } }
+                    //new Dictionary<Enemys, int> { { Enemys.Regular, 2 }, {Enemys.Scout, 1 }, { Enemys.Rowland, 3 } },
                     //new Dictionary<Enemys, int> { { Enemys.Regular, 4 }, { Enemys.Scout, 2 }, { Enemys.Rowland, 4 } },
                     //new Dictionary<Enemys, int> { { Enemys.Regular, 3 }, { Enemys.Scout, 3 }, { Enemys.Rowland, 3 }, { Enemys.Tank, 1 } },
                 }),
@@ -848,13 +853,13 @@ namespace christ_a_2
             };
 
             enemysData = new Dictionary<Enemys, EnemyOb> {
-            //   Enemy                       Img,                                Size,                      Health, Speed, Weapon,              DropRate, MovementDeviation, ShootChance
-                {Enemys.Regular, new EnemyOb(Properties.Resources.enemy_regular, new Vector2(0.04f, 0.06f), 100.0f, 0.10f, WeaponClass.AR,              0.50f,    0.10f,     0.70f ) },
-                {Enemys.Tank,    new EnemyOb(Properties.Resources.enemy_tank,    new Vector2(0.04f, 0.06f), 200.0f, 0.02f, WeaponClass.GrenadeLauncher, 0.50f,    0.00f,     0.50f ) },
-                {Enemys.Scout,   new EnemyOb(Properties.Resources.enemy_scout,   new Vector2(0.04f, 0.06f), 25.0f,  0.20f, WeaponClass.SMG,             0.50f,    0.02f,     0.90f ) },
-                {Enemys.Sniper,  new EnemyOb(Properties.Resources.enemy_sniper,  new Vector2(0.03f, 0.04f), 50.0f,  0.30f, WeaponClass.Marksman,        0.50f,    0.08f,     0.40f ) },
-                {Enemys.Rowland, new EnemyOb(Properties.Resources.enemy_rowland, new Vector2(0.05f, 0.06f), 150.0f, 0.15f, WeaponClass.None,            0.50f,    0.20f,     0.00f ) },
-                {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.34f, 0.12f), 800.0f, 0.00f, WeaponClass.Pistol,          0.50f,    0.00f,     1.00f ) },
+            //   Enemy                       Img,                                Size,                       Health, Speed, Weapon,              DropRate, MovementDeviation, ShootChance
+                {Enemys.Regular, new EnemyOb(Properties.Resources.enemy_regular, new Vector2(0.04f, 0.06f),  100.0f, 0.10f, WeaponClass.AR,              0.50f,    0.10f,     0.70f ) },
+                {Enemys.Tank,    new EnemyOb(Properties.Resources.enemy_tank,    new Vector2(0.08f, 0.12f),  200.0f, 0.02f, WeaponClass.GrenadeLauncher, 0.50f,    0.00f,     0.50f ) },
+                {Enemys.Scout,   new EnemyOb(Properties.Resources.enemy_scout,   new Vector2(0.03f, 0.045f), 25.0f,  0.20f, WeaponClass.SMG,             0.50f,    0.02f,     0.90f ) },
+                {Enemys.Sniper,  new EnemyOb(Properties.Resources.enemy_sniper,  new Vector2(0.02f, 0.06f),  50.0f,  0.30f, WeaponClass.Marksman,        0.50f,    0.08f,     0.40f ) },
+                {Enemys.Rowland, new EnemyOb(Properties.Resources.enemy_rowland, new Vector2(0.04f, 0.06f),  150.0f, 0.15f, WeaponClass.None,            0.50f,    0.20f,     0.00f ) },
+                {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.5f, 0.2f),  800.0f, 0.00f, WeaponClass.Pistol,          0.50f,    0.00f,     1.00f ) },
             };
 
             dropsData = new Dictionary<Drops, DropOb> {
@@ -885,10 +890,10 @@ namespace christ_a_2
 
             foreach (KeyValuePair<Scenes, SceneOb> s in scenesData)
                 s.Value.panel.Visible = false;
-            LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
+            //LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
 
-            //cLevel = 3;
-            //LoadScene(Scenes.Game);
+            cLevel = 3;
+            LoadScene(Scenes.Game);
 
             for (int i = 0; i < soundEffects.Length; i++)
                 soundEffects[i] = new SoundEffectPlayer();
@@ -1143,7 +1148,8 @@ namespace christ_a_2
                     break;
 
                 case Cutscenes.Loss:
-                    LoadCutsceneAfterCutscene(Cutscenes.OpeningCredits);
+                    playerHealth = Constants.maxPlayerHealth * Constants.playerRespawnHealthPercent;
+                    LoadScene(Scenes.Game);
                     break;
             }
 
@@ -1159,6 +1165,8 @@ namespace christ_a_2
         #region "Game"
 
         #region "Game.Load"
+
+        private bool enemyAIOn = false;
 
         private void GameOnLoad(object data)
         {
@@ -1205,8 +1213,16 @@ namespace christ_a_2
                 explosions.RemoveAt(i);
             }
 
+            enemyAIOn = false;
             cWave = 0;
             LoadWave();
+            TurnEnemyAIOn();
+        }
+
+        private async void TurnEnemyAIOn()
+        {
+            await Task.Delay(Constants.enemyAIDelay);
+            enemyAIOn = true;
         }
 
         private void LoadWave()
@@ -1686,7 +1702,10 @@ namespace christ_a_2
                         continue;
                     }
 
-                    EnemyAI(i, delta);
+                    if (enemyAIOn)
+                    { 
+                        EnemyAI(i, delta);
+                    }
                 }
                 for (int i = deleteEnemys.Count - 1; i >= 0; i--)
                 {
