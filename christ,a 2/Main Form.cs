@@ -797,7 +797,8 @@ namespace christ_a_2
 
         private Vector2 playerPos = new Vector2(0.5f, 0.5f);
         private float playerHealth;
-        private InventoryOb[] inventory = new InventoryOb[3] { new InventoryOb(Weapons.Glock19, 15, 45), new InventoryOb(), new InventoryOb() };
+        private InventoryOb[] inventory = new InventoryOb[3] { new InventoryOb(Weapons.Glock19, 15, 45), new InventoryOb(Weapons.M1014, 10, 10), new InventoryOb(Weapons.Galil, 10, 10) };
+        private int cInventory = 0;
 
         private System.Windows.Media.MediaPlayer backgroundMusicPlayer = new System.Windows.Media.MediaPlayer();
         private SoundEffectPlayer[] soundEffects = new SoundEffectPlayer[Constants.concurrentSoundEffects];
@@ -970,6 +971,12 @@ namespace christ_a_2
         private Vector2 GetMousePos(Size formSize)
         {
             return ToRelativeV2(PointToClient(MousePosition), formSize);
+        }
+
+        private int Modulus(int x, int m)
+        {
+            int r = x % m;
+            return r < 0 ? r + m : r;
         }
 
         #region "Misc.Music"
@@ -1381,9 +1388,33 @@ namespace christ_a_2
                 if (Keyboard.IsKeyDown(Key.D) || Keyboard.IsKeyDown(Key.Right))
                     movement.x += 1;
 
-                float speedWeightModifier = (float)1 / weaponsData[inventory[0].weapon].weight;
-                playerPos = AddV2WithBounds(playerPos, FromScaledRelativeV2ToRealtiveV2(movement * Constants.playerSpeed * speedWeightModifier * delta, main_game_panel.Size), new Vector2(0f), new Vector2(1f)); // Player Movement
-                game_player_pictureBox.Location = FromRelativeV2Center(playerPos, game_player_pictureBox.Size, main_game_panel.Size);
+                float movementMag = movement.Magnitude();
+                if (movementMag > 0)
+                {
+                    float speedWeightModifier = (float)1 / weaponsData[inventory[cInventory].weapon].weight;
+                    playerPos = AddV2WithBounds(playerPos, FromScaledRelativeV2ToRealtiveV2(movement * Constants.playerSpeed * speedWeightModifier * (1 / movementMag) * delta, main_game_panel.Size), new Vector2(0f), new Vector2(1f)); // Player Movement
+                    game_player_pictureBox.Location = FromRelativeV2Center(playerPos, game_player_pictureBox.Size, main_game_panel.Size);
+                }
+
+                #endregion
+
+                #region "Game.WeaponSwitch"
+
+                if (Keyboard.IsKeyDown(Key.D1) || Keyboard.IsKeyDown(Key.NumPad1)) // Set weapon based on number
+                {
+                    cInventory = 0;
+                    UpdateInventoryGraphics();
+                }
+                else if (Keyboard.IsKeyDown(Key.D2) || Keyboard.IsKeyDown(Key.NumPad2))
+                {
+                    cInventory = 1;
+                    UpdateInventoryGraphics();
+                }
+                else if (Keyboard.IsKeyDown(Key.D3) || Keyboard.IsKeyDown(Key.NumPad3))
+                {
+                    cInventory = 2;
+                    UpdateInventoryGraphics();
+                }
 
                 #endregion
 
@@ -1466,7 +1497,15 @@ namespace christ_a_2
                 {
                     if ((weaponDrops[i].pos - playerPos).ScaledMagnitude(main_game_panel.Size) <= Math.Max(Constants.weaponDropSize.x, Constants.weaponDropSize.y)) // Player should be close enough to pick up weapon
                     {
-                        int noneInventory = (inventory[0].weapon == Weapons.None) ? 1 : (inventory[1].weapon == Weapons.None) ? 1 : (inventory[2].weapon == Weapons.None) ? 2 : -1; 
+                        int noneInventory = -1;
+                        for (int j = 0; j < inventory.Length; j++)
+                        {
+                            if (inventory[j].weapon == Weapons.None)
+                            {
+                                noneInventory = j;
+                                break;
+                            }
+                        }
                         if (noneInventory >= 0) // If there is currenty an empty space in inventory
                         {
                             PlaySoundEffect(SoundEffects.WeaponPickup);
@@ -1486,11 +1525,11 @@ namespace christ_a_2
                             PlaySoundEffect(SoundEffects.WeaponPickup);
 
                             weaponDrops.Add(new WeaponDrop(
-                                inventory[0].weapon,
-                                inventory[0].magBullets,
-                                inventory[0].reserveBullets,
-                                weaponDrops[i].pos,
-                                weaponsData[inventory[0].weapon].img,
+                                inventory[cInventory].weapon,
+                                inventory[cInventory].magBullets,
+                                inventory[cInventory].reserveBullets,
+                                playerPos,
+                                weaponsData[inventory[cInventory].weapon].img,
                                 SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(Constants.weaponDropSize, main_game_panel.Size), main_game_panel.Size))
                             ));
 
@@ -1499,10 +1538,10 @@ namespace christ_a_2
                             weaponDrops[j].pb.Location = FromRelativeV2Center(weaponDrops[j].pos, weaponDrops[j].pb.Size, main_game_panel.Size);
                             weaponDrops[j].pb.BringToFront();
 
-                            inventory[0] = new InventoryOb(
+                            inventory[cInventory] = new InventoryOb(
                                 weaponDrops[i].weapon,
-                                weaponDrops[0].magBullets,
-                                weaponDrops[0].reserveBullets
+                                weaponDrops[i].magBullets,
+                                weaponDrops[i].reserveBullets
                             );
                             UpdateInventoryGraphics();
 
@@ -1525,20 +1564,20 @@ namespace christ_a_2
                 bool click = (MouseButtons == MouseButtons.Left) && ClientRectangle.Contains(FromRelativeV2(GetMousePos(main_game_panel.Size), main_game_panel.Size));
                 if (click) // Player clicks to try and shoot
                 {
-                    if (lastShot < sw.ElapsedMilliseconds - (1000 / weaponsData[inventory[0].weapon].firerate)) // Only shoot at firerate (1 / (rps / 1000))
+                    if (lastShot < sw.ElapsedMilliseconds - (1000 / weaponsData[inventory[cInventory].weapon].firerate)) // Only shoot at firerate (1 / (rps / 1000))
                     {
-                        if (weaponClassData[weaponsData[inventory[0].weapon].weaponClass].type == WeaponType.Auto || (weaponClassData[weaponsData[inventory[0].weapon].weaponClass].type == WeaponType.Semi && !lastClick)) // If weapon is semi make sure its a new click
+                        if (weaponClassData[weaponsData[inventory[cInventory].weapon].weaponClass].type == WeaponType.Auto || (weaponClassData[weaponsData[inventory[cInventory].weapon].weaponClass].type == WeaponType.Semi && !lastClick)) // If weapon is semi make sure its a new click
                         {
                             if (lastRotate < sw.ElapsedMilliseconds - Constants.weaponSwitchCooldown) // Can only shoot after weapon switch cooldown after changing weapon
                             {
                                 if (!reloading) // Cant shoot while reloading
                                 {
-                                    if (inventory[0].magBullets > 0) // Make sure there are bullets in the mag
+                                    if (inventory[cInventory].magBullets > 0) // Make sure there are bullets in the mag
                                     {
-                                        inventory[0].magBullets--; // Remove bullet from mag
+                                        inventory[cInventory].magBullets--; // Remove bullet from mag
                                         UpdateInventoryAmmo();
 
-                                        PlayerShoot(inventory[0].weapon);
+                                        PlayerShoot(inventory[cInventory].weapon);
                                         PlaySoundEffect(SoundEffects.Shoot);
 
                                         lastShot = sw.ElapsedMilliseconds;
@@ -1566,7 +1605,7 @@ namespace christ_a_2
                 {
                     if (!reloading)
                     {
-                        if (inventory[0].reserveBullets > 0) // If there are bullets in reserve
+                        if (inventory[cInventory].reserveBullets > 0) // If there are bullets in reserve
                         {
                             PlaySoundEffect(SoundEffects.Reload);
                             PlayerReload();
@@ -2258,18 +2297,18 @@ namespace christ_a_2
             reloading = true;
             game_inventory_reloading_label.Visible = true;
 
-            await Task.Delay(weaponsData[inventory[0].weapon].reload); // Reload time
+            await Task.Delay(weaponsData[inventory[cInventory].weapon].reload); // Reload time
 
-            int bulletsToAdd = weaponsData[inventory[0].weapon].magCapacity - inventory[0].magBullets;
-            if (bulletsToAdd <= inventory[0].reserveBullets)
+            int bulletsToAdd = weaponsData[inventory[cInventory].weapon].magCapacity - inventory[cInventory].magBullets;
+            if (bulletsToAdd <= inventory[cInventory].reserveBullets)
             {
-                inventory[0].magBullets += bulletsToAdd;
-                inventory[0].reserveBullets -= bulletsToAdd;
+                inventory[cInventory].magBullets += bulletsToAdd;
+                inventory[cInventory].reserveBullets -= bulletsToAdd;
             }
             else
             {
-                inventory[0].magBullets += inventory[0].reserveBullets;
-                inventory[0].reserveBullets = 0;
+                inventory[cInventory].magBullets += inventory[cInventory].reserveBullets;
+                inventory[cInventory].reserveBullets = 0;
             }
             UpdateInventoryAmmo();
 
@@ -2280,40 +2319,27 @@ namespace christ_a_2
 
         private void UpdateInventoryAmmo() // Update only current weapon ammo graphics in inventory
         {
-            game_inventory_currentWeaponAmmo_Label.Text = inventory[0].magBullets.ToString() + "/" + weaponsData[inventory[0].weapon].magCapacity.ToString();
-            game_inventory_currentWeaponAmmoReserve_Label.Text = inventory[0].reserveBullets.ToString() + "/" + (weaponsData[inventory[0].weapon].magCapacity * weaponsData[inventory[0].weapon].maxAmmoMultiplier).ToString();
+            game_inventory_currentWeaponAmmo_Label.Text = inventory[cInventory].magBullets.ToString() + "/" + weaponsData[inventory[cInventory].weapon].magCapacity.ToString();
+            game_inventory_currentWeaponAmmoReserve_Label.Text = inventory[cInventory].reserveBullets.ToString() + "/" + (weaponsData[inventory[cInventory].weapon].magCapacity * weaponsData[inventory[cInventory].weapon].maxAmmoMultiplier).ToString();
         }
 
         private void UpdateInventoryGraphics() // Update all inventory graphics
         {
-            game_inventory_currentWeapon_PictureBox.BackgroundImage = weaponsData[inventory[0].weapon].img;
-            game_inventory_currentWeaponName_label.Text = weaponsData[inventory[0].weapon].name;
+            game_inventory_currentWeapon_PictureBox.BackgroundImage = weaponsData[inventory[cInventory].weapon].img;
+            game_inventory_currentWeaponName_label.Text = weaponsData[inventory[cInventory].weapon].name;
             
-            game_inventory_nextWeapon_PictureBox.BackgroundImage = weaponsData[inventory[1].weapon].img;
-            game_inventory_prevWeapon_PictureBox.BackgroundImage = weaponsData[inventory[2].weapon].img;
+            game_inventory_nextWeapon_PictureBox.BackgroundImage = weaponsData[inventory[(cInventory + 1) % 3].weapon].img;
+            game_inventory_prevWeapon_PictureBox.BackgroundImage = weaponsData[inventory[(cInventory + 2) % 3].weapon].img;
 
             UpdateInventoryAmmo();
         }
 
         private void RotateWeapons(bool next) // Shift inventory either forwards or backwards
         {
-            InventoryOb[] tempInventory = new InventoryOb[inventory.Length];
-            Array.Copy(inventory, tempInventory, inventory.Length);
+            if (next) cInventory = Modulus(cInventory + 1, 3);
+            else cInventory = Modulus(cInventory - 1, 3);
 
-            if (next)
-            {
-                InventoryOb first = inventory[0];
-                Array.Copy(tempInventory, 1, inventory, 0, inventory.Length - 1);
-                inventory[inventory.Length - 1] = first;
-            }
-            else
-            {
-                InventoryOb last = inventory[inventory.Length - 1];
-                Array.Copy(tempInventory, 0, inventory, 1, inventory.Length - 1);
-                inventory[0] = last;
-            }
-
-            if (inventory[0].weapon == Weapons.None)
+            if (inventory[cInventory].weapon == Weapons.None)
                 RotateWeapons(next);
             else
                 UpdateInventoryGraphics();
