@@ -256,12 +256,45 @@ namespace christ_a_2
 
         #region "EnumClasses.Levels"
 
+        private struct WaveOb
+        {
+            public int amount;
+
+            public float firerateModifier;
+            public float damageModifier;
+            public float healthModifier;
+            public float accuracyModifier;
+            public float speedModifier;
+            
+            public WaveOb(int _amount, float _firerateModifier = 1f, float _damageModifier = 1f, float _healthModifier = 1f, float _accuracyModifier = 1f, float _speedModifier = 1f)
+            {
+                amount = _amount;
+
+                firerateModifier = _firerateModifier;
+                damageModifier = _damageModifier;
+                healthModifier = _healthModifier;
+                accuracyModifier = _accuracyModifier;
+                speedModifier = _speedModifier;
+            }
+
+            public WaveOb(int _amount, float difficulty)
+            {
+                amount = _amount;
+
+                healthModifier = difficulty;
+                speedModifier = difficulty;
+                firerateModifier = difficulty;
+                damageModifier = difficulty;
+                accuracyModifier = difficulty;
+            }
+        }
+
         private struct LevelOb
         {
             public Image floorImg;
-            public Dictionary<Enemys, int>[] waves;
+            public Dictionary<Enemys, WaveOb>[] waves; // Number of enemys, difficulty of enemy
 
-            public LevelOb(Image _floorImg, Dictionary<Enemys, int>[] _waves)
+            public LevelOb(Image _floorImg, Dictionary<Enemys, WaveOb>[] _waves)
             {
                 floorImg = _floorImg;
                 waves = _waves;
@@ -288,6 +321,11 @@ namespace christ_a_2
             public float maxHealth;
             public float speed;
 
+            public float firerateModifier;
+            public float damageModifier;
+            public float accuracyModifier;
+            public float speedModifier;
+
             public Vector2 gotoPos;
             public bool moving;
             public bool escaping;
@@ -296,7 +334,7 @@ namespace christ_a_2
             public int bulletsLeft;
             public bool reloading;
 
-            public Enemy(string _id, Enemys _type, Vector2 _pos, Image img, Size size, Weapons _weapon, float _health, float _speed, int _bulletsLeft) 
+            public Enemy(string _id, Enemys _type, Vector2 _pos, Image img, Size size, Weapons _weapon, float _health, float _speed, float _firerateModifier, float _damageModifier, float _accuracyModifier, float _speedModifier, int _bulletsLeft) 
             {
                 id = _id;
                 type = _type;
@@ -325,6 +363,11 @@ namespace christ_a_2
                 health = _health;
                 maxHealth = health;
                 speed = _speed;
+
+                firerateModifier = _firerateModifier;
+                damageModifier = _damageModifier;
+                accuracyModifier = _accuracyModifier;
+                speedModifier = _speedModifier;
 
                 gotoPos = new Vector2();
                 moving = false;
@@ -366,9 +409,8 @@ namespace christ_a_2
             public WeaponClass weaponClass;
             public float dropRate;
             public float movementDeviation;
-            public float shootChance;
 
-            public EnemyOb(Image _img, Vector2 _size, float _health, float _speed, WeaponClass _weaponClass, float _dropRate, float _movementDeviation, float _shootChance)
+            public EnemyOb(Image _img, Vector2 _size, float _health, float _speed, WeaponClass _weaponClass, float _dropRate, float _movementDeviation)
             {
                 img = _img;
                 size = _size;
@@ -377,7 +419,6 @@ namespace christ_a_2
                 weaponClass = _weaponClass;
                 dropRate = _dropRate;
                 movementDeviation = _movementDeviation;
-                shootChance = _shootChance;
             }
         }
 
@@ -797,14 +838,14 @@ namespace christ_a_2
             };
 
             levelsData = new LevelOb[] {
-                new LevelOb(Properties.Resources.level_0Factory, new Dictionary<Enemys, int>[] { 
-                    new Dictionary<Enemys, int> { { Enemys.Regular, 1 }, { Enemys.Rowland, 1 } },
-                    new Dictionary<Enemys, int> { {Enemys.Scout, 3 }, { Enemys.Rowland, 1 } },
-                    new Dictionary<Enemys, int> { { Enemys.Regular, 2 }, { Enemys.Scout, 2 }, { Enemys.Sniper, 1 } },
-                    new Dictionary<Enemys, int> { { Enemys.Tank, 2 } },
-                    new Dictionary<Enemys, int> { { Enemys.Regular, 1 }, { Enemys.Scout, 1 }, { Enemys.Tank, 1 },  { Enemys.Sniper, 1 }, { Enemys.Rowland, 1 }, },
+                new LevelOb(Properties.Resources.level_0Factory, new Dictionary<Enemys, WaveOb>[] { 
+                    new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(1, 1f, 0.1f, 1f, 1f, 0.1f) } },
+                    //new Dictionary<Enemys, int> { {Enemys.Scout, 3 }, { Enemys.Rowland, 1 } },
+                    //new Dictionary<Enemys, int> { { Enemys.Regular, 2 }, { Enemys.Scout, 2 }, { Enemys.Sniper, 1 } },
+                    //new Dictionary<Enemys, int> { { Enemys.Tank, 2 } },
+                    //new Dictionary<Enemys, int> { { Enemys.Regular, 1 }, { Enemys.Scout, 1 }, { Enemys.Tank, 1 },  { Enemys.Sniper, 1 }, { Enemys.Rowland, 1 }, },
                 }),
-                new LevelOb(Properties.Resources.level_1FactoryOutside, new Dictionary<Enemys, int>[] {
+                /*new LevelOb(Properties.Resources.level_1FactoryOutside, new Dictionary<Enemys, int>[] {
                     new Dictionary<Enemys, int> { { Enemys.Regular, 1 }, { Enemys.Rowland, 1 } },
                     new Dictionary<Enemys, int> { {Enemys.Scout, 3 }, { Enemys.Rowland, 1 } },
                     new Dictionary<Enemys, int> { { Enemys.Regular, 2 }, { Enemys.Scout, 2 }, { Enemys.Sniper, 1 } },
@@ -820,7 +861,7 @@ namespace christ_a_2
                 }),
                 new LevelOb(Properties.Resources.level_3Boss, new Dictionary<Enemys, int>[] {
                     new Dictionary<Enemys, int> { {Enemys.Boss, 1 } },
-                }),
+                }),*/
             };
 
             weaponClassData = new Dictionary<WeaponClass, WeaponClassOb> {
@@ -847,9 +888,9 @@ namespace christ_a_2
                 {Weapons.AMD65,       new WeaponOb("AMD-65",       WeaponClass.AR,              Properties.Resources.weapon_amd65,     Properties.Resources.bullet_other,   0.02f,      "Hungary",        30,     2.00f,  0.50f,    3.00f,    1,          700,    30,          6,                 0.10f,    0.02f,  0.75f) },
                 {Weapons.AEK971,      new WeaponOb("AEK-971",      WeaponClass.AR,              Properties.Resources.weapon_aek971,    Properties.Resources.bullet_other,   0.02f,      "Russia",         30,     2.00f,  0.50f,    3.00f,    1,          700,    30,          6,                 0.10f,    0.02f,  0.75f) },
                 {Weapons.AK47,        new WeaponOb("AK-47",        WeaponClass.AR,              Properties.Resources.weapon_ak47,      Properties.Resources.bullet_other,   0.02f,      "Russia",         40,     2.00f,  0.50f,    3.00f,    1,          700,    30,          6,                 0.10f,    0.02f,  0.75f) },
-                {Weapons.M107,        new WeaponOb("M107",         WeaponClass.Marksman,        Properties.Resources.weapon_m107,      Properties.Resources.bullet_other,   0.04f,      "USA",            60,    3.00f,  0.50f,    1.00f,    3,          1800,   1,           10,                0.01f,    0.09f,  1.00f) },
-                {Weapons.L115A3,      new WeaponOb("L115A3",       WeaponClass.Marksman,        Properties.Resources.weapon_l115a3,    Properties.Resources.bullet_other,   0.04f,      "United Kingdom", 60,    3.00f,  0.50f,    1.00f,    3,          1800,   2,           5,                 0.01f,    0.09f,  1.00f) },
-                {Weapons.SCAR,        new WeaponOb("SCAR SSR",     WeaponClass.Marksman,        Properties.Resources.weapon_scar,      Properties.Resources.bullet_other,   0.04f,      "Belgium",        60,    3.00f,  0.50f,    1.00f,    3,          1800,   5,           2,                 0.01f,    0.09f,  1.00f) },
+                {Weapons.M107,        new WeaponOb("M107",         WeaponClass.Marksman,        Properties.Resources.weapon_m107,      Properties.Resources.bullet_other,   0.04f,      "USA",            60,     3.00f,  0.50f,    1.00f,    3,          1800,   1,           10,                0.01f,    0.09f,  1.00f) },
+                {Weapons.L115A3,      new WeaponOb("L115A3",       WeaponClass.Marksman,        Properties.Resources.weapon_l115a3,    Properties.Resources.bullet_other,   0.04f,      "United Kingdom", 60,     3.00f,  0.50f,    1.00f,    3,          1800,   2,           5,                 0.01f,    0.09f,  1.00f) },
+                {Weapons.SCAR,        new WeaponOb("SCAR SSR",     WeaponClass.Marksman,        Properties.Resources.weapon_scar,      Properties.Resources.bullet_other,   0.04f,      "Belgium",        60,     3.00f,  0.50f,    1.00f,    3,          1800,   5,           2,                 0.01f,    0.09f,  1.00f) },
                 {Weapons.UMP,         new WeaponOb("UMP",          WeaponClass.SMG,             Properties.Resources.weapon_ump,       Properties.Resources.bullet_other,   0.01f,      "Germany",        5,      1.00f,  1.00f,    8.00f,    2,          500,    25,          10,                0.20f,    0.01f,  0.50f) },
                 {Weapons.MAC10,       new WeaponOb("MAC-10",       WeaponClass.SMG,             Properties.Resources.weapon_mac10,     Properties.Resources.bullet_other,   0.01f,      "USA",            5,      1.00f,  1.00f,    8.00f,    1,          500,    30,          10,                0.20f,    0.01f,  0.50f) },
                 {Weapons.Uzi,         new WeaponOb("Uzi",          WeaponClass.SMG,             Properties.Resources.weapon_uzi,       Properties.Resources.bullet_other,   0.01f,      "Israel",         5,      1.00f,  1.00f,    8.00f,    1,          500,    20,          10,                0.20f,    0.01f,  0.50f) },
@@ -862,13 +903,13 @@ namespace christ_a_2
             };
 
             enemysData = new Dictionary<Enemys, EnemyOb> {
-            //   Enemy                       Img,                                Size,                       Health, Speed, Weapon,              DropRate, MovementDeviation, ShootChance
-                {Enemys.Regular, new EnemyOb(Properties.Resources.enemy_regular, new Vector2(0.04f, 0.06f),  60.0f, 0.10f, WeaponClass.AR,              1f,    0.10f,     0.70f ) },
-                {Enemys.Tank,    new EnemyOb(Properties.Resources.enemy_tank,    new Vector2(0.08f, 0.12f),  200.0f, 0.02f, WeaponClass.GrenadeLauncher, 1f,    0.00f,     0.50f ) },
-                {Enemys.Scout,   new EnemyOb(Properties.Resources.enemy_scout,   new Vector2(0.03f, 0.045f), 25.0f,  0.20f, WeaponClass.SMG,             1f,    0.02f,     0.90f ) },
-                {Enemys.Sniper,  new EnemyOb(Properties.Resources.enemy_sniper,  new Vector2(0.02f, 0.06f),  40.0f,  0.30f, WeaponClass.Marksman,        1f,    0.08f,     0.40f ) },
-                {Enemys.Rowland, new EnemyOb(Properties.Resources.enemy_rowland, new Vector2(0.04f, 0.06f),  120.0f, 0.15f, WeaponClass.None,            1f,    0.20f,     0.00f ) },
-                {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.5f, 0.2f),    1600.0f, 0.00f, WeaponClass.Pistol,         1f,    0.00f,     1.00f ) },
+            //   Enemy                       Img,                                Size,                       Health,  Speed, Weapon,                      DropRate, MovementDeviation
+                {Enemys.Regular, new EnemyOb(Properties.Resources.enemy_regular, new Vector2(0.04f, 0.06f),  60.0f,   0.10f, WeaponClass.AR,              1f,       0.10f) },
+                {Enemys.Tank,    new EnemyOb(Properties.Resources.enemy_tank,    new Vector2(0.08f, 0.12f),  200.0f,  0.02f, WeaponClass.GrenadeLauncher, 1f,       0.00f) },
+                {Enemys.Scout,   new EnemyOb(Properties.Resources.enemy_scout,   new Vector2(0.03f, 0.045f), 25.0f,   0.20f, WeaponClass.SMG,             1f,       0.02f) },
+                {Enemys.Sniper,  new EnemyOb(Properties.Resources.enemy_sniper,  new Vector2(0.02f, 0.06f),  40.0f,   0.30f, WeaponClass.Marksman,        1f,       0.08f) },
+                {Enemys.Rowland, new EnemyOb(Properties.Resources.enemy_rowland, new Vector2(0.04f, 0.06f),  120.0f,  0.15f, WeaponClass.None,            1f,       0.20f) },
+                {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.5f, 0.2f),    1600.0f, 0.00f, WeaponClass.Pistol,          1f,       0.00f) },
             };
 
             dropsData = new Dictionary<Drops, DropOb> {
@@ -899,10 +940,10 @@ namespace christ_a_2
 
             foreach (KeyValuePair<Scenes, SceneOb> s in scenesData)
                 s.Value.panel.Visible = false;
-            LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
+            //LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
 
-            //cLevel = 3;
-            //LoadScene(Scenes.Game);
+            cLevel = 0;
+            LoadScene(Scenes.Game);
 
             for (int i = 0; i < soundEffects.Length; i++)
                 soundEffects[i] = new SoundEffectPlayer();
@@ -1238,9 +1279,9 @@ namespace christ_a_2
             enemyAIOn = false;
 
             int enemyi = 0;
-            foreach (KeyValuePair<Enemys, int> enemyType in levelsData[cLevel].waves[cWave]) // Create the enemys for the level and wave
+            foreach (KeyValuePair<Enemys, WaveOb> enemyType in levelsData[cLevel].waves[cWave]) // Create the enemys for the level and wave
             {
-                for (int i = 0; i < enemyType.Value; i++)
+                for (int i = 0; i < enemyType.Value.amount; i++)
                 {
                     WeaponClass enemyWeaponClass = enemysData[enemyType.Key].weaponClass;
                     List<Weapons> viableWeapons = new List<Weapons>();
@@ -1260,8 +1301,12 @@ namespace christ_a_2
                         enemysData[enemyType.Key].img,
                         SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(enemysData[enemyType.Key].size, main_game_panel.Size), main_game_panel.Size)),
                         weapon,
-                        enemysData[enemyType.Key].health,
-                        enemysData[enemyType.Key].speed,
+                        enemysData[enemyType.Key].health * enemyType.Value.healthModifier,
+                        enemysData[enemyType.Key].speed * enemyType.Value.speedModifier,
+                        enemyType.Value.firerateModifier,
+                        enemyType.Value.damageModifier,
+                        enemyType.Value.accuracyModifier,
+                        enemyType.Value.speedModifier,
                         weaponsData[weapon].magCapacity
                     ));
 
@@ -1953,7 +1998,7 @@ namespace christ_a_2
 
                 if (toGoto.ScaledMagnitude(main_game_panel.Size) >= EnemyConstants.closeEnough)
                 {
-                    enemys[i].pos += FromScaledRelativeV2ToRealtiveV2(toGoto.Normalise() * enemysData[enemys[i].type].speed * delta, main_game_panel.Size);
+                    enemys[i].pos += FromScaledRelativeV2ToRealtiveV2(toGoto.Normalise() * enemysData[enemys[i].type].speed * enemys[i].speedModifier * delta, main_game_panel.Size);
                     enemys[i].UpdatePos(main_game_panel.Size);
                 }
                 else
@@ -1962,27 +2007,25 @@ namespace christ_a_2
                 }
             }
 
-            if (GetFloatRng() < enemysData[enemys[i].type].shootChance) // Enemy shooting
+            // Enemy shooting
+            if (enemys[i].bulletsLeft > 0) // Make sure there are bullets in the mag
             {
-                if (enemys[i].bulletsLeft > 0) // Make sure there are bullets in the mag
+                if (!enemys[i].reloading) // Cant shoot while reloading
                 {
-                    if (!enemys[i].reloading) // Cant shoot while reloading
+                    if (enemys[i].lastShot < sw.ElapsedMilliseconds - (1000 / (weaponsData[enemys[i].weapon].firerate * enemys[i].firerateModifier)))  // Only shoot at firerate (1 / (rps / 1000))
                     {
-                        if (enemys[i].lastShot < sw.ElapsedMilliseconds - (1000 / weaponsData[enemys[i].weapon].firerate))  // Only shoot at firerate (1 / (rps / 1000))
-                        {
-                            enemys[i].bulletsLeft--; // Remove bullet from mag
+                        enemys[i].bulletsLeft--; // Remove bullet from mag
 
-                            EnemyShoot(i);
-                            PlaySoundEffect(SoundEffects.Shoot);
+                        EnemyShoot(i);
+                        PlaySoundEffect(SoundEffects.Shoot);
 
-                            enemys[i].lastShot = sw.ElapsedMilliseconds;
-                        }
+                        enemys[i].lastShot = sw.ElapsedMilliseconds;
                     }
                 }
-                else
-                {
-                    EnemyReload(i);
-                }
+            }
+            else
+            {
+                EnemyReload(i);
             }
 
             if (enemys[i].type == Enemys.Boss)
@@ -2019,7 +2062,11 @@ namespace christ_a_2
                         weapon,
                         enemysData[enemyType].health,
                         enemysData[enemyType].speed,
-                        weaponsData[weapon].magCapacity
+                        1f,
+                        1f,
+                        1f,
+                        1f,
+                        weaponsData[weapon].magCapacity // What should boss spawing difficulty be?
                     ));
 
                     int j = enemys.Count - 1;
@@ -2042,7 +2089,7 @@ namespace christ_a_2
         {
             Weapons weapon = enemys[i].weapon;
 
-            float accuracyVal = (weaponsData[weapon].accuracy + weaponsData[weapon].recoil) / 2;
+            float accuracyVal = weaponsData[weapon].accuracy / (2 * enemys[i].accuracyModifier);
             Vector2 aimPos = playerPos + FromScaledRelativeV2ToRealtiveV2(new Vector2(GetFloatRng(-accuracyVal, accuracyVal), GetFloatRng(-accuracyVal, accuracyVal)), main_game_panel.Size); // Affected by accuracy
             Vector2 dir = (aimPos - enemys[i].pos).Normalise();
 
@@ -2064,7 +2111,7 @@ namespace christ_a_2
                             weaponsData[weapon].maxDistance,
                             new Vector2(cAngle, true),
                             (float)weaponsData[weapon].velocity,
-                            weaponsData[weapon].damage,
+                            (int)((float)weaponsData[weapon].damage * enemys[i].damageModifier),
                             weaponsData[weapon].penetration,
                             weaponsData[weapon].bulletImg,
                             SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(new Vector2(weaponsData[weapon].bulletSize), main_game_panel.Size), main_game_panel.Size)),
@@ -2083,7 +2130,7 @@ namespace christ_a_2
                         weaponsData[weapon].maxDistance,
                         dir,
                         (float)weaponsData[weapon].velocity,
-                        weaponsData[weapon].damage,
+                        (int)((float)weaponsData[weapon].damage * enemys[i].damageModifier),
                         weaponsData[weapon].penetration,
                         weaponsData[weapon].bulletImg,
                         SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(new Vector2(weaponsData[weapon].bulletSize), main_game_panel.Size), main_game_panel.Size)),
@@ -2103,7 +2150,7 @@ namespace christ_a_2
             enemys[i].reloading = true;
             enemys[i].bulletsLeft = weaponsData[enemys[i].weapon].magCapacity; // Add bullets before delay so EnemyReload is not called multiple times
             await Task.Delay(weaponsData[enemys[i].weapon].reload);
-            if (i < enemys.Count) enemys[i].reloading = false;
+            enemys[i].reloading = false;
         }
 
         #endregion
