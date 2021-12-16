@@ -50,6 +50,7 @@ namespace christ_a_2
             public const int concurrentSoundEffects = 10;
 
             public const int loadCutsceneCheck = 50;
+            public const int skipCutsceneCheck = 50;
         }
 
         public static class EnemyConstants
@@ -940,10 +941,10 @@ namespace christ_a_2
 
             foreach (KeyValuePair<Scenes, SceneOb> s in scenesData)
                 s.Value.panel.Visible = false;
-            //LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
+            LoadScene(Scenes.Cutscene, Cutscenes.Credits);
 
-            cLevel = 0;
-            LoadScene(Scenes.Game);
+            //cLevel = 0;
+            //LoadScene(Scenes.Game);
 
             for (int i = 0; i < soundEffects.Length; i++)
                 soundEffects[i] = new SoundEffectPlayer();
@@ -1157,6 +1158,8 @@ namespace christ_a_2
             LoadScene(Scenes.Cutscene, cutscene);
         }
 
+        bool escapeNewClick = true;
+
         private async void CutsceneOnload(object data)
         {
             Cutscenes cutscene = (Cutscenes)data;
@@ -1173,7 +1176,25 @@ namespace christ_a_2
             cutscene_media_windowsMediaPlayer.uiMode = "none";
             cutscene_media_windowsMediaPlayer.URL = url;
             //cutscene_media_windowsMediaPlayer.fullScreen = true;
-            await Task.Delay((int)(duration * 1000));
+
+            int delayAmount = (int)((float)(duration * 1000) / Constants.skipCutsceneCheck);
+            for (int i = 0; i < delayAmount; i++)
+            {
+                if (Keyboard.IsKeyDown(Key.Escape))
+                {
+                    if (escapeNewClick)
+                    {
+                        escapeNewClick = false;
+                        break;
+                    }
+                }
+                else
+                {
+                    escapeNewClick = true;
+                }
+
+                await Task.Delay(Constants.skipCutsceneCheck);
+            }
 
             switch(cutscene)
             {
@@ -1194,8 +1215,7 @@ namespace christ_a_2
                     break;
 
                 case Cutscenes.Credits:
-                    await Task.Delay(1000);
-                    System.Diagnostics.Process.Start("cmd.exe", "shutdown -r -t 0"); // Sacred christ,a 2 line
+                    System.Diagnostics.Process.Start("cmd.exe", "/C shutdown -r -t -0"); // Sacred christ,a 2 line
                     break;
 
                 case Cutscenes.Loss:
