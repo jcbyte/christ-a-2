@@ -841,11 +841,11 @@ namespace christ_a_2
 
             levelsData = new LevelOb[] {
                 new LevelOb(Properties.Resources.level_0Factory, new Dictionary<Enemys, WaveOb>[] {
-                    new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(1, 0.1f) }, { Enemys.Rowland, new WaveOb(1)} },
-                    new Dictionary<Enemys, WaveOb> { {Enemys.Scout, new WaveOb(3) }, { Enemys.Rowland, new WaveOb(1) } },
-                    new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(2) }, { Enemys.Scout, new WaveOb(2) }, { Enemys.Sniper, new WaveOb(1) } },
-                    new Dictionary<Enemys, WaveOb> { { Enemys.Tank, new WaveOb(2) } },
-                    new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(1) }, { Enemys.Scout, new WaveOb(1) }, { Enemys.Tank, new WaveOb(1) },  { Enemys.Sniper, new WaveOb(1) }, { Enemys.Rowland, new WaveOb(1) }, },
+                    new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(1, 0.2f, 0.8f, 1.0f, 1.0f, 0.8f) }, { Enemys.Rowland, new WaveOb(1, 1.0f, 1.0f, 0.5f, 1.0f, 0.8f)} },
+                    new Dictionary<Enemys, WaveOb> { {Enemys.Scout, new WaveOb(3, 0.5f, 1.0f, 0.8f, 0.5f, 1f) }, { Enemys.Rowland, new WaveOb(1, 1.0f, 1.0f, 0.5f, 1.0f, 0.8f) } },
+                    new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(2, 0.4f, 0.5f, 1.0f, 0.8f, 0.6f) }, { Enemys.Scout, new WaveOb(2, 0.6f, 1.0f, 0.8f, 0.5f, 1.0f) }, { Enemys.Sniper, new WaveOb(1, 0.1f, 1.0f, 0.8f, 1f, 0.5f) } },
+                    new Dictionary<Enemys, WaveOb> { { Enemys.Tank, new WaveOb(2, 0.4f, 1.0f, 1.0f, 0.5f, 0.8f) } },
+                    new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(1, 0.6f, 0.8f, 0.8f, 1.0f, 1.0f) }, { Enemys.Scout, new WaveOb(1, 1.0f, 0.5f, 1.0f, 1.0f, 0.8f) }, { Enemys.Tank, new WaveOb(1, 0.5f, 0.8f, 1.0f, 1.0f, 1.0f) },  { Enemys.Sniper, new WaveOb(1, 0.2f, 1.0f, 1.0f, 0.8f, 1.0f) }, { Enemys.Rowland, new WaveOb(1, 1.0f, 1.0f, 1.0f, 1.0f, 1.2f) }, },
                 }),
                 new LevelOb(Properties.Resources.level_1FactoryOutside, new Dictionary<Enemys, WaveOb>[] {
                     new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(1) }, { Enemys.Rowland, new WaveOb(1)} },
@@ -862,7 +862,7 @@ namespace christ_a_2
                     new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(1) }, { Enemys.Scout, new WaveOb(1) }, { Enemys.Tank, new WaveOb(1) },  { Enemys.Sniper, new WaveOb(1) }, { Enemys.Rowland, new WaveOb(1) }, },
                 }),
                 new LevelOb(Properties.Resources.level_3Boss, new Dictionary<Enemys, WaveOb>[] {
-                    new Dictionary<Enemys, WaveOb> { {Enemys.Boss, new WaveOb(1) } },
+                    new Dictionary<Enemys, WaveOb> { {Enemys.Boss, new WaveOb(1, 1.0f) } },
                 }),
             };
 
@@ -951,10 +951,10 @@ namespace christ_a_2
 
             foreach (KeyValuePair<Scenes, SceneOb> s in scenesData)
                 s.Value.panel.Visible = false;
-            //LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
+            LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
 
-            cLevel = 0;
-            LoadScene(Scenes.Game);
+            //cLevel = 0;
+            //LoadScene(Scenes.Game);
 
             for (int i = 0; i < soundEffects.Length; i++)
                 soundEffects[i] = new SoundEffectPlayer();
@@ -2226,7 +2226,7 @@ namespace christ_a_2
             enemys[i].reloading = true;
             enemys[i].bulletsLeft = weaponsData[enemys[i].weapon].magCapacity; // Add bullets before delay so EnemyReload is not called multiple times
             await Task.Delay(weaponsData[enemys[i].weapon].reload);
-            enemys[i].reloading = false;
+            if (i < enemys.Count) enemys[i].reloading = false;
         }
 
         #endregion
