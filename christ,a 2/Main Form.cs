@@ -941,7 +941,7 @@ namespace christ_a_2
 
             foreach (KeyValuePair<Scenes, SceneOb> s in scenesData)
                 s.Value.panel.Visible = false;
-            LoadScene(Scenes.Cutscene, Cutscenes.Credits);
+            LoadScene(Scenes.Cutscene, Cutscenes.OpeningCredits);
 
             //cLevel = 0;
             //LoadScene(Scenes.Game);
@@ -1382,7 +1382,7 @@ namespace christ_a_2
                     movement.x += 1;
 
                 float speedWeightModifier = (float)1 / weaponsData[inventory[0].weapon].weight;
-                playerPos += FromScaledRelativeV2ToRealtiveV2(movement * Constants.playerSpeed * speedWeightModifier * delta, main_game_panel.Size); // Player Movement
+                playerPos = AddV2WithBounds(playerPos, FromScaledRelativeV2ToRealtiveV2(movement * Constants.playerSpeed * speedWeightModifier * delta, main_game_panel.Size), new Vector2(0f), new Vector2(1f)); // Player Movement
                 game_player_pictureBox.Location = FromRelativeV2Center(playerPos, game_player_pictureBox.Size, main_game_panel.Size);
 
                 #endregion
