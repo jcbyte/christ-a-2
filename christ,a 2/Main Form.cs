@@ -63,8 +63,8 @@ namespace christ_a_2
             public const float sniperRunRange = 0.2f;
             public const float rowlandTooFarRange = 0.2f;
 
-            public const float bossRegen = 0.5f;
-            public const int bossMaxSpawnRate = 5000; // (ms)
+            public const float bossRegen = 2f;
+            public const int bossMaxSpawnRate = 6000; // (ms)
             public const int bossMinSpawnRate = 1000; // (ms)
         }
 
@@ -920,7 +920,7 @@ namespace christ_a_2
                 {Enemys.Scout,   new EnemyOb(Properties.Resources.enemy_scout,   new Vector2(0.03f, 0.045f), 25.0f,   0.20f, WeaponClass.SMG,             1f,       0.02f) },
                 {Enemys.Sniper,  new EnemyOb(Properties.Resources.enemy_sniper,  new Vector2(0.02f, 0.06f),  40.0f,   0.30f, WeaponClass.Marksman,        1f,       0.08f) },
                 {Enemys.Rowland, new EnemyOb(Properties.Resources.enemy_rowland, new Vector2(0.04f, 0.06f),  120.0f,  0.15f, WeaponClass.None,            1f,       0.20f) },
-                {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.5f, 0.2f),    1600.0f, 0.00f, WeaponClass.Pistol,          1f,       0.00f) },
+                {Enemys.Boss,    new EnemyOb(Properties.Resources.enemy_boss,    new Vector2(0.5f, 0.2f),    2000.0f, 0.00f, WeaponClass.Pistol,          0f,       0.00f) },
             };
 
             dropsData = new Dictionary<Drops, DropOb> {
@@ -1178,14 +1178,6 @@ namespace christ_a_2
         private bool shouldBePlayingCutscene = false;
         private int cutscenesPlaying = 0;
 
-        private async void WaitForCutscene(int delay)
-        {
-            await Task.Delay(delay);
-            cutscenesPlaying--;
-
-            if (cutscenesPlaying == 0) shouldBePlayingCutscene = false;
-        }
-
         private bool escapeNewClick = true;
 
         private async void CutsceneOnload(object data)
@@ -1200,14 +1192,12 @@ namespace christ_a_2
             backgroundMusicPlayer.Stop();
             if (cutscene == Cutscenes.OpeningCredits) LoadBackgroundMusic("FullResources\\Music\\menu.mp3");
 
-            double duration = (int)(new WMPLib.WindowsMediaPlayer()).newMedia(url).duration;
             cutscene_media_windowsMediaPlayer.uiMode = "none";
             cutscene_media_windowsMediaPlayer.URL = url;
 
             shouldBePlayingCutscene = true;
             cutscenesPlaying++;
 
-            WaitForCutscene((int)(duration * 1000));
             while (shouldBePlayingCutscene)
             {
                 if (Keyboard.IsKeyDown(Key.Escape))
@@ -1262,9 +1252,9 @@ namespace christ_a_2
 
         private void cutscene_media_windowsMediaPlayer_PlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e)
         {
-            if (e.newState == 1)
+            if (e.newState == 1) // Stops playing
             {
-
+                shouldBePlayingCutscene = false;
             }
 
             if (e.newState == 3) // If playing
@@ -1437,18 +1427,27 @@ namespace christ_a_2
 
                 if (Keyboard.IsKeyDown(Key.D1) || Keyboard.IsKeyDown(Key.NumPad1)) // Set weapon based on number
                 {
-                    cInventory = 0;
-                    UpdateInventoryGraphics();
+                    if (inventory[0].weapon != Weapons.None)
+                    {
+                        cInventory = 0;
+                        UpdateInventoryGraphics();
+                    }
                 }
                 else if (Keyboard.IsKeyDown(Key.D2) || Keyboard.IsKeyDown(Key.NumPad2))
                 {
-                    cInventory = 1;
-                    UpdateInventoryGraphics();
+                    if (inventory[1].weapon != Weapons.None)
+                    {
+                        cInventory = 1;
+                        UpdateInventoryGraphics();
+                    }
                 }
                 else if (Keyboard.IsKeyDown(Key.D3) || Keyboard.IsKeyDown(Key.NumPad3))
                 {
-                    cInventory = 2;
-                    UpdateInventoryGraphics();
+                    if (inventory[2].weapon != Weapons.None)
+                    {
+                        cInventory = 2;
+                        UpdateInventoryGraphics();
+                    }
                 }
 
                 #endregion
