@@ -24,7 +24,8 @@ namespace christ_a_2
             public const int memoryIncrease = 1024 * 1024 * 1;
 
             public const float playerSpeed = 0.20f;
-            public const int maxPlayerHealth = 250;
+            public const float maxPlayerHealth = 100;
+            public const float maxPlayerShield = 100;
             public static readonly Vector2 playerSize = new Vector2(0.06f); // Scaled relative Vector2
 
             public const float playerRespawnHealthPercent = 0.80f;
@@ -38,7 +39,8 @@ namespace christ_a_2
             public const int enemyHealthBarThickness = 6; // (px)
 
             public const float pickupBoxRange = 0.02f; // Relative
-            public const int healthPickupHealth = 50;
+            public const int healthPickupHealth = 20;
+            public const int shieldPickupShield = 30;
             public static readonly Vector2 weaponDropSize = new Vector2(0.08f, 0.06f);
             public const int weaponPickupDelay = 200; // (ms)
 
@@ -752,7 +754,7 @@ namespace christ_a_2
         private enum SoundEffects : byte
         {
             Shoot,
-            PlayerDamage, // Not implemented yet
+            PlayerDamage,
             AmmoPickup,
             HealthPickup,
             WeaponPickup,
@@ -761,6 +763,7 @@ namespace christ_a_2
             NoAmmo,
             NextWave,
             EnemyDamage,
+            ShieldPickup,
         }
 
         private class SoundEffectPlayer
@@ -795,6 +798,7 @@ namespace christ_a_2
 
         private Vector2 playerPos = new Vector2(0.5f, 0.5f);
         private float playerHealth;
+        private float playerShield;
         private InventoryOb[] inventory = new InventoryOb[3] { new InventoryOb(Weapons.Glock19, 15, 45), new InventoryOb(), new InventoryOb() };
         private int cInventory = 0;
 
@@ -948,12 +952,15 @@ namespace christ_a_2
                 { SoundEffects.NoAmmo,       "FullResources\\SoundEffects\\noAmmo.mp3" },
                 { SoundEffects.NextWave,     "FullResources\\SoundEffects\\nextWave.mp3" },
                 { SoundEffects.EnemyDamage,  "FullResources\\SoundEffects\\enemyDamage.mp3" },
+                { SoundEffects.ShieldPickup, "FullResources\\SoundEffects\\shieldPickup.mp3" },
             };
 
             #endregion
 
             playerHealth = Constants.maxPlayerHealth;
             UpdatePlayerHealth();
+            playerShield = Constants.maxPlayerShield;
+            UpdatePlayerShield();
 
             foreach (KeyValuePair<Scenes, SceneOb> s in scenesData)
                 s.Value.panel.Visible = false;
@@ -1502,6 +1509,12 @@ namespace christ_a_2
                                 weaponDrops[k].pb.Location = FromRelativeV2Center(weaponDrops[k].pos, weaponDrops[k].pb.Size, main_game_panel.Size);
                                 weaponDrops[k].pb.BringToFront();
 
+                                break;
+
+                            case Drops.Shield:
+                                PlaySoundEffect(SoundEffects.ShieldPickup);
+                                playerShield = Math.Min(playerShield + Constants.shieldPickupShield, Constants.maxPlayerShield);
+                                UpdatePlayerShield();
                                 break;
 
                             case Drops.NextWave:
@@ -2273,6 +2286,12 @@ namespace christ_a_2
         {
             game_playerHealth_healthBar_pictureBox.Size = SystemPointToSystemSize(FromRelativeV2(new Vector2((float)playerHealth / Constants.maxPlayerHealth, 1), game_playerHealth_panel.Size));
             game_playerHealth_health_label.Text = ((int)playerHealth).ToString() + "/" + Constants.maxPlayerHealth.ToString();
+        }
+
+        private void UpdatePlayerShield()
+        {
+            game_playerShield_shieldBar_pictureBox.Size = SystemPointToSystemSize(FromRelativeV2(new Vector2((float)playerShield / Constants.maxPlayerShield, 1), game_playerShield_panel.Size));
+            game_playerShield_shield_label.Text = ((int)playerShield).ToString() + "/" + Constants.maxPlayerShield.ToString();
         }
 
         private void CreateBullet(Vector2 pos, float posLimit, Vector2 dir, float speed, int damage, int penetration, Image img, Size size, Weapons fromWeapon, bool playerBullet)

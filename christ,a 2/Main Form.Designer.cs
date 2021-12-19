@@ -52,6 +52,9 @@
             this.main_cutscene_panel = new System.Windows.Forms.Panel();
             this.cutscene_media_windowsMediaPlayer = new AxWMPLib.AxWindowsMediaPlayer();
             this.main_FPSCounter_Label = new System.Windows.Forms.Label();
+            this.game_playerShield_panel = new System.Windows.Forms.Panel();
+            this.game_playerShield_shield_label = new System.Windows.Forms.Label();
+            this.game_playerShield_shieldBar_pictureBox = new System.Windows.Forms.PictureBox();
             this.main_menu_panel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.menu_background_PictureBox)).BeginInit();
             this.main_game_panel.SuspendLayout();
@@ -65,6 +68,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.game_floor_pictureBox)).BeginInit();
             this.main_cutscene_panel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.cutscene_media_windowsMediaPlayer)).BeginInit();
+            this.game_playerShield_panel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.game_playerShield_shieldBar_pictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // menu_startGame_button
@@ -161,6 +166,7 @@
             this.main_game_panel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.main_game_panel.Controls.Add(this.game_playerShield_panel);
             this.main_game_panel.Controls.Add(this.game_playerHealth_panel);
             this.main_game_panel.Controls.Add(this.game_player_pictureBox);
             this.main_game_panel.Controls.Add(this.game_inventory_panel);
@@ -352,6 +358,40 @@
             this.main_FPSCounter_Label.TabIndex = 4;
             this.main_FPSCounter_Label.Text = "FPS: 0";
             // 
+            // game_playerShield_panel
+            // 
+            this.game_playerShield_panel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.game_playerShield_panel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.game_playerShield_panel.Controls.Add(this.game_playerShield_shield_label);
+            this.game_playerShield_panel.Controls.Add(this.game_playerShield_shieldBar_pictureBox);
+            this.game_playerShield_panel.Location = new System.Drawing.Point(20, 974);
+            this.game_playerShield_panel.Name = "game_playerShield_panel";
+            this.game_playerShield_panel.Size = new System.Drawing.Size(1280, 40);
+            this.game_playerShield_panel.TabIndex = 9;
+            // 
+            // game_playerShield_shield_label
+            // 
+            this.game_playerShield_shield_label.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.game_playerShield_shield_label.AutoSize = true;
+            this.game_playerShield_shield_label.BackColor = System.Drawing.Color.Transparent;
+            this.game_playerShield_shield_label.Font = new System.Drawing.Font("Metropolis Thin", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.game_playerShield_shield_label.Location = new System.Drawing.Point(10, 8);
+            this.game_playerShield_shield_label.Name = "game_playerShield_shield_label";
+            this.game_playerShield_shield_label.Size = new System.Drawing.Size(75, 19);
+            this.game_playerShield_shield_label.TabIndex = 7;
+            this.game_playerShield_shield_label.Text = "70/100";
+            this.game_playerShield_shield_label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // game_playerShield_shieldBar_pictureBox
+            // 
+            this.game_playerShield_shieldBar_pictureBox.BackColor = System.Drawing.Color.SteelBlue;
+            this.game_playerShield_shieldBar_pictureBox.Location = new System.Drawing.Point(0, 0);
+            this.game_playerShield_shieldBar_pictureBox.Name = "game_playerShield_shieldBar_pictureBox";
+            this.game_playerShield_shieldBar_pictureBox.Size = new System.Drawing.Size(600, 40);
+            this.game_playerShield_shieldBar_pictureBox.TabIndex = 8;
+            this.game_playerShield_shieldBar_pictureBox.TabStop = false;
+            // 
             // mainForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
@@ -388,6 +428,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.game_floor_pictureBox)).EndInit();
             this.main_cutscene_panel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.cutscene_media_windowsMediaPlayer)).EndInit();
+            this.game_playerShield_panel.ResumeLayout(false);
+            this.game_playerShield_panel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.game_playerShield_shieldBar_pictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -418,6 +461,9 @@
         private System.Windows.Forms.Label game_playerHealth_health_label;
         private System.Windows.Forms.PictureBox game_playerHealth_healthBar_pictureBox;
         private System.Windows.Forms.Label main_FPSCounter_Label;
+        private System.Windows.Forms.Panel game_playerShield_panel;
+        private System.Windows.Forms.Label game_playerShield_shield_label;
+        private System.Windows.Forms.PictureBox game_playerShield_shieldBar_pictureBox;
     }
 }
 
