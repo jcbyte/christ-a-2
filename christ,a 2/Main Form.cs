@@ -24,7 +24,7 @@ namespace christ_a_2
             public const int memoryIncrease = 1024 * 1024 * 1;
 
             public const float playerSpeed = 0.20f;
-            public const float maxPlayerHealth = 100;
+            public const float maxPlayerHealth = 200;
             public const float maxPlayerShield = 100;
             public const float shieldDegen = 1f;
             public static readonly Vector2 playerSize = new Vector2(0.06f); // Scaled relative Vector2
@@ -189,18 +189,14 @@ namespace christ_a_2
 
         private static Vector2 FromScaledRelativeV2ToRealtiveV2(Vector2 c, Size formSize) // A scaled relative Vector2 so that the proportions are 1:1, used for scaling
         {
-            if (formSize.Width > formSize.Height)
-                return new Vector2(c.x * ((float)formSize.Height / formSize.Width), c.y);
-            else
-                return new Vector2(c.x, c.y * ((float)formSize.Width / formSize.Height));
+            if (formSize.Width > formSize.Height) return new Vector2(c.x * ((float)formSize.Height / formSize.Width), c.y);
+            else return new Vector2(c.x, c.y * ((float)formSize.Width / formSize.Height));
         }
 
         private static Vector2 FromRelativeV2ToScaledRealtiveV2(Vector2 c, Size formSize) // To a scaled relative Vector2 so that the proportions are 1:1
         {
-            if (formSize.Width > formSize.Height)
-                return new Vector2(c.x * ((float)formSize.Width / formSize.Height), c.y);
-            else
-                return new Vector2(c.x, c.y * ((float)formSize.Height / formSize.Width));
+            if (formSize.Width > formSize.Height) return new Vector2(c.x * ((float)formSize.Width / formSize.Height), c.y);
+            else return new Vector2(c.x, c.y * ((float)formSize.Height / formSize.Width));
         }
 
         private static Vector2 AddV2WithBounds(Vector2 original, Vector2 add, Vector2 boundsMin, Vector2 boundsMax)
@@ -1134,7 +1130,6 @@ namespace christ_a_2
             while (true)
             {
                 float memUsed = (float)System.Diagnostics.Process.GetCurrentProcess().PrivateMemorySize64 / (1024 * 1024 * 1024);
-                //float memUsed = (float)GC.GetTotalMemory(true) / (1024 * 1024 * 1024);
                 main_memoryCounter_label.Text = "Memory used: " + memUsed.ToString("0.00") + " GB";
 
                 await Task.Delay(Constants.memoryCounterRefresh);
@@ -1197,7 +1192,6 @@ namespace christ_a_2
         }
 
         private bool shouldBePlayingCutscene = false;
-        private int cutscenesPlaying = 0;
 
         private bool escapeNewClick = true;
 
@@ -1217,8 +1211,6 @@ namespace christ_a_2
             cutscene_media_windowsMediaPlayer.URL = url;
 
             shouldBePlayingCutscene = true;
-            cutscenesPlaying++;
-
             while (shouldBePlayingCutscene)
             {
                 if (Keyboard.IsKeyDown(Key.Escape))
@@ -1267,7 +1259,7 @@ namespace christ_a_2
 
             cutscene_media_windowsMediaPlayer.URL = "";
 
-            //if (cScene != Scenes.Menu) memoryLeakOn = true;
+            //if (cScene != Scenes.Menu) memoryLeakOn = true; // Comment this for no memory leak
 
             playingCutscene = false;
         }
@@ -1275,14 +1267,10 @@ namespace christ_a_2
         private void cutscene_media_windowsMediaPlayer_PlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e)
         {
             if (e.newState == 1) // Stops playing
-            {
-                shouldBePlayingCutscene = false;
-            }
+                shouldBePlayingCutscene = false; 
 
-            if (e.newState == 3) // If playing
-            {
-                cutscene_media_windowsMediaPlayer.fullScreen = true;
-            }
+            else if (e.newState == 3) // If playing
+                cutscene_media_windowsMediaPlayer.fullScreen = true; 
         }
 
         #endregion
@@ -2016,9 +2004,7 @@ namespace christ_a_2
                 #endregion
 
                 if (playerHealth <= 0)
-                {
                     LoadScene(Scenes.Cutscene, Cutscenes.Loss);
-                }
             }
 
             if (lastFPSUpdate < sw.ElapsedMilliseconds - 1000)
@@ -2483,10 +2469,8 @@ namespace christ_a_2
             if (next) cInventory = Modulus(cInventory + 1, 3);
             else cInventory = Modulus(cInventory - 1, 3);
 
-            if (inventory[cInventory].weapon == Weapons.None)
-                RotateWeapons(next);
-            else
-                UpdateInventoryGraphics();
+            if (inventory[cInventory].weapon == Weapons.None) RotateWeapons(next);
+            else UpdateInventoryGraphics();
         }
 
         float lastRotate = 0;
