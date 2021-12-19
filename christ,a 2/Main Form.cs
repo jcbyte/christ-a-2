@@ -290,11 +290,13 @@ namespace christ_a_2
         private struct LevelOb
         {
             public Image floorImg;
+            public bool hasCutscene;
             public Dictionary<Enemys, WaveOb>[] waves; // Number of enemys, difficulty of enemy
 
-            public LevelOb(Image _floorImg, Dictionary<Enemys, WaveOb>[] _waves)
+            public LevelOb(Image _floorImg, bool _hasCutscene, Dictionary<Enemys, WaveOb>[] _waves)
             {
                 floorImg = _floorImg;
+                hasCutscene = _hasCutscene;
                 waves = _waves;
             }
         }
@@ -844,28 +846,28 @@ namespace christ_a_2
             };
 
             levelsData = new LevelOb[] {
-                new LevelOb(Properties.Resources.level_0Factory, new Dictionary<Enemys, WaveOb>[] {
+                new LevelOb(Properties.Resources.level_0Factory, true, new Dictionary<Enemys, WaveOb>[] {
                     new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(1, 0.2f, 0.8f, 1.0f, 1.0f, 0.8f) }, { Enemys.Rowland, new WaveOb(1, 1.0f, 1.0f, 0.5f, 1.0f, 0.8f) } },
                     new Dictionary<Enemys, WaveOb> { { Enemys.Scout,   new WaveOb(3, 0.5f, 1.0f, 0.8f, 0.5f, 1.0f) }, { Enemys.Rowland, new WaveOb(1, 1.0f, 1.0f, 0.5f, 1.0f, 0.8f) } },
                     new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(2, 0.4f, 0.5f, 1.0f, 0.8f, 0.6f) }, { Enemys.Scout,   new WaveOb(2, 0.6f, 1.0f, 0.8f, 0.5f, 1.0f) }, { Enemys.Sniper, new WaveOb(1, 0.1f, 1.0f, 0.8f, 1f, 0.5f) } },
                     new Dictionary<Enemys, WaveOb> { { Enemys.Tank,    new WaveOb(2, 0.4f, 1.0f, 1.0f, 0.5f, 0.8f) } },
                     new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(1, 0.6f, 0.8f, 0.8f, 1.0f, 1.0f) }, { Enemys.Scout,   new WaveOb(1, 1.0f, 0.5f, 1.0f, 1.0f, 0.8f) }, { Enemys.Tank,   new WaveOb(1, 0.5f, 0.8f, 1.0f, 1.0f, 1.0f) }, { Enemys.Sniper, new WaveOb(1, 0.2f, 1.0f, 1.0f, 0.8f, 1.0f) }, { Enemys.Rowland, new WaveOb(1, 1.0f, 1.0f, 1.0f, 1.0f, 1.2f) }, },
                 }),
-                new LevelOb(Properties.Resources.level_1FactoryOutside, new Dictionary<Enemys, WaveOb>[] {
+                new LevelOb(Properties.Resources.level_1FactoryOutside, true, new Dictionary<Enemys, WaveOb>[] {
                     new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(2, 0.6f, 0.8f, 1.0f, 1.0f, 0.8f) }, { Enemys.Rowland, new WaveOb(1, 1.0f, 1.0f, 0.5f, 1.0f, 1.0f) } },
                     new Dictionary<Enemys, WaveOb> { { Enemys.Scout,   new WaveOb(3, 1.0f, 0.8f, 1.0f, 1.0f, 0.8f) }, { Enemys.Rowland, new WaveOb(1, 1.0f, 1.0f, 0.5f, 1.0f, 1.0f) } },
                     new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(3, 0.6f, 0.8f, 0.8f, 0.8f, 0.8f) }, { Enemys.Scout,   new WaveOb(2, 0.8f, 0.6f, 1.0f, 0.6f, 1.0f) } },
                     new Dictionary<Enemys, WaveOb> { { Enemys.Tank,    new WaveOb(2, 0.3f, 1.2f, 1.2f, 0.6f, 0.4f) }, { Enemys.Sniper,  new WaveOb(1, 0.2f, 0.5f, 0.1f, 1.0f, 0.5f) } },
                     new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(2, 0.6f, 0.8f, 1.0f, 1.0f, 1.0f) }, { Enemys.Tank,    new WaveOb(1, 0.5f, 0.8f, 1.0f, 1.0f, 1.0f) }, { Enemys.Sniper, new WaveOb(1, 0.2f, 1.0f, 1.0f, 0.8f, 1.0f) }, { Enemys.Rowland, new WaveOb(1, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f) }, },
                 }),
-                new LevelOb(Properties.Resources.level_2Outside, new Dictionary<Enemys, WaveOb>[] {
+                new LevelOb(Properties.Resources.level_2Outside, true, new Dictionary<Enemys, WaveOb>[] {
                     new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(2, 1.0f, 0.8f, 1.0f, 1.0f, 0.8f) }, { Enemys.Rowland, new WaveOb(2, 1.0f, 1.0f, 0.5f, 1.0f, 1.0f) } },
                     new Dictionary<Enemys, WaveOb> { { Enemys.Scout,   new WaveOb(4, 1.0f, 1.0f, 1.0f, 1.0f, 1.1f) } },
                     new Dictionary<Enemys, WaveOb> { { Enemys.Sniper,  new WaveOb(3, 0.5f, 0.8f, 0.1f, 1.0f, 0.5f) }, { Enemys.Rowland, new WaveOb(2, 1.0f, 1.0f, 2.0f, 1.0f, 1.0f) } },
                     new Dictionary<Enemys, WaveOb> { { Enemys.Tank,    new WaveOb(3, 0.2f, 1.0f, 1.0f, 1.0f, 0.6f) }, { Enemys.Rowland, new WaveOb(1, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f) } },
                     new Dictionary<Enemys, WaveOb> { { Enemys.Regular, new WaveOb(2, 1.0f, 0.8f, 1.0f, 1.0f, 0.8f) }, { Enemys.Tank,    new WaveOb(1, 0.5f, 0.8f, 1.0f, 1.0f, 1.0f) }, { Enemys.Sniper, new WaveOb(1, 0.2f, 1.0f, 1.0f, 0.9f, 1.0f) } },
                 }),
-                new LevelOb(Properties.Resources.level_3Boss, new Dictionary<Enemys, WaveOb>[] {
+                new LevelOb(Properties.Resources.level_3Boss, true, new Dictionary<Enemys, WaveOb>[] {
                     new Dictionary<Enemys, WaveOb> { {Enemys.Boss, new WaveOb(1, 1.0f) } },
                 }),
             };
@@ -1172,7 +1174,14 @@ namespace christ_a_2
         private void menu_startMemoryLeak_button_Click(object sender, EventArgs e)
         {
             cLevel = 0;
-            LoadScene(Scenes.Cutscene, Cutscenes.BeforeLevel);
+            if (levelsData[cLevel].hasCutscene)
+            {
+                LoadScene(Scenes.Cutscene, Cutscenes.BeforeLevel);
+            }
+            else
+            {
+                LoadScene(Scenes.Game);
+            }
         }
 
         #endregion
@@ -1531,7 +1540,14 @@ namespace christ_a_2
                                 else
                                 {
                                     cLevel++;
-                                    LoadScene(Scenes.Cutscene, Cutscenes.BeforeLevel);
+                                    if (levelsData[cLevel].hasCutscene)
+                                    {
+                                        LoadScene(Scenes.Cutscene, Cutscenes.BeforeLevel);
+                                    }
+                                    else
+                                    {
+                                        LoadScene(Scenes.Game);
+                                    }
                                 }
                                 break;
                         }
