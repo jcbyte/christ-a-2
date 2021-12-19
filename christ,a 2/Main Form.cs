@@ -767,6 +767,7 @@ namespace christ_a_2
             ShieldPickup,
             ShieldUp,
             ShieldDown,
+            ShieldDamage,
         }
 
         private class SoundEffectPlayer
@@ -958,6 +959,7 @@ namespace christ_a_2
                 { SoundEffects.ShieldPickup, "FullResources\\SoundEffects\\shieldPickup.mp3" },
                 { SoundEffects.ShieldUp,     "FullResources\\SoundEffects\\shieldUp.mp3" },
                 { SoundEffects.ShieldDown,   "FullResources\\SoundEffects\\shieldDown.mp3" },
+                { SoundEffects.ShieldDamage, "FullResources\\SoundEffects\\shieldDamage.mp3" },
             };
 
             #endregion
@@ -1766,11 +1768,19 @@ namespace christ_a_2
                             Vector2 playerRealPos = ToRelativeV2(game_player_pictureBox.Location, main_game_panel.Size);
                             if (LineIntersectsStraightRect(before, after, playerRealPos, playerRealPos + ToRelativeV2(SystemSizeToSystemPoint(game_player_pictureBox.Size), main_game_panel.Size)))
                             {
-                                PlaySoundEffect(SoundEffects.PlayerDamage);
-
-                                playerHealth -= bullets[i].damage;
-                                UpdatePlayerHealth();
-
+                                if (shieldUp)
+                                {
+                                    PlaySoundEffect(SoundEffects.ShieldDamage);
+                                    playerShield = Math.Max(playerShield - bullets[i].damage, 0);
+                                    UpdatePlayerShield();
+                                }
+                                else
+                                {
+                                    PlaySoundEffect(SoundEffects.PlayerDamage);
+                                    playerHealth -= bullets[i].damage;
+                                    UpdatePlayerHealth();
+                                }
+                                
                                 bullets[i].blacklist.Add("nullz");
                                 bullets[i].penetration -= 1;
                             }
@@ -1840,7 +1850,6 @@ namespace christ_a_2
                     bullets.RemoveAt(deleteBullets[i]);
                 }
 
-
                 #endregion
 
                 #region "Game.Explosions"
@@ -1883,14 +1892,22 @@ namespace christ_a_2
                         {
                             if (PointInStraightRect(playerPos, explosionRectA, explosionRectB)) // If explosion goes into player
                             {
-                                PlaySoundEffect(SoundEffects.PlayerDamage);
-
                                 float distance = (explosions[i].pos - playerPos).ScaledMagnitude(main_game_panel.Size);
                                 float maxExplosion = explosions[i].maxRadius;
                                 float experiencedDamage = (explosions[i].damage / maxExplosion) * (-distance + maxExplosion); // damage = ( k / maxr )( -r + maxr)
 
-                                playerHealth -= (int)experiencedDamage;
-                                UpdatePlayerHealth();
+                                if (shieldUp)
+                                {
+                                    PlaySoundEffect(SoundEffects.ShieldDamage);
+                                    playerShield = Math.Max(playerShield - (int)experiencedDamage, 0);
+                                    UpdatePlayerShield();
+                                }
+                                else
+                                {
+                                    PlaySoundEffect(SoundEffects.PlayerDamage);
+                                    playerHealth -= (int)experiencedDamage;
+                                    UpdatePlayerHealth();
+                                }
 
                                 explosions[i].blacklist.Add("nullz"); // Add nullz to blacklist so he cant be hit again by the same bullet
                             }
