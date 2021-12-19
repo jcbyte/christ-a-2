@@ -27,7 +27,7 @@ namespace christ_a_2
 
             public const float playerSpeed = 0.20f;
             public const int maxPlayerHealth = 250;
-            public static readonly Vector2 playerSize = new Vector2(0.04f, 0.06f); // Scaled relative Vector2
+            public static readonly Vector2 playerSize = new Vector2(0.06f); // Scaled relative Vector2
 
             public const float playerRespawnHealthPercent = 0.80f;
 
@@ -1283,6 +1283,7 @@ namespace christ_a_2
             playerPos = new Vector2(0.5f, 0.5f);
             game_player_pictureBox.Location = FromRelativeV2Center(playerPos, game_player_pictureBox.Size, main_game_panel.Size); // Have player start in centre
             game_player_pictureBox.Size = SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(Constants.playerSize, main_game_panel.Size), main_game_panel.Size));
+            game_player_pictureBox.BackgroundImage = Properties.Resources.player_normal;
             game_player_pictureBox.BringToFront();
             UpdatePlayerHealth();
 

@@ -293,6 +293,16 @@ namespace christ_a_2.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap pickup_shield {
+            get {
+                object obj = ResourceManager.GetObject("pickup_shield", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap pickup_weaponBox {
             get {
                 object obj = ResourceManager.GetObject("pickup_weaponBox", resourceCulture);
@@ -303,9 +313,19 @@ namespace christ_a_2.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap player_nullz {
+        internal static System.Drawing.Bitmap player_normal {
             get {
-                object obj = ResourceManager.GetObject("player_nullz", resourceCulture);
+                object obj = ResourceManager.GetObject("player_normal", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap player_shield {
+            get {
+                object obj = ResourceManager.GetObject("player_shield", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -209,11 +209,11 @@
             // game_player_pictureBox
             // 
             this.game_player_pictureBox.BackColor = System.Drawing.Color.Transparent;
-            this.game_player_pictureBox.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("game_player_pictureBox.BackgroundImage")));
+            this.game_player_pictureBox.BackgroundImage = global::christ_a_2.Properties.Resources.player_normal;
             this.game_player_pictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.game_player_pictureBox.Location = new System.Drawing.Point(587, 346);
+            this.game_player_pictureBox.Location = new System.Drawing.Point(581, 412);
             this.game_player_pictureBox.Name = "game_player_pictureBox";
-            this.game_player_pictureBox.Size = new System.Drawing.Size(45, 77);
+            this.game_player_pictureBox.Size = new System.Drawing.Size(77, 77);
             this.game_player_pictureBox.TabIndex = 1;
             this.game_player_pictureBox.TabStop = false;
             // 
