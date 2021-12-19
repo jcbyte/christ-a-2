@@ -2,13 +2,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Media;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Text;
+using System.Linq;
 
 #endregion
 
@@ -39,7 +37,6 @@ namespace christ_a_2
 
             public const int enemyHealthBarThickness = 6; // (px)
 
-            public const float ammoDropChance = 0.35f; // Ammo chance + health chance = 1 
             public const float pickupBoxRange = 0.02f; // Relative
             public const int healthPickupHealth = 50;
             public static readonly Vector2 weaponDropSize = new Vector2(0.08f, 0.06f);
@@ -664,6 +661,7 @@ namespace christ_a_2
             Ammo,
             Health,
             WeaponBox,
+            Shield,
             NextWave,
             NextLevel,
         }
@@ -810,6 +808,7 @@ namespace christ_a_2
         private Dictionary<Weapons, WeaponOb> weaponsData;
         private Dictionary<Enemys, EnemyOb> enemysData;
         private Dictionary<Drops, DropOb> dropsData;
+        private Dictionary<Drops, float> dropsChanceData;
         private Dictionary<SoundEffects, string> soundEffectsData;
 
         private Scenes cScene = Scenes.Menu;
@@ -927,8 +926,15 @@ namespace christ_a_2
                 {Drops.Ammo,      new DropOb(Properties.Resources.pickup_ammoBox,   0.015f) },
                 {Drops.Health,    new DropOb(Properties.Resources.pickup_healthBox, 0.015f) },
                 {Drops.WeaponBox, new DropOb(Properties.Resources.pickup_weaponBox, 0.030f) },
+                {Drops.Shield,    new DropOb(Properties.Resources.pickup_shield,    0.015f) },
                 {Drops.NextWave,  new DropOb(Properties.Resources.pickup_nextWave,  0.040f) },
                 {Drops.NextLevel, new DropOb(Properties.Resources.pickup_nextLevel, 0.040f) },
+            };
+
+            dropsChanceData = new Dictionary<Drops, float> {
+                {Drops.Ammo,   0.3f },
+                {Drops.Health, 0.4f },
+                {Drops.Shield, 0.3f },
             };
 
             soundEffectsData = new Dictionary<SoundEffects, string> {
@@ -1862,7 +1868,19 @@ namespace christ_a_2
                 {
                     if (enemysData[enemys[deleteEnemys[i]].type].dropRate >= GetFloatRng()) // Enemy should drop
                     {
-                        Drops dropType = (Constants.ammoDropChance >= GetFloatRng()) ? Drops.Ammo : Drops.Health; // Chooses whether enemy drops amo or health
+                        Drops dropType = dropsChanceData.Keys.ElementAt(0);
+                        float rng = GetFloatRng();
+                        float cChance = 0f;
+
+                        foreach (KeyValuePair<Drops, float> dropChance in dropsChanceData) // Chooses what the enemy drops
+                        {
+                            cChance += dropChance.Value;
+                            if (cChance >= rng)
+                            {
+                                dropType = dropChance.Key;
+                                break;
+                            }
+                        }
 
                         drops.Add(new Drop( // Drop ammo/health box
                             dropType,
