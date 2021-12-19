@@ -30,6 +30,7 @@ namespace christ_a_2
             public static readonly Vector2 playerSize = new Vector2(0.06f); // Scaled relative Vector2
 
             public const float playerRespawnHealthPercent = 0.80f;
+            public const float playerRespawnShieldPercent = 0.25f;
 
             public const int enemyAIDelay = 2000;
 
@@ -966,7 +967,7 @@ namespace christ_a_2
 
             playerHealth = Constants.maxPlayerHealth;
             UpdatePlayerHealth();
-            playerShield = Constants.maxPlayerShield * 0.25f;
+            playerShield = Constants.maxPlayerShield * Constants.playerRespawnShieldPercent;
             UpdatePlayerShield();
 
             foreach (KeyValuePair<Scenes, SceneOb> s in scenesData)
@@ -1259,6 +1260,7 @@ namespace christ_a_2
 
                 case Cutscenes.Loss:
                     playerHealth = Constants.maxPlayerHealth * Constants.playerRespawnHealthPercent;
+                    playerShield = Constants.maxPlayerShield * Constants.playerRespawnShieldPercent;
                     LoadScene(Scenes.Game);
                     break;
             }
