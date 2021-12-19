@@ -26,6 +26,7 @@ namespace christ_a_2
             public const float playerSpeed = 0.20f;
             public const float maxPlayerHealth = 100;
             public const float maxPlayerShield = 100;
+            public const float shieldDegen = 1f;
             public static readonly Vector2 playerSize = new Vector2(0.06f); // Scaled relative Vector2
 
             public const float playerRespawnHealthPercent = 0.80f;
@@ -764,6 +765,8 @@ namespace christ_a_2
             NextWave,
             EnemyDamage,
             ShieldPickup,
+            ShieldUp,
+            ShieldDown,
         }
 
         private class SoundEffectPlayer
@@ -953,13 +956,15 @@ namespace christ_a_2
                 { SoundEffects.NextWave,     "FullResources\\SoundEffects\\nextWave.mp3" },
                 { SoundEffects.EnemyDamage,  "FullResources\\SoundEffects\\enemyDamage.mp3" },
                 { SoundEffects.ShieldPickup, "FullResources\\SoundEffects\\shieldPickup.mp3" },
+                { SoundEffects.ShieldUp,     "FullResources\\SoundEffects\\shieldUp.mp3" },
+                { SoundEffects.ShieldDown,   "FullResources\\SoundEffects\\shieldDown.mp3" },
             };
 
             #endregion
 
             playerHealth = Constants.maxPlayerHealth;
             UpdatePlayerHealth();
-            playerShield = Constants.maxPlayerShield;
+            playerShield = Constants.maxPlayerShield * 0.25f;
             UpdatePlayerShield();
 
             foreach (KeyValuePair<Scenes, SceneOb> s in scenesData)
@@ -1296,6 +1301,7 @@ namespace christ_a_2
             playerPos = new Vector2(0.5f, 0.5f);
             game_player_pictureBox.Location = FromRelativeV2Center(playerPos, game_player_pictureBox.Size, main_game_panel.Size); // Have player start in centre
             game_player_pictureBox.Size = SystemPointToSystemSize(FromRelativeV2(FromScaledRelativeV2ToRealtiveV2(Constants.playerSize, main_game_panel.Size), main_game_panel.Size));
+            shieldUp = false;
             game_player_pictureBox.BackgroundImage = Properties.Resources.player_normal;
             game_player_pictureBox.BringToFront();
             UpdatePlayerHealth();
@@ -1409,6 +1415,8 @@ namespace christ_a_2
         float lastTryShoot = 0;
         bool reloading = false;
         float lastWeaponPickup = 0;
+        bool newShieldKey = true;
+        bool shieldUp = false;
 
         void GameLoop(object sender, EventArgs e)
         {
@@ -1672,6 +1680,51 @@ namespace christ_a_2
                                 lastTryReload = sw.ElapsedMilliseconds;
                             }
                         }
+                    }
+                }
+
+                #endregion
+
+                #region "Game.Shield"
+
+                if (Keyboard.IsKeyDown(Key.LeftShift))
+                {
+                    if (newShieldKey)
+                    {
+                        if (shieldUp)
+                        {
+                            PlaySoundEffect(SoundEffects.ShieldDown);
+                            game_player_pictureBox.BackgroundImage = Properties.Resources.player_normal;
+                            shieldUp = false;
+                        }
+                        else
+                        {
+                            if (playerShield >= 0)
+                            {
+                                PlaySoundEffect(SoundEffects.ShieldUp);
+                                game_player_pictureBox.BackgroundImage = Properties.Resources.player_shield;
+                                shieldUp = true;
+                            }
+                        }
+
+                        newShieldKey = false;
+                    }
+                }
+                else
+                {
+                    newShieldKey = true;
+                }
+
+                if (shieldUp)
+                {
+                    playerShield -= Constants.shieldDegen * delta;
+                    UpdatePlayerShield();
+
+                    if (playerShield <= 0)
+                    {
+                        PlaySoundEffect(SoundEffects.ShieldDown);
+                        game_player_pictureBox.BackgroundImage = Properties.Resources.player_normal;
+                        shieldUp = false;
                     }
                 }
 

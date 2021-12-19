@@ -258,5 +258,8 @@
   <ItemGroup>
     <None Include="Resources\pickup_shiels.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\level_0Factory.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
